@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartREPORTING — Platform Architecture</title>
+<link rel="stylesheet" href="../css/eko365.css">
+<style>
+  /* Page-specific overrides only */
+  .hl-canvas { position: relative; width: 100%; min-height: 860px; }
+  .hl-sources { display: flex; justify-content: center; gap: 24px; margin-bottom: 16px; flex-wrap: wrap; }
+  .hl-pipelines { display: flex; justify-content: center; gap: 20px; margin-bottom: 16px; flex-wrap: wrap; }
+  .hl-infra { display: flex; justify-content: center; gap: 20px; margin-top: 16px; flex-wrap: wrap; }
+  .hl-delivery { display: flex; justify-content: center; gap: 20px; margin-top: 16px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+
+<div class="eko-header">
+  <h1>SmartREPORTING — Platform Architecture</h1>
+  <div class="subtitle">Architettura dei servizi di reportistica automatizzata EKO365 — 4 pipeline, 10+ tenant, 3 livelli di output</div>
+  <a href="../" class="back-link">&larr; Hub Documentazione</a>
+</div>
+
+<div class="view-toggle">
+  <button class="view-btn active" onclick="switchView('hl')">High-Level Overview</button>
+  <button class="view-btn" onclick="switchView('detail')">Dettaglio Tecnico</button>
+</div>
+
+<!-- ====================== HIGH-LEVEL VIEW ====================== -->
+<div id="view-hl" class="view active">
+  <div class="hl-canvas">
+
+    <!-- DATA SOURCES -->
+    <div class="section-label">Sorgenti Dati</div>
+    <div class="hl-sources">
+      <div class="hl-source">
+        <div class="icon">&#x1F3AB;</div>
+        <div class="name">Desk365</div>
+        <div class="type">REST API v3</div>
+      </div>
+      <div class="hl-source">
+        <div class="icon">&#x1F4BE;</div>
+        <div class="name">AFI.ai</div>
+        <div class="type">REST API v1</div>
+      </div>
+      <div class="hl-source">
+        <div class="icon">&#x1F4E7;</div>
+        <div class="name">Veeam EM</div>
+        <div class="type">EKOBKP08 &rarr; Email &rarr; Graph</div>
+      </div>
+      <div class="hl-source">
+        <div class="icon">&#x1F512;</div>
+        <div class="name">Microsoft 365</div>
+        <div class="type">Graph API (44 scope)</div>
+      </div>
+    </div>
+
+    <div class="arrow-down">&#x25BC; &#x25BC; &#x25BC; &#x25BC;</div>
+
+    <!-- PIPELINES -->
+    <div class="section-label">Pipeline di Elaborazione</div>
+    <div class="hl-pipelines">
+      <div class="hl-pipeline">
+        <div class="badge">Mensile / Trim.</div>
+        <h3>Desk365 Helpdesk</h3>
+        <div class="phases">
+          <span class="phase fetch">Fetch</span>
+          <span class="phase analyze">Analyze</span>
+          <span class="phase report">Report</span>
+        </div>
+        <div class="freq">3&ordm; del mese, 06:00 UTC</div>
+        <div class="outputs">
+          <span class="output-tag pptx">PPTX</span>
+          <span class="output-tag docx">DOCX</span>
+          <span class="output-tag csv">CSV</span>
+        </div>
+      </div>
+
+      <div class="hl-pipeline">
+        <div class="badge">Mensile / Trim.</div>
+        <h3>SmartBackup (AFI)</h3>
+        <div class="phases">
+          <span class="phase fetch">Fetch</span>
+          <span class="phase analyze">Analyze</span>
+          <span class="phase report">Report</span>
+        </div>
+        <div class="freq">2&ordm; del mese, 06:00 UTC</div>
+        <div class="outputs">
+          <span class="output-tag docx">DOCX</span>
+        </div>
+      </div>
+
+      <div class="hl-pipeline">
+        <div class="badge">Giornaliero / Mens.</div>
+        <h3>Veeam Backup</h3>
+        <div class="phases">
+          <span class="phase fetch">Fetch + Parse</span>
+          <span class="phase analyze">Analyze</span>
+          <span class="phase report">Report</span>
+        </div>
+        <div class="freq">Giorn. 10:00 + 2&ordm; mese (full)</div>
+        <div class="outputs">
+          <span class="output-tag docx">DOCX</span>
+        </div>
+      </div>
+
+      <div class="hl-pipeline">
+        <div class="badge">Settimanale / Mens.</div>
+        <h3>Microsoft 365</h3>
+        <div class="phases">
+          <span class="phase fetch">Collect</span>
+          <span class="phase analyze">Transform</span>
+          <span class="phase report">Bulletin</span>
+        </div>
+        <div class="freq">Dom 04:00 + 1&ordm; mese 03:00</div>
+        <div class="outputs">
+          <span class="output-tag json">JSON</span>
+          <span class="output-tag docx">DOCX*</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-down">&#x25BC; &#x25BC; &#x25BC;</div>
+
+    <!-- SHARED INFRASTRUCTURE -->
+    <div class="section-label">Infrastruttura Condivisa</div>
+    <div class="hl-infra">
+      <div class="hl-infra-box">
+        <div class="icon">&#x2699;</div>
+        <div class="name">GitHub Actions</div>
+        <div class="desc">Orchestrazione CI/CD<br>Reusable Workflows</div>
+      </div>
+      <div class="hl-infra-box">
+        <div class="icon">&#x1F5C4;</div>
+        <div class="name">Wasabi S3</div>
+        <div class="desc">eko365-pipelines<br>eu-south-1</div>
+      </div>
+      <div class="hl-infra-box">
+        <div class="icon">&#x1F511;</div>
+        <div class="name">EKO365-Auth</div>
+        <div class="desc">GDAP + Refresh Token<br>Multi-tenant OBO</div>
+      </div>
+      <div class="hl-infra-box">
+        <div class="icon">&#x1F4E8;</div>
+        <div class="name">MailerSend SMTP</div>
+        <div class="desc">Delivery automatica<br>Role-based routing</div>
+      </div>
+    </div>
+
+    <div class="arrow-down">&#x25BC; &#x25BC;</div>
+
+    <!-- DELIVERY -->
+    <div class="section-label">Destinatari</div>
+    <div class="hl-delivery">
+      <div class="hl-delivery-box">
+        <div class="name">Clienti</div>
+        <div class="desc">Report trimestrali<br>PPTX / DOCX</div>
+      </div>
+      <div class="hl-delivery-box">
+        <div class="name">Service Manager</div>
+        <div class="desc">Report mensili<br>DOCX / CSV</div>
+      </div>
+      <div class="hl-delivery-box">
+        <div class="name">CTO / Direction</div>
+        <div class="desc">Overview cross-client<br>Bollettini interni</div>
+      </div>
+    </div>
+
+    <!-- TENANT COVERAGE -->
+    <div class="section-label" style="margin-top: 28px;">Tenant Coperti (10)</div>
+    <div class="tenant-grid" style="justify-content: center;">
+      <span class="tenant-chip">KSGR</span>
+      <span class="tenant-chip">KAM</span>
+      <span class="tenant-chip">DLPHRC</span>
+      <span class="tenant-chip">ICONS</span>
+      <span class="tenant-chip">C2P</span>
+      <span class="tenant-chip">ADVAM</span>
+      <span class="tenant-chip">EKO</span>
+      <span class="tenant-chip">SACMAR</span>
+      <span class="tenant-chip">DLLAW</span>
+      <span class="tenant-chip">K2P</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ====================== DETAIL VIEW ====================== -->
+<div id="view-detail" class="view">
+
+  <!-- 1. DESK365 -->
+  <div class="detail-section">
+    <h2>1. Pipeline Desk365 — Helpdesk Analytics</h2>
+
+    <h3>Flusso Dati</h3>
+    <div class="flow">
+      <div class="flow-step source"><strong>Desk365 API v3</strong><small>Tickets, Time, CSAT, Companies</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step process"><strong>fetch_tickets.py</strong><small>Python &middot; Pagination offset</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step storage"><strong>Wasabi S3</strong><small>desk365/extractions/</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step process"><strong>analyze_data.py</strong><small>KPI engine &middot; SLA &middot; DORA</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step storage"><strong>Wasabi S3</strong><small>desk365/analysis/</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step output"><strong>8 Report Generators</strong><small>Node.js &middot; PptxGenJS &middot; docx</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step deliver"><strong>MailerSend</strong><small>Role-based delivery</small></div>
+    </div>
+
+    <h3>Output (8 generatori)</h3>
+    <table class="tech-table">
+      <thead><tr><th>Generatore</th><th>Tipo</th><th>Audience</th><th>Cadenza</th><th>Contenuto</th></tr></thead>
+      <tbody>
+        <tr><td>generate_report.js</td><td><span class="output-tag pptx">PPTX</span></td><td>Clienti</td><td>Trimestrale</td><td>13 slide per company (5 condizionali)</td></tr>
+        <tr><td>generate_overview.js</td><td><span class="output-tag pptx">PPTX</span></td><td>Direction</td><td>Trimestrale</td><td>Cross-client comparison</td></tr>
+        <tr><td>generate_narrative.js</td><td><span class="output-tag docx">DOCX</span></td><td>Clienti</td><td>Trimestrale</td><td>Narrativa con Chart.js inline</td></tr>
+        <tr><td>generate_internal_*.js (3)</td><td><span class="output-tag pptx">PPTX</span> <span class="output-tag docx">DOCX</span></td><td>Team interno</td><td>Mensile</td><td>Branding invertito (orange)</td></tr>
+        <tr><td>generate_aging_report.js</td><td><span class="output-tag pptx">PPTX</span></td><td>Team interno</td><td>Mensile</td><td>Ticket stale, aging analysis (7 slide)</td></tr>
+        <tr><td>generate_aging_csv.py</td><td><span class="output-tag csv">CSV</span></td><td>Team interno</td><td>Mensile</td><td>Export ticket aperti per Excel</td></tr>
+      </tbody>
+    </table>
+
+    <h3>KPI Principali</h3>
+    <div class="kpi-row">
+      <div class="kpi-card"><div class="kpi-label">SLA Compliance</div><div class="kpi-value">%</div><div class="kpi-threshold"><span class="dot-green"></span>&ge;90% <span class="dot-yellow"></span>75-89% <span class="dot-red"></span>&lt;75%</div></div>
+      <div class="kpi-card"><div class="kpi-label">Response Time</div><div class="kpi-value">P95</div><div class="kpi-threshold">Mean, Median, P95 per fase</div></div>
+      <div class="kpi-card"><div class="kpi-label">CSAT</div><div class="kpi-value">Rating</div><div class="kpi-threshold">Media + distribuzione</div></div>
+      <div class="kpi-card"><div class="kpi-label">DORA</div><div class="kpi-value">Opzionale</div><div class="kpi-threshold">Solo clienti regolamentati</div></div>
+    </div>
+
+    <h3>Classificazione Ticket</h3>
+    <p style="font-size:0.85rem; margin:6px 0;">Sistema ibrido a 2 livelli: <strong>Tier 1</strong> rule engine deterministico (classification_rules.json), <strong>Tier 2</strong> LLM opzionale (Claude Haiku, flag --use-llm). Tassonomia: 9 categorie, 58 sottocategorie.</p>
+  </div>
+
+  <!-- 2. SMARTBACKUP AFI -->
+  <div class="detail-section">
+    <h2>2. Pipeline SmartBackup (AFI.ai) — Cloud Backup Analytics</h2>
+
+    <h3>Flusso Dati</h3>
+    <div class="flow">
+      <div class="flow-step source"><strong>AFI.ai API v1</strong><small>9 endpoint &times; 10 tenant</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step process"><strong>fetch_backup_data.py</strong><small>Python &middot; Cursor pagination</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step storage"><strong>Wasabi S3</strong><small>smartbackup/snapshots/</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step process"><strong>analyze_backup.py</strong><small>7 sezioni KPI &middot; Billing</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step storage"><strong>Wasabi S3</strong><small>smartbackup/analysis/</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step output"><strong>3 Report Generators</strong><small>Node.js &middot; docx &middot; Chart.js</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step deliver"><strong>MailerSend</strong><small>Auto-routing per periodo</small></div>
+    </div>
+
+    <h3>Output (3 generatori)</h3>
+    <table class="tech-table">
+      <thead><tr><th>Generatore</th><th>Tipo</th><th>Audience</th><th>Struttura</th></tr></thead>
+      <tbody>
+        <tr><td>generate_backup_report.js</td><td><span class="output-tag docx">DOCX</span></td><td>Per-tenant</td><td>3 livelli: Executive (1-3) &rarr; Operational (4-6) &rarr; Compliance (7-9, solo KSGR)</td></tr>
+        <tr><td>generate_backup_overview.js</td><td><span class="output-tag docx">DOCX</span></td><td>CTO</td><td>Heat-map, risk ranking, storage capacity, anomalie</td></tr>
+        <tr><td>generate_backup_bulletin.js</td><td><span class="output-tag docx">DOCX</span></td><td>Team interno</td><td>Branding invertito, semafori, billing, licensing</td></tr>
+      </tbody>
+    </table>
+
+    <h3>KPI Principali</h3>
+    <div class="kpi-row">
+      <div class="kpi-card"><div class="kpi-label">Backup Success</div><div class="kpi-value">%</div><div class="kpi-threshold">Trend mensile</div></div>
+      <div class="kpi-card"><div class="kpi-label">Coverage</div><div class="kpi-value">%</div><div class="kpi-threshold">Risorse protette vs totali<br>Filtering smart (~50 pattern)</div></div>
+      <div class="kpi-card"><div class="kpi-label">Storage</div><div class="kpi-value">%</div><div class="kpi-threshold"><span class="dot-green"></span>&lt;90% <span class="dot-yellow"></span>90-95% <span class="dot-red"></span>&ge;95%</div></div>
+      <div class="kpi-card"><div class="kpi-label">Billing</div><div class="kpi-value">&euro;/mese</div><div class="kpi-threshold">Slot 100GB, Pack 1TB = &euro;60</div></div>
+    </div>
+
+    <h3>Vincoli</h3>
+    <p style="font-size:0.85rem; margin:6px 0;"><strong>Task Statistics:</strong> scadono dopo 35 giorni &mdash; il fetch deve completarsi entro fine mese. <strong>Config statiche:</strong> policy_config.json (14 policy) e tenant_config.json (storage contrattualizzato) richiedono aggiornamento manuale.</p>
+  </div>
+
+  <!-- 3. VEEAM BACKUP -->
+  <div class="detail-section">
+    <h2>3. Pipeline Veeam Backup — Email-Based On-Prem Reporting</h2>
+
+    <h3>Flusso Dati</h3>
+    <div class="flow">
+      <div class="flow-step source"><strong>Veeam Enterprise Manager</strong><small>EKOBKP08 &rarr; SMTP email giornaliera</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step source"><strong>pipeline-ingest@eko365.it</strong><small>Shared Mailbox (Exchange Online)</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step process"><strong>fetch_veeam_emails.py</strong><small>Graph Mail API &middot; MSAL client credentials</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step process"><strong>parse_veeam_email.py</strong><small>BeautifulSoup &middot; HTML table parser</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step storage"><strong>Wasabi S3</strong><small>veeam/daily/ + veeam/raw/</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step process"><strong>analyze_veeam.py</strong><small>949 righe &middot; KPI engine &middot; Anomaly detection</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step storage"><strong>Wasabi S3</strong><small>veeam/analysis/</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step output"><strong>2 Report Generators</strong><small>Node.js &middot; docx &middot; Chart.js</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step deliver"><strong>MailerSend</strong><small>Bollettino + per-client</small></div>
+    </div>
+
+    <h3>Output (2 generatori)</h3>
+    <table class="tech-table">
+      <thead><tr><th>Generatore</th><th>Tipo</th><th>Audience</th><th>Cadenza</th><th>Contenuto</th></tr></thead>
+      <tbody>
+        <tr><td>generate_veeam_report.js</td><td><span class="output-tag docx">DOCX</span></td><td>Per-client (7)</td><td>Trimestrale</td><td>8 sezioni: Executive &rarr; Performance &rarr; Resource &rarr; Transfer &rarr; Duration &rarr; Anomalies &rarr; Recommendations</td></tr>
+        <tr><td>generate_veeam_bulletin.js</td><td><span class="output-tag docx">DOCX</span></td><td>Team interno</td><td>Mensile</td><td>Branding invertito, semaforo 13 job, alert, volumi, finestra backup, dettaglio per cliente</td></tr>
+      </tbody>
+    </table>
+
+    <h3>KPI Principali</h3>
+    <div class="kpi-row">
+      <div class="kpi-card"><div class="kpi-label">Successo Backup</div><div class="kpi-value">%</div><div class="kpi-threshold"><span class="dot-green"></span>&ge;99% <span class="dot-yellow"></span>&ge;95% <span class="dot-red"></span>&lt;95%</div></div>
+      <div class="kpi-card"><div class="kpi-label">Affidabilit&agrave; Job</div><div class="kpi-value">%</div><div class="kpi-threshold"><span class="dot-green"></span>100% <span class="dot-yellow"></span>&ge;90% <span class="dot-red"></span>&lt;90%</div></div>
+      <div class="kpi-card"><div class="kpi-label">Continuit&agrave; Dati</div><div class="kpi-value">%</div><div class="kpi-threshold"><span class="dot-green"></span>&ge;95% <span class="dot-yellow"></span>&ge;80% <span class="dot-red"></span>&lt;80%</div></div>
+      <div class="kpi-card"><div class="kpi-label">Dedup Ratio</div><div class="kpi-value">x</div><div class="kpi-threshold">Read / Transferred (es. 3.64x)</div></div>
+    </div>
+
+    <h3>Architettura Sorgente</h3>
+    <p style="font-size:0.85rem; margin:6px 0;">La pipeline sfrutta un approccio <strong>email-based</strong> unico: Veeam Enterprise Manager (server on-prem EKOBKP08) invia report giornalieri via SMTP alla shared mailbox <strong>pipeline-ingest@eko365.it</strong>. L'app Entra ID <strong>EKO365-Pipeline-MailReader</strong> (client credentials, secret valido fino 02/2028) legge le email tramite Graph Mail API con Application Access Policy restrittiva.</p>
+
+    <h3>Job Tracking (13 job, 7 clienti esterni)</h3>
+    <table class="tech-table">
+      <thead><tr><th>Tipo</th><th>Clienti</th><th>Report</th></tr></thead>
+      <tbody>
+        <tr><td>Clienti esterni (7)</td><td>KSGR, DLPHRC, FORTALD, QUANTUM, SACMAR, TOSI, XFORGE</td><td>Per-client DOCX + bollettino</td></tr>
+        <tr><td>Interni EKO (4)</td><td>EKO, EKOWEB03, Zerto, LPTOOLS</td><td>Solo bollettino</td></tr>
+        <tr><td>Multi-client (2)</td><td>Clienti, WKS-CLIENTI</td><td>Solo bollettino (no attribuzione)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Parsing HTML</h3>
+    <p style="font-size:0.85rem; margin:6px 0;">Il parser gestisce sia formato nativo Veeam (hex color) che forward Outlook (rgb format). Estrae 9 colonne per task: resource_name, status, start/end_time, performance_rate, size, read, transferred, duration. Supporto formato europeo (virgola decimale: "1,1 TB").</p>
+  </div>
+
+  <!-- 4. M365 GRAPH -->
+  <div class="detail-section">
+    <h2>4. Pipeline Microsoft 365 — Security & Compliance Collection</h2>
+
+    <h3>Flusso Dati</h3>
+    <div class="flow">
+      <div class="flow-step source"><strong>Microsoft Graph API</strong><small>44 delegated permissions</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step process"><strong>run_all.py</strong><small>Orchestrator &middot; 8 collectors</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step storage"><strong>Wasabi S3</strong><small>{TENANT}/raw/graph/{MODULE}/</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step process"><strong>cross_reference.py</strong><small>Data enrichment</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step output"><strong>Bulletin Generators</strong><small>Node.js (in sviluppo)</small></div>
+    </div>
+
+    <h3>Collector Modules (8)</h3>
+    <div class="module-grid">
+      <div class="module-card"><div class="mod-name">Security</div><div class="mod-freq">Settimanale</div><div class="mod-data">Alert, incident, risk detection</div></div>
+      <div class="module-card"><div class="mod-name">Health</div><div class="mod-freq">Settimanale</div><div class="mod-data">Service incident, advisory</div></div>
+      <div class="module-card"><div class="mod-name">Identity</div><div class="mod-freq">Mensile</div><div class="mod-data">Users, MFA, role assignment</div></div>
+      <div class="module-card"><div class="mod-name">Exchange</div><div class="mod-freq">Mensile</div><div class="mod-data">Mailbox, DLP, mail flow</div></div>
+      <div class="module-card"><div class="mod-name">SharePoint</div><div class="mod-freq">Mensile</div><div class="mod-data">Site usage, file activity</div></div>
+      <div class="module-card"><div class="mod-name">Teams</div><div class="mod-freq">Mensile</div><div class="mod-data">Team usage, user activity</div></div>
+      <div class="module-card"><div class="mod-name">Intune</div><div class="mod-freq">Mensile</div><div class="mod-data">Device compliance, enrollment</div></div>
+      <div class="module-card"><div class="mod-name">EOP</div><div class="mod-freq">Settimanale</div><div class="mod-data">Exchange Online Protection threats</div></div>
+    </div>
+
+    <h3>Autenticazione</h3>
+    <p style="font-size:0.85rem; margin:6px 0;">App <strong>EKO365-MSP-Automation</strong> con GDAP + OBO (admin-fs@eko365sb). Refresh token auto-rinnovato e riscritto su GitHub Secret dopo ogni collection. Token manager gestisce il ciclo completo.</p>
+  </div>
+
+  <!-- 5. INFRASTRUTTURA CONDIVISA -->
+  <div class="detail-section">
+    <h2>5. Infrastruttura Condivisa SmartREPORTING</h2>
+
+    <h3>Orchestrazione — GitHub Actions</h3>
+    <table class="tech-table">
+      <thead><tr><th>Workflow</th><th>Tipo</th><th>Funzione</th></tr></thead>
+      <tbody>
+        <tr><td>reusable-fetch.yml</td><td><span class="tech-badge python">Python</span></td><td>Estrazione dati + upload S3</td></tr>
+        <tr><td>reusable-analyze.yml</td><td><span class="tech-badge python">Python</span></td><td>Download S3 + analisi + upload S3</td></tr>
+        <tr><td>reusable-report.yml</td><td><span class="tech-badge node">Node.js</span></td><td>Download S3 + report generation + email</td></tr>
+        <tr><td>reusable-notify.yml</td><td><span class="tech-badge yaml">SMTP</span></td><td>Notifica failure a alerts@eko365.it</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Scheduling Completo</h3>
+    <div class="schedule-row">
+      <span class="cron">0 3 1 * *</span>
+      <span class="desc">1&ordm; del mese, 03:00 UTC &mdash; M365 Graph full collection (tutti i moduli)</span>
+      <span class="pipeline-tag tag-m365">M365</span>
+    </div>
+    <div class="schedule-row">
+      <span class="cron">0 6 2 * *</span>
+      <span class="desc">2&ordm; del mese, 06:00 UTC &mdash; SmartBackup AFI fetch + analyze + report</span>
+      <span class="pipeline-tag tag-smartbackup">SmartBackup</span>
+    </div>
+    <div class="schedule-row">
+      <span class="cron">0 6 3 * *</span>
+      <span class="desc">3&ordm; del mese, 06:00 UTC &mdash; Desk365 fetch + analyze + report</span>
+      <span class="pipeline-tag tag-desk365">Desk365</span>
+    </div>
+    <div class="schedule-row">
+      <span class="cron">0 4 * * 0</span>
+      <span class="desc">Ogni domenica, 04:00 UTC &mdash; M365 Graph weekly (Security + Health)</span>
+      <span class="pipeline-tag tag-m365">M365</span>
+    </div>
+    <div class="schedule-row">
+      <span class="cron">0 10 * * *</span>
+      <span class="desc">Ogni giorno, 10:00 UTC (12:00 IT) &mdash; Veeam fetch + parse email giornaliera</span>
+      <span class="pipeline-tag tag-veeam">Veeam</span>
+    </div>
+    <div class="schedule-row">
+      <span class="cron">0 10 2 * *</span>
+      <span class="desc">2&ordm; del mese, 10:00 UTC &mdash; Veeam full pipeline (analyze + report). Auto quarter-end detection</span>
+      <span class="pipeline-tag tag-veeam">Veeam</span>
+    </div>
+
+    <h3>Storage — Wasabi S3</h3>
+    <div class="s3-tree">
+<span class="folder">s3://eko365-pipelines/</span>
+<span class="folder">&nbsp;&nbsp;desk365/</span>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;extractions/{DATE}/</span> <span class="comment"># raw_extraction_YYYYMMDD.json</span>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;analysis/{DATE}/</span> <span class="comment"># analysis_YYYYMMDD.json</span>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;reports/{YEAR}/</span> <span class="comment"># PPTX, DOCX, CSV per company</span>
+<span class="folder">&nbsp;&nbsp;smartbackup/</span>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;snapshots/{YYYY-MM}/</span> <span class="comment"># {TENANT}_{YYYY-MM}.json (AFI.ai)</span>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;analysis/</span> <span class="comment"># {TENANT}_{period}.json + summary</span>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;reports/mensili|trimestrali|annuali/</span>
+<span class="folder">&nbsp;&nbsp;veeam/</span>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;raw/{YYYY-MM-DD}.json</span> <span class="comment"># Email JSON grezze (metadata + HTML body)</span>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;daily/{YYYY-MM-DD}.json</span> <span class="comment"># Parsed: 72 campi per task, 13 job</span>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;analysis/veeam_{from}_{to}.json</span> <span class="comment"># Aggregazione mensile/trimestrale</span>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;reports/mensili|trimestrali|annuali/</span> <span class="comment"># Bollettino + 7 DOCX per-client</span>
+<span class="folder">&nbsp;&nbsp;{TENANT_CODE}/raw/graph/</span>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;{MODULE}/{YYYY-MM-DD}_{MODULE}.json</span>
+<span class="folder">&nbsp;&nbsp;bulletins/</span>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;weekly/{YYYY}-W{WW}_security.json</span>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;monthly/{YYYY-MM}_ops.json</span>
+    </div>
+
+    <h3>Autenticazione per Pipeline</h3>
+    <table class="tech-table">
+      <thead><tr><th>Pipeline</th><th>Metodo Auth</th><th>App Registration</th><th>Scope</th></tr></thead>
+      <tbody>
+        <tr><td>Desk365</td><td>API Key (header)</td><td>&mdash;</td><td>Desk365 API v3</td></tr>
+        <tr><td>SmartBackup (AFI)</td><td>API Key (header)</td><td>&mdash;</td><td>AFI.ai API v1</td></tr>
+        <tr><td>Veeam</td><td>Client Credentials (MSAL)</td><td>EKO365-Pipeline-MailReader</td><td>Graph Mail.Read + Application Access Policy</td></tr>
+        <tr><td>Microsoft 365</td><td>GDAP + OBO Refresh Token</td><td>EKO365-MSP-Automation (44 scope)</td><td>Graph API multi-tenant</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Stack Tecnologico</h3>
+    <table class="tech-table">
+      <thead><tr><th>Layer</th><th>Tecnologia</th><th>Uso</th></tr></thead>
+      <tbody>
+        <tr><td>Estrazione dati</td><td><span class="tech-badge python">Python 3.10+</span> <span class="tech-badge rest">requests</span></td><td>API client con retry, pagination, rate limiting</td></tr>
+        <tr><td>Analisi KPI</td><td><span class="tech-badge python">Python 3.10+</span></td><td>Engine centralizzato soglie e semafori</td></tr>
+        <tr><td>Report PPTX</td><td><span class="tech-badge node">Node.js 18+</span> <span class="tech-badge node">PptxGenJS</span></td><td>Slide 16:9, branding corporate</td></tr>
+        <tr><td>Report DOCX</td><td><span class="tech-badge node">Node.js 18+</span> <span class="tech-badge node">docx</span></td><td>Documenti con Chart.js embedded</td></tr>
+        <tr><td>Grafici</td><td><span class="tech-badge node">Chart.js</span> + <span class="tech-badge node">chartjs-node-canvas</span></td><td>Rendering PNG server-side (Cairo/Pango)</td></tr>
+        <tr><td>Auth M365</td><td><span class="tech-badge python">msal</span> / <span class="tech-badge rest">REST</span></td><td>GDAP + OBO + refresh token rotation</td></tr>
+        <tr><td>Storage</td><td><span class="tech-badge rest">Wasabi S3</span></td><td>eu-south-1, bucket unico multi-pipeline</td></tr>
+        <tr><td>Email</td><td><span class="tech-badge python">smtplib</span></td><td>MailerSend SMTP, role-based routing</td></tr>
+        <tr><td>Orchestrazione</td><td><span class="tech-badge yaml">GitHub Actions</span></td><td>Reusable workflows, auto-quarter detection</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Resilienza & Auto-Recovery</h3>
+    <table class="tech-table">
+      <thead><tr><th>Meccanismo</th><th>Dettaglio</th></tr></thead>
+      <tbody>
+        <tr><td>Retry API</td><td>Exponential backoff (3 tentativi, 2s base) su tutti i client</td></tr>
+        <tr><td>Auto-fallback pipeline</td><td>Job check-data verifica S3; se dati mancanti, ri-esegue fasi precedenti</td></tr>
+        <tr><td>Token auto-renewal</td><td>Refresh token M365 rinnovato e riscritto su GitHub Secret ad ogni run</td></tr>
+        <tr><td>Failure notification</td><td>reusable-notify.yml invia email a alerts@eko365.it</td></tr>
+        <tr><td>Quarter auto-detection</td><td>Job prepare rileva fine trimestre, espande periodo e scope automaticamente</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<div class="eko-footer">
+  EKO365 S.B. S.r.l. &mdash; SmartREPORTING Platform Architecture &mdash; Marzo 2026 &mdash; Riservato, uso interno
+</div>
+
+<script>
+function switchView(view) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + view).classList.add('active');
+  const btns = document.querySelectorAll('.view-btn');
+  if (view === 'hl') btns[0].classList.add('active');
+  else btns[1].classList.add('active');
+}
+</script>
+
+</body>
+</html>
