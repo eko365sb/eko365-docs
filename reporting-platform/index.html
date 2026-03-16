@@ -92,31 +92,31 @@
       </div>
 
       <div class="hl-pipeline">
-        <div class="badge">Giornaliero / Mens.</div>
+        <div class="badge">Giorn. / Mens. / Trim.</div>
         <h3>Veeam Backup</h3>
         <div class="phases">
           <span class="phase fetch">Fetch + Parse</span>
           <span class="phase analyze">Analyze</span>
           <span class="phase report">Report</span>
         </div>
-        <div class="freq">Giorn. 10:00 + 2&ordm; mese (full)</div>
+        <div class="freq">Giorn. 10:00 + 2&ordm; mese (full + trim.)</div>
         <div class="outputs">
           <span class="output-tag docx">DOCX</span>
         </div>
       </div>
 
       <div class="hl-pipeline">
-        <div class="badge">Settimanale / Mens.</div>
+        <div class="badge">Sett. / Mens. / Trim.</div>
         <h3>Microsoft 365</h3>
         <div class="phases">
           <span class="phase fetch">Collect</span>
           <span class="phase analyze">Transform</span>
-          <span class="phase report">Bulletin</span>
+          <span class="phase report">Report</span>
         </div>
-        <div class="freq">Dom 04:00 + 1&ordm; mese 03:00</div>
+        <div class="freq">Dom 04:00 + 1&ordm; + 3&ordm; mese</div>
         <div class="outputs">
-          <span class="output-tag json">JSON</span>
-          <span class="output-tag docx">DOCX*</span>
+          <span class="output-tag docx">DOCX</span>
+          <span class="output-tag pptx">PPTX</span>
         </div>
       </div>
     </div>
@@ -168,7 +168,7 @@
     </div>
 
     <!-- TENANT COVERAGE -->
-    <div class="section-label" style="margin-top: 28px;">Tenant Coperti (10)</div>
+    <div class="section-label" style="margin-top: 28px;">Tenant Coperti (11)</div>
     <div class="tenant-grid" style="justify-content: center;">
       <span class="tenant-chip">KSGR</span>
       <span class="tenant-chip">KAM</span>
@@ -180,6 +180,8 @@
       <span class="tenant-chip">SACMAR</span>
       <span class="tenant-chip">DLLAW</span>
       <span class="tenant-chip">K2P</span>
+      <span class="tenant-chip">CLP</span>
+      <span class="tenant-chip" style="background:var(--gray);">VBC (inactive)</span>
     </div>
 
   </div>
@@ -204,23 +206,25 @@
       <span class="flow-arrow">&#x27A1;</span>
       <div class="flow-step storage"><strong>Wasabi S3</strong><small>desk365/analysis/</small></div>
       <span class="flow-arrow">&#x27A1;</span>
-      <div class="flow-step output"><strong>8 Report Generators</strong><small>Node.js &middot; PptxGenJS &middot; docx</small></div>
+      <div class="flow-step output"><strong>7 Report Generators</strong><small>Node.js &middot; PptxGenJS &middot; docx</small></div>
       <span class="flow-arrow">&#x27A1;</span>
       <div class="flow-step deliver"><strong>MailerSend</strong><small>Role-based delivery</small></div>
     </div>
 
-    <h3>Output (8 generatori)</h3>
+    <h3>Output (7 generatori nel pipeline, 12 script totali)</h3>
     <table class="tech-table">
       <thead><tr><th>Generatore</th><th>Tipo</th><th>Audience</th><th>Cadenza</th><th>Contenuto</th></tr></thead>
       <tbody>
-        <tr><td>generate_report.js</td><td><span class="output-tag pptx">PPTX</span></td><td>Clienti</td><td>Trimestrale</td><td>13 slide per company (5 condizionali)</td></tr>
-        <tr><td>generate_overview.js</td><td><span class="output-tag pptx">PPTX</span></td><td>Direction</td><td>Trimestrale</td><td>Cross-client comparison</td></tr>
-        <tr><td>generate_narrative.js</td><td><span class="output-tag docx">DOCX</span></td><td>Clienti</td><td>Trimestrale</td><td>Narrativa con Chart.js inline</td></tr>
-        <tr><td>generate_internal_*.js (3)</td><td><span class="output-tag pptx">PPTX</span> <span class="output-tag docx">DOCX</span></td><td>Team interno</td><td>Mensile</td><td>Branding invertito (orange)</td></tr>
-        <tr><td>generate_aging_report.js</td><td><span class="output-tag pptx">PPTX</span></td><td>Team interno</td><td>Mensile</td><td>Ticket stale, aging analysis (7 slide)</td></tr>
-        <tr><td>generate_aging_csv.py</td><td><span class="output-tag csv">CSV</span></td><td>Team interno</td><td>Mensile</td><td>Export ticket aperti per Excel</td></tr>
+        <tr style="border-left:3px solid var(--green);"><td>generate_internal_overview.js</td><td><span class="output-tag pptx">PPTX</span></td><td>Team interno</td><td>Mensile</td><td>Overview operativa, branding invertito (orange)</td></tr>
+        <tr style="border-left:3px solid var(--green);"><td>generate_internal_narrative.js</td><td><span class="output-tag docx">DOCX</span></td><td>Team interno</td><td>Mensile</td><td>Narrativa interna con grafici</td></tr>
+        <tr style="border-left:3px solid var(--green);"><td>generate_aging_report.js</td><td><span class="output-tag pptx">PPTX</span></td><td>Team interno</td><td>Mensile</td><td>Ticket stale, aging analysis (7 slide)</td></tr>
+        <tr style="border-left:3px solid var(--green);"><td>generate_aging_csv.py</td><td><span class="output-tag csv">CSV</span></td><td>Team interno</td><td>Mensile</td><td>Export ticket aperti per Excel</td></tr>
+        <tr style="border-left:3px solid var(--accent);"><td>generate_report.js</td><td><span class="output-tag pptx">PPTX</span></td><td>Clienti</td><td>Trimestrale</td><td>13 slide per company (5 condizionali)</td></tr>
+        <tr style="border-left:3px solid var(--accent);"><td>generate_narrative.js</td><td><span class="output-tag docx">DOCX</span></td><td>Clienti</td><td>Trimestrale</td><td>Narrativa con Chart.js inline</td></tr>
+        <tr style="border-left:3px solid var(--accent);"><td>generate_orphan_csv.py</td><td><span class="output-tag csv">CSV</span></td><td>Cross-tenant</td><td>Trimestrale</td><td>Ticket orfani cross-client</td></tr>
       </tbody>
     </table>
+    <p style="font-size:0.78rem; color:var(--gray); margin-top:4px;"><span style="display:inline-block;width:10px;height:10px;background:var(--green);border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Mensile (ogni esecuzione) &nbsp; <span style="display:inline-block;width:10px;height:10px;background:var(--accent);border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Trimestrale (auto-detect quarter-end)</p>
 
     <h3>KPI Principali</h3>
     <div class="kpi-row">
@@ -257,13 +261,14 @@
 
     <h3>Output (3 generatori)</h3>
     <table class="tech-table">
-      <thead><tr><th>Generatore</th><th>Tipo</th><th>Audience</th><th>Struttura</th></tr></thead>
+      <thead><tr><th>Generatore</th><th>Tipo</th><th>Audience</th><th>Cadenza</th><th>Struttura</th></tr></thead>
       <tbody>
-        <tr><td>generate_backup_report.js</td><td><span class="output-tag docx">DOCX</span></td><td>Per-tenant</td><td>3 livelli: Executive (1-3) &rarr; Operational (4-6) &rarr; Compliance (7-9, solo KSGR)</td></tr>
-        <tr><td>generate_backup_overview.js</td><td><span class="output-tag docx">DOCX</span></td><td>CTO</td><td>Heat-map, risk ranking, storage capacity, anomalie</td></tr>
-        <tr><td>generate_backup_bulletin.js</td><td><span class="output-tag docx">DOCX</span></td><td>Team interno</td><td>Branding invertito, semafori, billing, licensing</td></tr>
+        <tr style="border-left:3px solid var(--accent);"><td>generate_backup_report.js</td><td><span class="output-tag docx">DOCX</span></td><td>Per-tenant</td><td>Trimestrale</td><td>3 livelli: Executive (1-3) &rarr; Operational (4-6) &rarr; Compliance (7-9, solo KSGR)</td></tr>
+        <tr style="border-left:3px solid var(--accent);"><td>generate_backup_overview.js</td><td><span class="output-tag docx">DOCX</span></td><td>CTO</td><td>Trimestrale</td><td>Heat-map, risk ranking, storage capacity, anomalie</td></tr>
+        <tr style="border-left:3px solid var(--green);"><td>generate_backup_bulletin.js</td><td><span class="output-tag docx">DOCX</span></td><td>Team interno</td><td>Mensile</td><td>Branding invertito, semafori, billing, licensing</td></tr>
       </tbody>
     </table>
+    <p style="font-size:0.78rem; color:var(--gray); margin-top:4px;"><span style="display:inline-block;width:10px;height:10px;background:var(--green);border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Mensile (ogni esecuzione) &nbsp; <span style="display:inline-block;width:10px;height:10px;background:var(--accent);border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Trimestrale (auto-detect quarter-end)</p>
 
     <h3>KPI Principali</h3>
     <div class="kpi-row">
@@ -306,10 +311,11 @@
     <table class="tech-table">
       <thead><tr><th>Generatore</th><th>Tipo</th><th>Audience</th><th>Cadenza</th><th>Contenuto</th></tr></thead>
       <tbody>
-        <tr><td>generate_veeam_report.js</td><td><span class="output-tag docx">DOCX</span></td><td>Per-client (7)</td><td>Trimestrale</td><td>8 sezioni: Executive &rarr; Performance &rarr; Resource &rarr; Transfer &rarr; Duration &rarr; Anomalies &rarr; Recommendations</td></tr>
-        <tr><td>generate_veeam_bulletin.js</td><td><span class="output-tag docx">DOCX</span></td><td>Team interno</td><td>Mensile</td><td>Branding invertito, semaforo 13 job, alert, volumi, finestra backup, dettaglio per cliente</td></tr>
+        <tr style="border-left:3px solid var(--accent);"><td>generate_veeam_report.js</td><td><span class="output-tag docx">DOCX</span></td><td>Per-client (7)</td><td>Trimestrale</td><td>8 sezioni: Executive &rarr; Performance &rarr; Resource &rarr; Transfer &rarr; Duration &rarr; Anomalies &rarr; Recommendations</td></tr>
+        <tr style="border-left:3px solid var(--green);"><td>generate_veeam_bulletin.js</td><td><span class="output-tag docx">DOCX</span></td><td>Team interno</td><td>Mensile</td><td>Branding invertito, semaforo 13 job, alert, volumi, finestra backup, dettaglio per cliente</td></tr>
       </tbody>
     </table>
+    <p style="font-size:0.78rem; color:var(--gray); margin-top:4px;"><span style="display:inline-block;width:10px;height:10px;background:var(--green);border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Mensile (ogni esecuzione) &nbsp; <span style="display:inline-block;width:10px;height:10px;background:var(--accent);border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Trimestrale (auto-detect quarter-end)</p>
 
     <h3>KPI Principali</h3>
     <div class="kpi-row">
@@ -338,32 +344,78 @@
 
   <!-- 4. M365 GRAPH -->
   <div class="detail-section">
-    <h2>4. Pipeline Microsoft 365 — Security & Compliance Collection</h2>
+    <h2>4. Pipeline Microsoft 365 — Security, Compliance & Usage Reporting</h2>
 
-    <h3>Flusso Dati</h3>
+    <h3>Flusso Dati — Collection (3 workflow)</h3>
     <div class="flow">
-      <div class="flow-step source"><strong>Microsoft Graph API</strong><small>44 delegated permissions</small></div>
+      <div class="flow-step source"><strong>Microsoft Graph API</strong><small>44 delegated permissions &middot; 10 tenant</small></div>
       <span class="flow-arrow">&#x27A1;</span>
-      <div class="flow-step process"><strong>run_all.py</strong><small>Orchestrator &middot; 8 collectors</small></div>
+      <div class="flow-step process"><strong>run_all.py</strong><small>Orchestrator &middot; 9 collectors</small></div>
       <span class="flow-arrow">&#x27A1;</span>
-      <div class="flow-step storage"><strong>Wasabi S3</strong><small>{TENANT}/raw/graph/{MODULE}/</small></div>
-      <span class="flow-arrow">&#x27A1;</span>
-      <div class="flow-step process"><strong>cross_reference.py</strong><small>Data enrichment</small></div>
-      <span class="flow-arrow">&#x27A1;</span>
-      <div class="flow-step output"><strong>Bulletin Generators</strong><small>Node.js (in sviluppo)</small></div>
+      <div class="flow-step storage"><strong>Wasabi S3</strong><small>{CODICE}/raw/graph/{MODULE}/</small></div>
     </div>
 
-    <h3>Collector Modules (8)</h3>
+    <h3>Flusso Dati — Report Generation</h3>
+    <div class="flow">
+      <div class="flow-step storage"><strong>Wasabi S3</strong><small>{CODICE}/raw/graph/</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step output"><strong>3 Report Generators</strong><small>Node.js &middot; docx &middot; PptxGenJS</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step storage"><strong>Wasabi S3</strong><small>m365-graph/reports/{MONTH}/</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step deliver"><strong>MailerSend</strong><small>Ops + per-tenant</small></div>
+    </div>
+
+    <h3>Collector Modules (9)</h3>
     <div class="module-grid">
       <div class="module-card"><div class="mod-name">Security</div><div class="mod-freq">Settimanale</div><div class="mod-data">Alert, incident, risk detection</div></div>
       <div class="module-card"><div class="mod-name">Health</div><div class="mod-freq">Settimanale</div><div class="mod-data">Service incident, advisory</div></div>
+      <div class="module-card"><div class="mod-name">EOP</div><div class="mod-freq">Settimanale</div><div class="mod-data">Exchange Online Protection threats</div></div>
       <div class="module-card"><div class="mod-name">Identity</div><div class="mod-freq">Mensile</div><div class="mod-data">Users, MFA, role assignment</div></div>
       <div class="module-card"><div class="mod-name">Exchange</div><div class="mod-freq">Mensile</div><div class="mod-data">Mailbox, DLP, mail flow</div></div>
       <div class="module-card"><div class="mod-name">SharePoint</div><div class="mod-freq">Mensile</div><div class="mod-data">Site usage, file activity</div></div>
       <div class="module-card"><div class="mod-name">Teams</div><div class="mod-freq">Mensile</div><div class="mod-data">Team usage, user activity</div></div>
       <div class="module-card"><div class="mod-name">Intune</div><div class="mod-freq">Mensile</div><div class="mod-data">Device compliance, enrollment</div></div>
-      <div class="module-card"><div class="mod-name">EOP</div><div class="mod-freq">Settimanale</div><div class="mod-data">Exchange Online Protection threats</div></div>
+      <div class="module-card"><div class="mod-name">Audit</div><div class="mod-freq">Mensile</div><div class="mod-data">Unified Audit Log (90 giorni lookback)</div></div>
     </div>
+
+    <h3>Report Generators (3)</h3>
+    <table class="tech-table">
+      <thead><tr><th>Generatore</th><th>Tipo</th><th>Audience</th><th>Cadenza</th><th>Contenuto</th></tr></thead>
+      <tbody>
+        <tr style="border-left:3px solid var(--green);"><td>generate_m365_ops_report.js</td><td><span class="output-tag docx">DOCX</span></td><td>Team interno</td><td>Mensile</td><td>Ops report cross-tenant, trend, executive summary, action plan</td></tr>
+        <tr style="border-left:3px solid var(--accent);"><td>generate_m365_report.js</td><td><span class="output-tag docx">DOCX</span></td><td>Per-tenant (9 attivi)</td><td>Trimestrale</td><td>Security posture, identity, compliance per cliente</td></tr>
+        <tr style="border-left:3px solid var(--accent);"><td>generate_m365_presentation.js</td><td><span class="output-tag pptx">PPTX</span></td><td>Per-tenant (9 attivi)</td><td>Trimestrale</td><td>v2.0: charts, trend slides, OS detail</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:0.78rem; color:var(--gray); margin-top:4px;"><span style="display:inline-block;width:10px;height:10px;background:var(--green);border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Mensile (ogni esecuzione) &nbsp; <span style="display:inline-block;width:10px;height:10px;background:var(--accent);border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Trimestrale (auto-detect quarter-end)</p>
+
+    <h3>Workflow GitHub Actions (3 file)</h3>
+    <table class="tech-table">
+      <thead><tr><th>Workflow</th><th>Trigger</th><th>Funzione</th></tr></thead>
+      <tbody>
+        <tr><td>graph-scheduled.yml</td><td>Cron settimanale + mensile</td><td>Data collection (9 moduli su 10 tenant)</td></tr>
+        <tr><td>graph-report.yml</td><td>Cron 3&ordm; mese 14:00 UTC</td><td>Report generation (ops + quarterly client)</td></tr>
+        <tr><td>graph-on-demand.yml</td><td>Solo workflow_dispatch</td><td>Collection manuale per tenant/moduli specifici</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Tenant Configuration (10)</h3>
+    <table class="tech-table">
+      <thead><tr><th>Codice</th><th>Tenant</th><th>Tier</th><th>DORA</th><th>Ironscales</th><th>Stato</th></tr></thead>
+      <tbody>
+        <tr><td>KSGR</td><td>Kryalos SGR</td><td>premium</td><td>Si</td><td>Si</td><td>Attivo</td></tr>
+        <tr><td>C2P</td><td>C2Partners</td><td>premium</td><td></td><td></td><td>Attivo</td></tr>
+        <tr><td>DLP</td><td>DLPHRC</td><td>premium</td><td></td><td></td><td>Attivo</td></tr>
+        <tr><td>DLL</td><td>DLLaw</td><td>premium</td><td></td><td>Si</td><td>Attivo</td></tr>
+        <tr><td>SAC</td><td>Sacmar</td><td>premium</td><td></td><td></td><td>Attivo</td></tr>
+        <tr><td>KAM</td><td>KAM</td><td>base</td><td></td><td>Si</td><td>Attivo</td></tr>
+        <tr><td>ICO</td><td>Icons365</td><td>base</td><td></td><td></td><td>Attivo</td></tr>
+        <tr><td>RSRJ</td><td>RSRJ</td><td>base</td><td></td><td></td><td>Attivo</td></tr>
+        <tr><td>CLP</td><td>CLP</td><td>base</td><td></td><td></td><td>Attivo</td></tr>
+        <tr><td style="color:var(--gray);">VBC</td><td style="color:var(--gray);">VBC1663</td><td style="color:var(--gray);">inactive</td><td></td><td></td><td style="color:var(--gray);">Monitored (low priority)</td></tr>
+      </tbody>
+    </table>
 
     <h3>Autenticazione</h3>
     <p style="font-size:0.85rem; margin:6px 0;">App <strong>EKO365-MSP-Automation</strong> con GDAP + OBO (admin-fs@eko365sb). Refresh token auto-rinnovato e riscritto su GitHub Secret dopo ogni collection. Token manager gestisce il ciclo completo.</p>
@@ -392,12 +444,12 @@
     </div>
     <div class="schedule-row">
       <span class="cron">0 6 2 * *</span>
-      <span class="desc">2&ordm; del mese, 06:00 UTC &mdash; SmartBackup AFI fetch + analyze + report</span>
+      <span class="desc">2&ordm; del mese, 06:00 UTC &mdash; SmartBackup AFI fetch + analyze + report; in mesi 03/06/09/12 auto quarter-end: report per-tenant + CTO overview</span>
       <span class="pipeline-tag tag-smartbackup">SmartBackup</span>
     </div>
     <div class="schedule-row">
       <span class="cron">0 6 3 * *</span>
-      <span class="desc">3&ordm; del mese, 06:00 UTC &mdash; Desk365 fetch + analyze + report</span>
+      <span class="desc">3&ordm; del mese, 06:00 UTC &mdash; Desk365 fetch + analyze + report; in mesi 03/06/09/12 auto quarter-end: report per-client PPTX + DOCX + CSV ticket orfani</span>
       <span class="pipeline-tag tag-desk365">Desk365</span>
     </div>
     <div class="schedule-row">
@@ -407,13 +459,16 @@
     </div>
     <div class="schedule-row">
       <span class="cron">0 10 * * *</span>
-      <span class="desc">Ogni giorno, 10:00 UTC (12:00 IT) &mdash; Veeam fetch + parse email giornaliera</span>
+      <span class="desc">Ogni giorno, 10:00 UTC (12:00 IT) &mdash; Veeam fetch + parse. Il 2&ordm; del mese auto-escalation a full pipeline (analyze + report); quarter-end detection per report client</span>
       <span class="pipeline-tag tag-veeam">Veeam</span>
     </div>
     <div class="schedule-row">
-      <span class="cron">0 10 2 * *</span>
-      <span class="desc">2&ordm; del mese, 10:00 UTC &mdash; Veeam full pipeline (analyze + report). Auto quarter-end detection</span>
-      <span class="pipeline-tag tag-veeam">Veeam</span>
+      <span class="cron">0 14 3 * *</span>
+      <span class="desc">3&ordm; del mese, 14:00 UTC &mdash; M365 Graph report generation (ops report mensile; in mesi 03/06/09/12 anche report client DOCX + PPTX)</span>
+      <span class="pipeline-tag tag-m365">M365</span>
+    </div>
+    <div class="kpi-card" style="margin-top: 16px; border-left: 4px solid #EE774A;">
+      <strong>Quarter-End Auto-Detection</strong> &mdash; Tutte e 4 le pipeline rilevano automaticamente i mesi di fine trimestre (03/06/09/12). Nei run trimestrali, oltre ai report operativi interni, vengono generati report client-facing aggiuntivi (PPTX, DOCX per-tenant) e il periodo di analisi viene esteso all'intero trimestre.
     </div>
 
     <h3>Storage — Wasabi S3</h3>
@@ -434,9 +489,8 @@
 <span class="file">&nbsp;&nbsp;&nbsp;&nbsp;reports/mensili|trimestrali|annuali/</span> <span class="comment"># Bollettino + 7 DOCX per-client</span>
 <span class="folder">&nbsp;&nbsp;{TENANT_CODE}/raw/graph/</span>
 <span class="file">&nbsp;&nbsp;&nbsp;&nbsp;{MODULE}/{YYYY-MM-DD}_{MODULE}.json</span>
-<span class="folder">&nbsp;&nbsp;bulletins/</span>
-<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;weekly/{YYYY}-W{WW}_security.json</span>
-<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;monthly/{YYYY-MM}_ops.json</span>
+<span class="folder">&nbsp;&nbsp;m365-graph/</span>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;reports/{YYYY-MM}/</span> <span class="comment"># Ops report + client DOCX/PPTX per mese</span>
     </div>
 
     <h3>Autenticazione per Pipeline</h3>
