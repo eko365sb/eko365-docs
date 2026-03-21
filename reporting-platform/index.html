@@ -265,12 +265,13 @@
         <div class="phases">
           <span class="phase fetch">Collect</span>
           <span class="phase analyze">Transform</span>
-          <span class="phase report">Bulletin</span>
+          <span class="phase report">Report</span>
         </div>
-        <div class="freq">Dom 04:00 + 1&ordm; mese 03:00</div>
+        <div class="freq">Dom 04:00 + 1&ordm; mese 03:00 + 3&ordm; mese 14:00</div>
         <div class="outputs">
           <span class="output-tag json">JSON</span>
-          <span class="output-tag docx">DOCX*</span>
+          <span class="output-tag docx">DOCX</span>
+          <span class="output-tag pptx">PPTX</span>
         </div>
       </div>
 
@@ -280,12 +281,13 @@
         <div class="phases">
           <span class="phase fetch">Collect</span>
           <span class="phase analyze">KPI</span>
-          <span class="phase report">Report*</span>
+          <span class="phase report">Report</span>
         </div>
         <div class="freq">Giorn. 07:00 + Lun + 1&ordm; mese</div>
         <div class="outputs">
           <span class="output-tag json">JSON</span>
-          <span class="output-tag docx">DOCX*</span>
+          <span class="output-tag docx">DOCX</span>
+          <span class="output-tag pptx">PPTX</span>
         </div>
       </div>
     </div>
@@ -567,7 +569,7 @@
       <span class="flow-arrow">&#x27A1;</span>
       <div class="flow-step process"><strong>cross_reference.py</strong><small>Data enrichment</small></div>
       <span class="flow-arrow">&#x27A1;</span>
-      <div class="flow-step output"><strong>Bulletin Generators</strong><small>Node.js (in sviluppo)</small></div>
+      <div class="flow-step output"><strong>Report Generators</strong><small>3 generatori Node.js &middot; Ops + Client + PPTX</small></div>
     </div>
 
     <h3>Collector Modules (8)</h3>
@@ -580,6 +582,23 @@
       <div class="module-card"><div class="mod-name">Teams</div><div class="mod-freq">Mensile</div><div class="mod-data">Team usage, user activity</div></div>
       <div class="module-card"><div class="mod-name">Intune</div><div class="mod-freq">Mensile</div><div class="mod-data">Device compliance, enrollment</div></div>
       <div class="module-card"><div class="mod-name">EOP</div><div class="mod-freq">Settimanale</div><div class="mod-data">Exchange Online Protection threats</div></div>
+    </div>
+
+    <h3>Report Generators (3)</h3>
+    <table class="tech-table">
+      <thead><tr><th>Script</th><th>Output</th><th>Destinatario</th><th>Cadenza</th><th>Contenuto</th></tr></thead>
+      <tbody>
+        <tr><td>generate_m365_ops_report.js</td><td><span class="output-tag docx">DOCX</span></td><td>Team interno</td><td>Mensile (3&ordm; mese)</td><td>Security, identity, compliance, usage per tenant</td></tr>
+        <tr><td>generate_m365_report.js</td><td><span class="output-tag docx">DOCX</span></td><td>Clienti</td><td>Trimestrale</td><td>Report per-tenant con trend e raccomandazioni</td></tr>
+        <tr><td>generate_m365_presentation.js</td><td><span class="output-tag pptx">PPTX</span></td><td>SDM / Direction</td><td>Trimestrale</td><td>Slide deck meeting, KPI card, trend line</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Scheduling Report</h3>
+    <div class="schedule-row">
+      <span class="cron">0 14 3 * *</span>
+      <span class="desc">3&ordm; del mese, 14:00 UTC &mdash; Ops report (sempre) + Client report (trimestrale)</span>
+      <span class="pipeline-tag tag-m365">M365</span>
     </div>
 
     <h3>Autenticazione</h3>
@@ -602,7 +621,7 @@
       <span class="flow-arrow">&#x27A1;</span>
       <div class="flow-step storage"><strong>Wasabi S3</strong><small>{CODE}/kpi/</small></div>
       <span class="flow-arrow">&#x27A1;</span>
-      <div class="flow-step output"><strong>Report Generators</strong><small>Phase 5 (in sviluppo)</small></div>
+      <div class="flow-step output"><strong>Report Generators</strong><small>3 generatori Node.js &middot; Ops + Quarterly + PPTX</small></div>
     </div>
 
     <h3>Collector Modules (8)</h3>
@@ -639,17 +658,37 @@
         <div class="kpi-value">Score</div>
         <div class="kpi-threshold">Reboot, stale, freshness 30d+</div>
       </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Software Portfolio</div>
+        <div class="kpi-value">#</div>
+        <div class="kpi-threshold"><span class="dot-green"></span>Unclass&lt;50 <span class="dot-yellow"></span>&lt;100 <span class="dot-red"></span>&ge;100</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Service Activity</div>
+        <div class="kpi-value">%</div>
+        <div class="kpi-threshold"><span class="dot-green"></span>Error&lt;20% <span class="dot-yellow"></span>&lt;40% <span class="dot-red"></span>&ge;40%</div>
+      </div>
     </div>
+
+    <h3>Report Generators (3)</h3>
+    <table class="tech-table">
+      <thead><tr><th>Script</th><th>Output</th><th>Destinatario</th><th>Cadenza</th><th>Contenuto</th></tr></thead>
+      <tbody>
+        <tr><td>generate_smartpatch_ops_report.js</td><td><span class="output-tag docx">DOCX</span></td><td>Team interno (SOC)</td><td>Mensile</td><td>6 aree effort/gap, reachability, shadow IT, ring strategy</td></tr>
+        <tr><td>generate_smartpatch_report.js</td><td><span class="output-tag docx">DOCX</span></td><td>Clienti (CISO)</td><td>Trimestrale</td><td>Narrative con trend chart, risk assessment, raccomandazioni</td></tr>
+        <tr><td>generate_smartpatch_presentation.js</td><td><span class="output-tag pptx">PPTX</span></td><td>SDM / Direction</td><td>Trimestrale</td><td>Slide deck per meeting, KPI card, trend line</td></tr>
+      </tbody>
+    </table>
 
     <h3>Organizzazioni (5 clienti, ~351 endpoint)</h3>
     <table class="tech-table">
       <thead><tr><th>Codice</th><th>Cliente</th><th>Endpoint</th><th>DORA</th><th>Moduli</th></tr></thead>
       <tbody>
         <tr><td>KSGR</td><td>Kryalos SGR</td><td>~160</td><td>S&igrave;</td><td>Tutti (7)</td></tr>
-        <tr><td>DLP</td><td>DLPHRC</td><td>~64</td><td>No</td><td>Tutti (7)</td></tr>
+        <tr><td>DLP</td><td>DLP e HRC</td><td>~64</td><td>No</td><td>Tutti (7)</td></tr>
         <tr><td>DLL</td><td>DL-Law</td><td>~14</td><td>No</td><td>Tutti (7)</td></tr>
         <tr><td>C2P</td><td>C2Partners</td><td>~58</td><td>No</td><td>Tutti (7)</td></tr>
-        <tr><td>SAC</td><td>Sacmar</td><td>~55</td><td>No</td><td>Tutti (7)</td></tr>
+        <tr><td>SAC</td><td>Sacmar e Selvania</td><td>~55</td><td>No</td><td>Tutti (7)</td></tr>
       </tbody>
     </table>
 
@@ -657,7 +696,7 @@
     <p style="font-size:0.85rem; margin:6px 0;">OAuth2 client credentials (API key + secret) con singola registrazione per tutte le organizzazioni. Istanza EU (<strong>app.eu.action1.com</strong>). Token manager con caching automatico. Pagination nativa Action1 (ResultPage cursor).</p>
 
     <h3>Roadmap</h3>
-    <p style="font-size:0.85rem; margin:6px 0;"><strong>Phase 1-3</strong> (completate): scaffolding, auth, 8 collector, orchestrator, KPI engine effort vs gap. <strong>Phase 4</strong> (prossima): Bulletin JSON giornaliero/settimanale/mensile. <strong>Phase 5</strong>: Report generation DOCX/PPTX con Node.js.</p>
+    <p style="font-size:0.85rem; margin:6px 0;"><strong>Phase 1-3</strong> (completate): scaffolding, auth, 8 collector, orchestrator, KPI engine effort vs gap. <strong>Phase 4</strong> (completata): ops_detail calculator con analisi reachability, shadow IT, ring strategy. <strong>Phase 5</strong> (completata): 3 report generators Node.js &mdash; Ops mensile (DOCX), Quarterly client-facing (DOCX con trend chart), Presentation (PPTX). Backfill storico automazioni per trend Q1 2026. Email delivery via MailerSend.</p>
   </div>
 
   <!-- 6. INFRASTRUTTURA CONDIVISA -->
@@ -690,6 +729,11 @@
       <span class="cron">0 6 3 * *</span>
       <span class="desc">3&ordm; del mese, 06:00 UTC &mdash; Desk365 fetch + analyze + report</span>
       <span class="pipeline-tag tag-desk365">Desk365</span>
+    </div>
+    <div class="schedule-row">
+      <span class="cron">0 14 3 * *</span>
+      <span class="desc">3&ordm; del mese, 14:00 UTC &mdash; M365 report generation (ops + quarterly auto-detect)</span>
+      <span class="pipeline-tag tag-m365">M365</span>
     </div>
     <div class="schedule-row">
       <span class="cron">0 4 * * 0</span>
@@ -734,13 +778,13 @@
 <span class="file">&nbsp;&nbsp;&nbsp;&nbsp;weekly/{YYYY}-W{WW}_security.json</span>
 <span class="file">&nbsp;&nbsp;&nbsp;&nbsp;monthly/{YYYY-MM}_ops.json</span>
 
-<span class="folder">s3://eko365-mssp-reporting/</span> <span class="comment"># SmartPATCH (eu-central-2)</span>
-<span class="folder">&nbsp;&nbsp;{CODE}/raw/action1/</span>
+<span class="folder">&nbsp;&nbsp;{CODE}/raw/action1/</span> <span class="comment"># SmartPATCH (stesso bucket, eu-south-1)</span>
 <span class="file">&nbsp;&nbsp;&nbsp;&nbsp;endpoints/{YYYY-MM-DD}_endpoints.json</span>
 <span class="file">&nbsp;&nbsp;&nbsp;&nbsp;vulnerabilities/{YYYY-MM-DD}_vulnerabilities.json</span>
 <span class="file">&nbsp;&nbsp;&nbsp;&nbsp;updates|software|antivirus|patching|automations/</span>
-<span class="folder">&nbsp;&nbsp;{CODE}/kpi/</span>
+<span class="folder">&nbsp;&nbsp;{CODE}/kpi/action1/</span>
 <span class="file">&nbsp;&nbsp;&nbsp;&nbsp;{YYYY-MM-DD}_kpi.json</span> <span class="comment"># Effort vs Gap, 6 aree, soglie</span>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;{YYYY-MM-DD}_ops_detail.json</span> <span class="comment"># Dettaglio operativo (reachability, shadow IT, ring)</span>
     </div>
 
     <h3>Autenticazione per Pipeline</h3>
@@ -765,7 +809,7 @@
         <tr><td>Report DOCX</td><td><span class="tech-badge node">Node.js 18+</span> <span class="tech-badge node">docx</span></td><td>Documenti con Chart.js embedded</td></tr>
         <tr><td>Grafici</td><td><span class="tech-badge node">Chart.js</span> + <span class="tech-badge node">chartjs-node-canvas</span></td><td>Rendering PNG server-side (Cairo/Pango)</td></tr>
         <tr><td>Auth M365</td><td><span class="tech-badge python">msal</span> / <span class="tech-badge rest">REST</span></td><td>GDAP + OBO + refresh token rotation</td></tr>
-        <tr><td>Storage</td><td><span class="tech-badge rest">Wasabi S3</span></td><td>2 bucket: eko365-pipelines (eu-south-1) + eko365-mssp-reporting (eu-central-2)</td></tr>
+        <tr><td>Storage</td><td><span class="tech-badge rest">Wasabi S3</span></td><td>Bucket unico: eko365-pipelines (eu-south-1)</td></tr>
         <tr><td>Email</td><td><span class="tech-badge python">smtplib</span></td><td>MailerSend SMTP, role-based routing</td></tr>
         <tr><td>Orchestrazione</td><td><span class="tech-badge yaml">GitHub Actions</span></td><td>Reusable workflows, auto-quarter detection</td></tr>
       </tbody>
@@ -787,7 +831,7 @@
 </div>
 
 <div class="footer">
-  EKO365 S.B. S.r.l. &mdash; Reporting Platform Architecture &mdash; Marzo 2026 &mdash; Riservato, uso interno
+  EKO365 S.B. S.r.l. &mdash; Reporting Platform Architecture &mdash; Marzo 2026 (rev. 21/03) &mdash; Riservato, uso interno
 </div>
 
 <script>
