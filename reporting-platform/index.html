@@ -151,6 +151,12 @@
   .dot-yellow { background: var(--yellow); }
   .dot-red { background: var(--red); }
 
+  /* DOC LINKS BAR */
+  .doc-links { display: flex; gap: 16px; align-items: center; padding: 12px 40px; background: var(--white); border-bottom: 1px solid #e0dde8; font-size: 0.82rem; flex-wrap: wrap; }
+  .doc-links .label { font-weight: 600; color: var(--dark); margin-right: 4px; }
+  .doc-links a { color: var(--primary); text-decoration: none; padding: 4px 12px; border: 1px solid #d8d4e8; border-radius: 4px; transition: all 0.2s; }
+  .doc-links a:hover { background: var(--primary); color: var(--white); }
+
   /* FOOTER */
   .footer { text-align: center; padding: 20px; font-size: 0.72rem; color: var(--gray); }
 
@@ -168,6 +174,18 @@
 <div class="header">
   <h1>EKO365 MSSP — Automated Reporting Platform</h1>
   <div class="subtitle">Architettura dei servizi di reportistica automatizzata — 5 pipeline, 10 tenant, 3 livelli di output</div>
+</div>
+
+<div class="doc-links">
+  <span class="label">Documentazione:</span>
+  <a href="https://github.com/eko365sb/pipeline-workflows-docs/blob/main/ARCHITECTURE.md">Architettura Tecnica</a>
+  <a href="https://github.com/eko365sb/pipeline-workflows-docs/blob/main/docs/Manuale_Operativo_Pipeline.md">Manuale Operativo</a>
+  <a href="https://github.com/eko365sb/pipeline-workflows">Reusable Workflows</a>
+  <span class="label" style="margin-left: 12px;">Repository:</span>
+  <a href="https://github.com/eko365sb/smartbackup-reports">SmartBackup</a>
+  <a href="https://github.com/eko365sb/desk365-reports">Desk365</a>
+  <a href="https://github.com/eko365sb/smartpatch-reports">SmartPATCH</a>
+  <a href="https://github.com/eko365sb/m365-graph-pipeline">M365 Graph</a>
 </div>
 
 <div class="view-toggle">
@@ -831,7 +849,8 @@
 </div>
 
 <div class="footer">
-  EKO365 S.B. S.r.l. &mdash; Reporting Platform Architecture &mdash; Marzo 2026 (rev. 21/03) &mdash; Riservato, uso interno
+  EKO365 S.B. S.r.l. &mdash; Reporting Platform Architecture &mdash; Marzo 2026 (rev. 23/03) &mdash; Riservato, uso interno
+  <br><a href="https://github.com/eko365sb/pipeline-workflows-docs" style="color: var(--primary);">Documentazione completa su GitHub</a>
 </div>
 
 <script>
