@@ -135,7 +135,7 @@
   .tag-smartpatch { background: #E8DAEF; color: #6C3483; }
 
   /* S3 TREE */
-  .s3-tree { font-family: 'Courier New', monospace; font-size: 0.78rem; background: var(--dark); color: #A3E4D7; padding: 16px 20px; border-radius: 8px; line-height: 1.6; overflow-x: auto; }
+  .s3-tree { font-family: 'Courier New', monospace; font-size: 0.78rem; background: var(--dark); color: #A3E4D7; padding: 16px 20px; border-radius: 8px; line-height: 1.6; overflow-x: auto; white-space: pre; }
   .s3-tree .folder { color: #85C1E9; }
   .s3-tree .file { color: #F9E79F; }
   .s3-tree .comment { color: #7F8C8D; font-style: italic; }
@@ -775,34 +775,56 @@
     </div>
 
     <h3>Storage — Wasabi S3</h3>
-    <div class="s3-tree">
-<span class="folder">s3://eko365-pipelines/</span>
-<span class="folder">&nbsp;&nbsp;desk365/</span>
-<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;extractions/{DATE}/</span> <span class="comment"># raw_extraction_YYYYMMDD.json</span>
-<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;analysis/{DATE}/</span> <span class="comment"># analysis_YYYYMMDD.json</span>
-<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;reports/{YEAR}/</span> <span class="comment"># PPTX, DOCX, CSV per company</span>
-<span class="folder">&nbsp;&nbsp;smartbackup/</span>
-<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;snapshots/{YYYY-MM}/</span> <span class="comment"># {TENANT}_{YYYY-MM}.json (AFI.ai)</span>
-<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;analysis/</span> <span class="comment"># {TENANT}_{period}.json + summary</span>
-<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;reports/mensili|trimestrali|annuali/</span>
-<span class="folder">&nbsp;&nbsp;veeam/</span>
-<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;raw/{YYYY-MM-DD}.json</span> <span class="comment"># Email JSON grezze (metadata + HTML body)</span>
-<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;daily/{YYYY-MM-DD}.json</span> <span class="comment"># Parsed: 72 campi per task, 13 job</span>
-<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;analysis/veeam_{from}_{to}.json</span> <span class="comment"># Aggregazione mensile/trimestrale</span>
-<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;reports/mensili|trimestrali|annuali/</span> <span class="comment"># Bollettino + 7 DOCX per-client</span>
-<span class="folder">&nbsp;&nbsp;{TENANT_CODE}/raw/graph/</span>
-<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;{MODULE}/{YYYY-MM-DD}_{MODULE}.json</span>
-<span class="folder">&nbsp;&nbsp;bulletins/</span>
-<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;weekly/{YYYY}-W{WW}_security.json</span>
-<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;monthly/{YYYY-MM}_ops.json</span>
+    <p style="font-size: 0.85rem; color: var(--gray); margin-bottom: 12px;">Bucket unico <code>eko365-pipelines</code> (eu-south-1), partizionato per pipeline</p>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 16px;">
 
-<span class="folder">&nbsp;&nbsp;{CODE}/raw/action1/</span> <span class="comment"># SmartPATCH (stesso bucket, eu-south-1)</span>
-<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;endpoints/{YYYY-MM-DD}_endpoints.json</span>
-<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;vulnerabilities/{YYYY-MM-DD}_vulnerabilities.json</span>
-<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;updates|software|antivirus|patching|automations/</span>
-<span class="folder">&nbsp;&nbsp;{CODE}/kpi/action1/</span>
-<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;{YYYY-MM-DD}_kpi.json</span> <span class="comment"># Effort vs Gap, 6 aree, soglie</span>
-<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;{YYYY-MM-DD}_ops_detail.json</span> <span class="comment"># Dettaglio operativo (reachability, shadow IT, ring)</span>
+      <div class="s3-tree">
+<span class="comment"># Desk365 Helpdesk</span>
+<span class="folder">desk365/</span>
+  <span class="file">extractions/{DATE}/</span>  <span class="comment"># raw_extraction_YYYYMMDD.json</span>
+  <span class="file">analysis/{DATE}/</span>      <span class="comment"># analysis_YYYYMMDD.json</span>
+  <span class="file">reports/{YEAR}/</span>       <span class="comment"># PPTX, DOCX, CSV per company</span>
+  <span class="file">reports/internal/</span>     <span class="comment"># Overview, narrativa, aging</span>
+      </div>
+
+      <div class="s3-tree">
+<span class="comment"># SmartBackup (AFI.ai)</span>
+<span class="folder">smartbackup/</span>
+  <span class="file">snapshots/{YYYY-MM}/</span> <span class="comment"># {TENANT}_{YYYY-MM}.json</span>
+  <span class="file">analysis/</span>            <span class="comment"># {TENANT}_{period}.json + summary</span>
+  <span class="file">reports/mensili/</span>     <span class="comment"># Bollettini interni DOCX</span>
+  <span class="file">reports/trimestrali/</span> <span class="comment"># Per-tenant + overview CTO</span>
+      </div>
+
+      <div class="s3-tree">
+<span class="comment"># Veeam Backup (email ingest)</span>
+<span class="folder">veeam/</span>
+  <span class="file">raw/{YYYY-MM-DD}.json</span>           <span class="comment"># Email JSON grezze</span>
+  <span class="file">daily/{YYYY-MM-DD}.json</span>         <span class="comment"># Parsed: 72 campi, 13 job</span>
+  <span class="file">analysis/veeam_{from}_{to}.json</span> <span class="comment"># Aggregazione mensile</span>
+  <span class="file">reports/</span>                        <span class="comment"># Bollettino + DOCX per-client</span>
+      </div>
+
+      <div class="s3-tree">
+<span class="comment"># M365 Graph (per-tenant)</span>
+<span class="folder">{TENANT_CODE}/raw/graph/</span>
+  <span class="file">{MODULE}/{YYYY-MM-DD}_{MODULE}.json</span>
+<span class="folder">m365-graph/reports/{YYYY-MM}/</span>
+  <span class="file">M365_Ops_Report_*.docx</span>          <span class="comment"># Report interno</span>
+  <span class="file">M365_{TENANT}_*.docx|pptx</span>       <span class="comment"># Per-tenant (trimestrale)</span>
+      </div>
+
+      <div class="s3-tree">
+<span class="comment"># SmartPATCH (Action1, per-org)</span>
+<span class="folder">{CODE}/raw/action1/</span>
+  <span class="file">endpoints/{YYYY-MM-DD}_endpoints.json</span>
+  <span class="file">vulnerabilities/{YYYY-MM-DD}_vulnerabilities.json</span>
+  <span class="file">updates|software|antivirus|patching|automations/</span>
+<span class="folder">{CODE}/kpi/action1/</span>
+  <span class="file">{YYYY-MM-DD}_kpi.json</span>           <span class="comment"># 6 aree KPI, soglie</span>
+  <span class="file">{YYYY-MM-DD}_ops_detail.json</span>    <span class="comment"># Reachability, shadow IT</span>
+      </div>
+
     </div>
 
     <h3>Autenticazione per Pipeline</h3>
