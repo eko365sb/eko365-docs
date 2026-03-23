@@ -789,7 +789,7 @@
     </div>
     <div class="schedule-row">
       <span class="cron">0 10 2 * *</span>
-      <span class="desc">2&ordm; del mese, 10:00 UTC &mdash; Veeam full pipeline (analyze + report). Auto quarter-end detection</span>
+      <span class="desc">2&ordm; del mese, 10:00 UTC &mdash; Veeam full pipeline (analyze + report). Auto quarter-end detection + period expansion</span>
       <span class="pipeline-tag" style="background:#FCE4EC;color:#880E4F;">Veeam</span>
     </div>
     <div class="schedule-row">
@@ -887,7 +887,7 @@
         <tr><td>Auto-fallback pipeline</td><td>Job check-data verifica S3; se dati mancanti, ri-esegue fasi precedenti</td></tr>
         <tr><td>Token auto-renewal</td><td>Refresh token M365 rinnovato e riscritto su GitHub Secret ad ogni run</td></tr>
         <tr><td>Failure notification</td><td>reusable-notify.yml invia email a alerts@eko365.it</td></tr>
-        <tr><td>Quarter auto-detection</td><td>Job prepare rileva fine trimestre, espande periodo e scope automaticamente</td></tr>
+        <tr><td>Quarter auto-detection</td><td>Job <code>prepare</code> rileva fine trimestre (mesi 03/06/09/12) ed espande periodo e scope. Tre pattern: <strong>A)</strong> espansione date-range esplicita (SmartBackup, Veeam, Desk365), <strong>B)</strong> espansione implicita via S3 data loading (SmartPATCH), <strong>C)</strong> label trimestrale passata ai report script (M365 Graph). Dettagli in <a href="QUARTERLY_LOGIC.md" style="color:var(--primary)"><code>QUARTERLY_LOGIC.md</code></a></td></tr>
       </tbody>
     </table>
   </div>
@@ -954,7 +954,7 @@
 </div>
 
 <div class="footer">
-  EKO365 S.B. S.r.l. &mdash; Reporting Platform Architecture &mdash; Marzo 2026 (rev. 23/03) &mdash; Riservato, uso interno
+  EKO365 S.B. S.r.l. &mdash; Reporting Platform Architecture &mdash; Marzo 2026 (rev. 23/03 &mdash; quarterly logic documented) &mdash; Riservato, uso interno
   <br><a href="https://github.com/eko365sb/pipeline-workflows-docs" style="color: var(--primary);">Documentazione completa su GitHub</a>
 </div>
 
