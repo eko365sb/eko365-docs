@@ -30,6 +30,7 @@
   .view-toggle { display:flex; gap:0; margin: 24px 40px 0; }
   .view-btn { padding: 10px 28px; border: 2px solid var(--primary); background: var(--white); color: var(--primary); cursor: pointer; font-size: 0.92rem; font-weight: 600; transition: all 0.2s; }
   .view-btn:first-child { border-radius: 6px 0 0 6px; }
+  .view-btn:nth-child(2) { border-radius: 0; }
   .view-btn:last-child { border-radius: 0 6px 6px 0; }
   .view-btn.active { background: var(--primary); color: var(--white); }
   .view-btn:hover:not(.active) { background: #eee; }
@@ -157,6 +158,27 @@
   .doc-links a { color: var(--primary); text-decoration: none; padding: 4px 12px; border: 1px solid #d8d4e8; border-radius: 4px; transition: all 0.2s; }
   .doc-links a:hover { background: var(--primary); color: var(--white); }
 
+  /* STATS VIEW */
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 16px; margin: 20px 0; }
+  .stat-card { background: var(--white); border-radius: 10px; padding: 20px; text-align: center; box-shadow: var(--shadow); }
+  .stat-card .value { font-size: 2.2rem; font-weight: 700; color: var(--primary); line-height: 1.1; }
+  .stat-card .label { font-size: 0.82rem; color: var(--gray); margin-top: 6px; }
+  .stat-card.accent .value { color: var(--accent); }
+  .lang-bar { display: flex; height: 28px; border-radius: 6px; overflow: hidden; margin: 16px 0; }
+  .lang-bar .seg { display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.72rem; font-weight: 600; white-space: nowrap; padding: 0 6px; }
+  .repo-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.85rem; }
+  .repo-table th { background: var(--primary); color: #fff; padding: 10px 14px; text-align: left; font-weight: 600; }
+  .repo-table td { padding: 8px 14px; border-bottom: 1px solid #e8e6f0; }
+  .repo-table tr:hover td { background: var(--light); }
+  .repo-table .num { text-align: right; font-family: 'Courier New', monospace; }
+  .repo-table tfoot td { font-weight: 700; border-top: 2px solid var(--primary); background: var(--light); }
+  .highlight-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin: 20px 0; }
+  .highlight-card { background: var(--white); border-radius: 10px; padding: 18px 20px; box-shadow: var(--shadow); border-left: 4px solid var(--primary); }
+  .highlight-card h4 { color: var(--primary); margin: 0 0 8px; font-size: 0.95rem; }
+  .highlight-card p { color: var(--dark); font-size: 0.85rem; margin: 0; line-height: 1.5; }
+  .highlight-card.orange { border-left-color: var(--accent); }
+  .highlight-card.orange h4 { color: var(--accent); }
+
   /* FOOTER */
   .footer { text-align: center; padding: 20px; font-size: 0.72rem; color: var(--gray); }
 
@@ -182,7 +204,6 @@
   <a href="https://github.com/eko365sb/pipeline-workflows-docs/blob/main/ARCHITECTURE.md">Architettura</a>
   <a href="https://github.com/eko365sb/pipeline-workflows-docs/blob/main/docs/Manuale_Operativo_Pipeline.md">Manuale</a>
   <a href="https://github.com/eko365sb/pipeline-workflows">Workflows</a>
-  <a href="../platform-stats/">Statistiche</a>
   <span class="label" style="margin-left: 12px;">Repo:</span>
   <a href="https://github.com/eko365sb/smartbackup-reports">SmartBackup</a>
   <a href="https://github.com/eko365sb/desk365-reports">Desk365</a>
@@ -193,6 +214,7 @@
 <div class="view-toggle">
   <button class="view-btn active" onclick="switchView('hl')">High-Level Overview</button>
   <button class="view-btn" onclick="switchView('detail')">Dettaglio Tecnico</button>
+  <button class="view-btn" onclick="switchView('stats')">Statistiche</button>
 </div>
 
 <!-- ====================== HIGH-LEVEL VIEW ====================== -->
@@ -872,6 +894,65 @@
 
 </div>
 
+<!-- ====================== STATS VIEW ====================== -->
+<div id="view-stats" class="view">
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="value">~64.000</div><div class="label">Righe di codice</div></div>
+    <div class="stat-card accent"><div class="value">5</div><div class="label">Pipeline attive</div></div>
+    <div class="stat-card"><div class="value">165</div><div class="label">File sorgente</div></div>
+    <div class="stat-card accent"><div class="value">6</div><div class="label">Repository</div></div>
+    <div class="stat-card"><div class="value">103</div><div class="label">Commit Git</div></div>
+    <div class="stat-card accent"><div class="value">~2-3 &euro;</div><div class="label">Costo mensile</div></div>
+  </div>
+
+  <h3>Distribuzione per linguaggio</h3>
+  <div class="lang-bar">
+    <div class="seg" style="width:36.3%;background:#3572A5;" title="Python: 23.253 righe">Python 36%</div>
+    <div class="seg" style="width:42.6%;background:#F1E05A;color:#333;" title="JavaScript: 27.286 righe">JavaScript 43%</div>
+    <div class="seg" style="width:4.2%;background:#E34C26;" title="YAML: 2.718 righe">YAML</div>
+    <div class="seg" style="width:2.7%;background:#89E051;" title="JSON: 1.703 righe">JSON</div>
+    <div class="seg" style="width:12.1%;background:#083FA1;" title="Markdown: 7.732 righe">Markdown 12%</div>
+    <div class="seg" style="width:2.1%;background:#E44D26;" title="HTML+CSS: 1.270 righe">HTML</div>
+  </div>
+  <p style="font-size:0.78rem;color:var(--gray);margin-top:4px;">
+    Python 23.253 &middot; JavaScript 27.286 &middot; YAML 2.718 &middot; JSON 1.703 &middot; Markdown 7.732 &middot; HTML/CSS 1.270 &middot; Shell 161
+  </p>
+
+  <h3 style="margin-top:28px;">Dettaglio per repository</h3>
+  <table class="repo-table">
+    <thead>
+      <tr><th>Repository</th><th style="text-align:right">Python</th><th style="text-align:right">JavaScript</th><th style="text-align:right">Workflow</th><th style="text-align:right">Doc (MD)</th><th style="text-align:right">Config</th><th style="text-align:right">Commit</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><a href="https://github.com/eko365sb/smartbackup-reports" style="color:var(--primary)">smartbackup-reports</a></td><td class="num">4.412</td><td class="num">4.487</td><td class="num">686</td><td class="num">1.032</td><td class="num">316</td><td class="num">32</td></tr>
+      <tr><td><a href="https://github.com/eko365sb/desk365-reports" style="color:var(--primary)">desk365-reports</a></td><td class="num">8.694</td><td class="num">8.745</td><td class="num">376</td><td class="num">4.553</td><td class="num">316</td><td class="num">16</td></tr>
+      <tr><td><a href="https://github.com/eko365sb/smartpatch-reports" style="color:var(--primary)">smartpatch-reports</a></td><td class="num">5.488</td><td class="num">5.282</td><td class="num">584</td><td class="num">178</td><td class="num">603</td><td class="num">10</td></tr>
+      <tr><td><a href="https://github.com/eko365sb/m365-graph-pipeline" style="color:var(--primary)">m365-graph-pipeline</a></td><td class="num">4.659</td><td class="num">6.135</td><td class="num">560</td><td class="num">121</td><td class="num">468</td><td class="num">22</td></tr>
+      <tr><td><a href="https://github.com/eko365sb/pipeline-workflows-docs" style="color:var(--primary)">pipeline-workflows-docs</a></td><td class="num">&mdash;</td><td class="num">2.637</td><td class="num">512</td><td class="num">1.599</td><td class="num">&mdash;</td><td class="num">16</td></tr>
+      <tr><td><a href="https://github.com/eko365sb/eko365-docs" style="color:var(--primary)">eko365-docs</a></td><td class="num">&mdash;</td><td class="num">&mdash;</td><td class="num">&mdash;</td><td class="num">249</td><td class="num">&mdash;</td><td class="num">7</td></tr>
+    </tbody>
+    <tfoot>
+      <tr><td>Totale</td><td class="num">23.253</td><td class="num">27.286</td><td class="num">2.718</td><td class="num">7.732</td><td class="num">1.703</td><td class="num">103</td></tr>
+    </tfoot>
+  </table>
+
+  <h3 style="margin-top:28px;">Cosa comprende la piattaforma</h3>
+  <div class="highlight-grid">
+    <div class="highlight-card"><h4>5 pipeline di produzione</h4><p>SmartBackup (AFI.ai), Veeam Backup, DESK365 Helpdesk, SmartPATCH (Action1), M365 Graph Security &amp; Health</p></div>
+    <div class="highlight-card orange"><h4>19 workflow GitHub Actions</h4><p>4 reusable condivisi (fetch, analyze, report, notify) + 15 caller workflow specifici per pipeline</p></div>
+    <div class="highlight-card"><h4>18 report generator</h4><p>Node.js: DOCX professionali, PPTX con grafici Chart.js, CSV per analisi. Branding EKO365 (Century Gothic, livrea viola/arancione)</p></div>
+    <div class="highlight-card orange"><h4>24 data collector</h4><p>Python: retry con exponential backoff, pagination cursor-based, rate limiting, upload S3 automatico</p></div>
+    <div class="highlight-card"><h4>10 tenant clienti</h4><p>Autenticazione multi-tenant GDAP + OAuth2 + API key. 5 sorgenti dati integrate</p></div>
+    <div class="highlight-card orange"><h4>Zero intervento manuale</h4><p>Schedulazione completamente automatica. Collection giornaliera/settimanale, report mensili, client-facing trimestrali.</p></div>
+  </div>
+
+  <p style="font-size:0.78rem;color:var(--gray);margin-top:24px;padding-top:16px;border-top:1px solid #e0e0e0;">
+    <strong>Ultimo aggiornamento:</strong> 23 marzo 2026 &mdash; Metriche calcolate con <code>find + wc -l</code> (esclusi node_modules, __pycache__, data/, .git). Valori in <strong>righe di codice</strong>.
+  </p>
+
+</div>
+
 <div class="footer">
   EKO365 S.B. S.r.l. &mdash; Reporting Platform Architecture &mdash; Marzo 2026 (rev. 23/03) &mdash; Riservato, uso interno
   <br><a href="https://github.com/eko365sb/pipeline-workflows-docs" style="color: var(--primary);">Documentazione completa su GitHub</a>
@@ -883,8 +964,8 @@ function switchView(view) {
   document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('view-' + view).classList.add('active');
   const btns = document.querySelectorAll('.view-btn');
-  if (view === 'hl') btns[0].classList.add('active');
-  else btns[1].classList.add('active');
+  var idx = view === 'hl' ? 0 : view === 'detail' ? 1 : 2;
+  btns[idx].classList.add('active');
 }
 </script>
 
