@@ -888,6 +888,7 @@
         <tr><td>Token auto-renewal</td><td>Refresh token M365 rinnovato e riscritto su GitHub Secret ad ogni run</td></tr>
         <tr><td>Failure notification</td><td>reusable-notify.yml invia email a alerts@eko365.it</td></tr>
         <tr><td>Quarter auto-detection</td><td>Job <code>prepare</code> rileva fine trimestre (mesi 03/06/09/12) ed espande periodo e scope. Tre pattern: <strong>A)</strong> espansione date-range esplicita (SmartBackup, Veeam, Desk365), <strong>B)</strong> espansione implicita via S3 data loading (SmartPATCH), <strong>C)</strong> label trimestrale passata ai report script (M365 Graph). Dettagli in <a href="QUARTERLY_LOGIC.md" style="color:var(--primary)"><code>QUARTERLY_LOGIC.md</code></a></td></tr>
+        <tr><td>Dry-run (send_email)</td><td>Tutti i workflow accettano un input <code>send_email</code> (boolean, default <code>true</code>). Se deselezionato nel dispatch manuale, la pipeline esegue raccolta dati, analisi e generazione report ma <strong>non invia email</strong>. Utile per test, rigenerazioni e QA senza impatto sui destinatari.</td></tr>
       </tbody>
     </table>
   </div>

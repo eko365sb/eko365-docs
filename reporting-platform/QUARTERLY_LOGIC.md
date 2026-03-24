@@ -124,3 +124,22 @@ gh workflow run graph-report.yml -f report_type="all" -f period="Q1 2026"
 # Desk365 (re-extracts from API)
 gh workflow run desk365-pipeline.yml -f from_date="2026-01-01" -f to_date="2026-03-31"
 ```
+
+## Dry-Run (No Email)
+
+All workflows accept a `send_email` boolean input (default: `true`).
+To run a full pipeline without sending email to recipients:
+
+```bash
+# Any pipeline — add -f send_email=false
+gh workflow run smartbackup-pipeline.yml -f phase="all" -f send_email=false
+gh workflow run veeam-pipeline.yml -f phase="all" -f send_email=false
+gh workflow run smartpatch-scheduled.yml -f phase="monthly" -f send_email=false
+gh workflow run graph-report.yml -f report_type="all" -f send_email=false
+gh workflow run desk365-pipeline.yml -f phase="all" -f send_email=false
+```
+
+This is useful for:
+- Testing workflows after code changes
+- Regenerating reports on S3 without notifying recipients
+- QA validation before a scheduled run
