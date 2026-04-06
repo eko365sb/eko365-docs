@@ -130,9 +130,9 @@
   .schedule-row .cron { font-family: 'Courier New', monospace; font-size: 0.78rem; background: var(--dark); color: var(--white); padding: 3px 10px; border-radius: 4px; }
   .schedule-row .desc { font-size: 0.82rem; flex: 1; }
   .schedule-row .pipeline-tag { font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
-  .tag-desk365 { background: #FADBD8; color: #922B21; }
+  .tag-smartdesk { background: #FADBD8; color: #922B21; }
   .tag-smartbackup { background: #D4EFDF; color: #1E8449; }
-  .tag-m365 { background: #D6EAF8; color: #2471A3; }
+  .tag-smart365, .tag-m365 { background: #D6EAF8; color: #2471A3; }
   .tag-smartpatch { background: #E8DAEF; color: #6C3483; }
 
   /* S3 TREE */
@@ -195,7 +195,7 @@
 
 <div class="header">
   <h1>EKO365 MSSP — Automated Reporting Platform</h1>
-  <div class="subtitle">Architettura dei servizi di reportistica automatizzata — 5 pipeline, 10 tenant, 3 livelli di output</div>
+  <div class="subtitle">Architettura dei servizi di reportistica automatizzata — 4 pipeline, 10 tenant, 3 livelli di output</div>
 </div>
 
 <div class="doc-links">
@@ -206,9 +206,9 @@
   <a href="https://github.com/eko365sb/pipeline-workflows">Workflows</a>
   <span class="label" style="margin-left: 12px;">Repo:</span>
   <a href="https://github.com/eko365sb/smartbackup-reports">SmartBackup</a>
-  <a href="https://github.com/eko365sb/desk365-reports">Desk365</a>
+  <a href="https://github.com/eko365sb/desk365-reports">SmartDESK</a>
   <a href="https://github.com/eko365sb/smartpatch-reports">SmartPATCH</a>
-  <a href="https://github.com/eko365sb/m365-graph-pipeline">M365 Graph</a>
+  <a href="https://github.com/eko365sb/m365-graph-pipeline">Smart365</a>
 </div>
 
 <div class="view-toggle">
@@ -252,14 +252,14 @@
       </div>
     </div>
 
-    <div class="hl-arrow-down">&#x25BC; &#x25BC; &#x25BC; &#x25BC; &#x25BC;</div>
+    <div class="hl-arrow-down">&#x25BC; &#x25BC; &#x25BC; &#x25BC;</div>
 
     <!-- PIPELINES -->
     <div class="section-label">Pipeline di Elaborazione</div>
     <div class="hl-pipelines">
       <div class="hl-pipeline">
         <div class="badge">Mensile / Trim.</div>
-        <h3>Desk365 Helpdesk</h3>
+        <h3>SmartDESK — Service Desk</h3>
         <div class="phases">
           <span class="phase fetch">Fetch</span>
           <span class="phase analyze">Analyze</span>
@@ -275,7 +275,7 @@
 
       <div class="hl-pipeline">
         <div class="badge">Mensile / Trim.</div>
-        <h3>SmartBackup (AFI)</h3>
+        <h3>SmartBackup — Servizio di Backup</h3>
         <div class="phases">
           <span class="phase fetch">Fetch</span>
           <span class="phase analyze">Analyze</span>
@@ -284,26 +284,14 @@
         <div class="freq">2&ordm; del mese, 06:00 UTC</div>
         <div class="outputs">
           <span class="output-tag docx">DOCX</span>
+          <span class="output-tag pptx">PPTX</span>
         </div>
-      </div>
-
-      <div class="hl-pipeline">
-        <div class="badge">Giornaliero / Mens.</div>
-        <h3>Veeam Backup</h3>
-        <div class="phases">
-          <span class="phase fetch">Fetch + Parse</span>
-          <span class="phase analyze">Analyze</span>
-          <span class="phase report">Report</span>
-        </div>
-        <div class="freq">Giorn. 10:00 + 2&ordm; mese (full)</div>
-        <div class="outputs">
-          <span class="output-tag docx">DOCX</span>
-        </div>
+        <div style="font-size:0.72rem;color:var(--gray);margin-top:4px;">Include Veeam on-prem</div>
       </div>
 
       <div class="hl-pipeline">
         <div class="badge">Settimanale / Mens.</div>
-        <h3>Microsoft 365</h3>
+        <h3>Smart365 — Servizi Microsoft 365</h3>
         <div class="phases">
           <span class="phase fetch">Collect</span>
           <span class="phase analyze">Transform</span>
@@ -319,7 +307,7 @@
 
       <div class="hl-pipeline">
         <div class="badge">Giorn. / Sett. / Mens.</div>
-        <h3>SmartPATCH (Action1)</h3>
+        <h3>SmartPATCH — Patch Management</h3>
         <div class="phases">
           <span class="phase fetch">Collect</span>
           <span class="phase analyze">KPI</span>
@@ -403,7 +391,7 @@
 
   <!-- 1. PIPELINE DESK365 -->
   <div class="detail-section">
-    <h2>1. Pipeline Desk365 — Helpdesk Analytics</h2>
+    <h2>1. Pipeline SmartDESK — Service Desk</h2>
 
     <h3>Flusso Dati</h3>
     <div class="flow">
@@ -465,7 +453,7 @@
 
   <!-- 2. PIPELINE SMARTBACKUP -->
   <div class="detail-section">
-    <h2>2. Pipeline SmartBackup (AFI.ai) — Backup Analytics</h2>
+    <h2>2. Pipeline SmartBackup — Servizio di Backup</h2>
 
     <h3>Flusso Dati</h3>
     <div class="flow">
@@ -479,18 +467,19 @@
       <span class="flow-arrow">&#x27A1;</span>
       <div class="flow-step storage"><strong>Wasabi S3</strong><small>smartbackup/analysis/</small></div>
       <span class="flow-arrow">&#x27A1;</span>
-      <div class="flow-step output"><strong>3 Report Generators</strong><small>Node.js &middot; docx &middot; Chart.js</small></div>
+      <div class="flow-step output"><strong>4 Report Generators</strong><small>Node.js &middot; docx &middot; Chart.js</small></div>
       <span class="flow-arrow">&#x27A1;</span>
       <div class="flow-step deliver"><strong>MailerSend</strong><small>Auto-routing per periodo</small></div>
     </div>
 
-    <h3>Output (3 generatori)</h3>
+    <h3>Output (4 generatori)</h3>
     <table class="tech-table">
       <thead><tr><th>Generatore</th><th>Tipo</th><th>Audience</th><th>Struttura</th></tr></thead>
       <tbody>
         <tr><td>generate_backup_report.js</td><td><span class="output-tag docx">DOCX</span></td><td>Per-tenant</td><td>3 livelli: Executive (1-3) &rarr; Operational (4-6) &rarr; Compliance (7-9, solo KSGR)</td></tr>
         <tr><td>generate_backup_overview.js</td><td><span class="output-tag docx">DOCX</span></td><td>CTO</td><td>Heat-map, risk ranking, storage capacity, anomalie</td></tr>
         <tr><td>generate_backup_bulletin.js</td><td><span class="output-tag docx">DOCX</span></td><td>Team interno</td><td>Branding invertito, semafori, billing, licensing</td></tr>
+        <tr><td>generate_veeam_report.js</td><td><span class="output-tag docx">DOCX</span></td><td>Per-client (on-prem)</td><td>Importabile come modulo per report unificato SmartBackup (flag --veeam)</td></tr>
       </tbody>
     </table>
 
@@ -524,7 +513,8 @@
 
   <!-- 3. PIPELINE VEEAM -->
   <div class="detail-section">
-    <h2>3. Pipeline Veeam Backup — Email-Based On-Prem Reporting</h2>
+    <h2>3. Pipeline Veeam — Backup On-Prem (integrata in SmartBackup)</h2>
+    <p style="font-size:0.85rem; margin:6px 0 14px; padding:10px 14px; background:#FFF8E1; border-left:4px solid var(--yellow); border-radius:4px;">Dal Q1 2026 i report Veeam per-client sono integrati nel documento SmartBackup unificato. La pipeline di raccolta dati resta separata; il bollettino operativo interno resta autonomo.</p>
 
     <h3>Flusso Dati</h3>
     <div class="flow">
@@ -599,7 +589,7 @@
 
   <!-- 4. PIPELINE M365 GRAPH -->
   <div class="detail-section">
-    <h2>4. Pipeline Microsoft 365 — Security & Compliance Collection</h2>
+    <h2>4. Pipeline Smart365 — Servizi Microsoft 365</h2>
 
     <h3>Flusso Dati</h3>
     <div class="flow">
@@ -640,7 +630,7 @@
     <div class="schedule-row">
       <span class="cron">0 14 3 * *</span>
       <span class="desc">3&ordm; del mese, 14:00 UTC &mdash; Ops report (sempre) + Client report (trimestrale)</span>
-      <span class="pipeline-tag tag-m365">M365</span>
+      <span class="pipeline-tag tag-smart365">Smart365</span>
     </div>
 
     <h3>Autenticazione</h3>
@@ -649,7 +639,7 @@
 
   <!-- 5. PIPELINE SMARTPATCH (ACTION1) -->
   <div class="detail-section">
-    <h2>5. Pipeline SmartPATCH (Action1) — Vulnerability & Patch Management</h2>
+    <h2>5. Pipeline SmartPATCH — Patch Management e Sicurezza Endpoint</h2>
 
     <h3>Flusso Dati</h3>
     <div class="flow">
@@ -759,8 +749,8 @@
     <h3>Scheduling Completo</h3>
     <div class="schedule-row">
       <span class="cron">0 3 1 * *</span>
-      <span class="desc">1&ordm; del mese, 03:00 UTC &mdash; M365 Graph full collection (tutti i moduli)</span>
-      <span class="pipeline-tag tag-m365">M365</span>
+      <span class="desc">1&ordm; del mese, 03:00 UTC &mdash; Smart365 full collection (tutti i moduli)</span>
+      <span class="pipeline-tag tag-smart365">Smart365</span>
     </div>
     <div class="schedule-row">
       <span class="cron">0 6 2 * *</span>
@@ -769,18 +759,18 @@
     </div>
     <div class="schedule-row">
       <span class="cron">0 6 3 * *</span>
-      <span class="desc">3&ordm; del mese, 06:00 UTC &mdash; Desk365 fetch + analyze + report</span>
-      <span class="pipeline-tag tag-desk365">Desk365</span>
+      <span class="desc">3&ordm; del mese, 06:00 UTC &mdash; SmartDESK fetch + analyze + report</span>
+      <span class="pipeline-tag tag-smartdesk">SmartDESK</span>
     </div>
     <div class="schedule-row">
       <span class="cron">0 14 3 * *</span>
-      <span class="desc">3&ordm; del mese, 14:00 UTC &mdash; M365 report generation (ops + quarterly auto-detect)</span>
-      <span class="pipeline-tag tag-m365">M365</span>
+      <span class="desc">3&ordm; del mese, 14:00 UTC &mdash; Smart365 report generation (ops + quarterly auto-detect)</span>
+      <span class="pipeline-tag tag-smart365">Smart365</span>
     </div>
     <div class="schedule-row">
       <span class="cron">0 4 * * 0</span>
-      <span class="desc">Ogni domenica, 04:00 UTC &mdash; M365 Graph weekly (Security + Health)</span>
-      <span class="pipeline-tag tag-m365">M365</span>
+      <span class="desc">Ogni domenica, 04:00 UTC &mdash; Smart365 weekly (Security + Health)</span>
+      <span class="pipeline-tag tag-smart365">Smart365</span>
     </div>
     <div class="schedule-row">
       <span class="cron">0 10 * * *</span>
@@ -803,7 +793,7 @@
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 16px;">
 
       <div class="s3-tree">
-<span class="comment"># Desk365 Helpdesk</span>
+<span class="comment"># SmartDESK (Desk365 Helpdesk)</span>
 <span class="folder">desk365/</span>
   <span class="file">extractions/{DATE}/</span>  <span class="comment"># raw_extraction_YYYYMMDD.json</span>
   <span class="file">analysis/{DATE}/</span>      <span class="comment"># analysis_YYYYMMDD.json</span>
@@ -821,7 +811,7 @@
       </div>
 
       <div class="s3-tree">
-<span class="comment"># Veeam Backup (email ingest)</span>
+<span class="comment"># Veeam On-Prem (integrato in SmartBackup)</span>
 <span class="folder">veeam/</span>
   <span class="file">raw/{YYYY-MM-DD}.json</span>           <span class="comment"># Email JSON grezze</span>
   <span class="file">daily/{YYYY-MM-DD}.json</span>         <span class="comment"># Parsed: 72 campi, 13 job</span>
@@ -830,7 +820,7 @@
       </div>
 
       <div class="s3-tree">
-<span class="comment"># M365 Graph (per-tenant)</span>
+<span class="comment"># Smart365 (M365 Graph, per-tenant)</span>
 <span class="folder">{TENANT_CODE}/raw/graph/</span>
   <span class="file">{MODULE}/{YYYY-MM-DD}_{MODULE}.json</span>
 <span class="folder">m365-graph/reports/{YYYY-MM}/</span>
@@ -855,11 +845,11 @@
     <table class="tech-table">
       <thead><tr><th>Pipeline</th><th>Metodo Auth</th><th>App Registration</th><th>Scope</th></tr></thead>
       <tbody>
-        <tr><td>Desk365</td><td>API Key (header)</td><td>&mdash;</td><td>Desk365 API v3</td></tr>
-        <tr><td>SmartBackup (AFI)</td><td>API Key (header)</td><td>&mdash;</td><td>AFI.ai API v1</td></tr>
-        <tr><td>Veeam</td><td>Client Credentials (MSAL)</td><td>EKO365-Pipeline-MailReader</td><td>Graph Mail.Read + Application Access Policy</td></tr>
-        <tr><td>Microsoft 365</td><td>GDAP + OBO Refresh Token</td><td>EKO365-MSP-Automation (44 scope)</td><td>Graph API multi-tenant</td></tr>
-        <tr><td>SmartPATCH (Action1)</td><td>OAuth2 Client Credentials</td><td>&mdash; (API key/secret)</td><td>Action1 REST API &middot; EU</td></tr>
+        <tr><td>SmartDESK</td><td>API Key (header)</td><td>&mdash;</td><td>Desk365 API v3</td></tr>
+        <tr><td>SmartBackup</td><td>API Key (header)</td><td>&mdash;</td><td>AFI.ai API v1</td></tr>
+        <tr><td>SmartBackup (Veeam)</td><td>Client Credentials (MSAL)</td><td>EKO365-Pipeline-MailReader</td><td>Graph Mail.Read + Application Access Policy</td></tr>
+        <tr><td>Smart365</td><td>GDAP + OBO Refresh Token</td><td>EKO365-MSP-Automation (44 scope)</td><td>Graph API multi-tenant</td></tr>
+        <tr><td>SmartPATCH</td><td>OAuth2 Client Credentials</td><td>&mdash; (API key/secret)</td><td>Action1 REST API &middot; EU</td></tr>
       </tbody>
     </table>
 
@@ -887,7 +877,7 @@
         <tr><td>Auto-fallback pipeline</td><td>Job check-data verifica S3; se dati mancanti, ri-esegue fasi precedenti</td></tr>
         <tr><td>Token auto-renewal</td><td>Refresh token M365 rinnovato e riscritto su GitHub Secret ad ogni run</td></tr>
         <tr><td>Failure notification</td><td>reusable-notify.yml invia email a alerts@eko365.it</td></tr>
-        <tr><td>Quarter auto-detection</td><td>Job <code>prepare</code> rileva fine trimestre (mesi 03/06/09/12) ed espande periodo e scope. Tre pattern: <strong>A)</strong> espansione date-range esplicita (SmartBackup, Veeam, Desk365), <strong>B)</strong> espansione implicita via S3 data loading (SmartPATCH), <strong>C)</strong> label trimestrale passata ai report script (M365 Graph). Dettagli in <a href="QUARTERLY_LOGIC.md" style="color:var(--primary)"><code>QUARTERLY_LOGIC.md</code></a></td></tr>
+        <tr><td>Quarter auto-detection</td><td>Job <code>prepare</code> rileva fine trimestre (mesi 03/06/09/12) ed espande periodo e scope. Tre pattern: <strong>A)</strong> espansione date-range esplicita (SmartBackup, Veeam, SmartDESK), <strong>B)</strong> espansione implicita via S3 data loading (SmartPATCH), <strong>C)</strong> label trimestrale passata ai report script (Smart365). Dettagli in <a href="QUARTERLY_LOGIC.md" style="color:var(--primary)"><code>QUARTERLY_LOGIC.md</code></a></td></tr>
         <tr><td>Dry-run (send_email)</td><td>Tutti i workflow accettano un input <code>send_email</code> (boolean, default <code>true</code>). Se deselezionato nel dispatch manuale, la pipeline esegue raccolta dati, analisi e generazione report ma <strong>non invia email</strong>. Utile per test, rigenerazioni e QA senza impatto sui destinatari.</td></tr>
       </tbody>
     </table>
@@ -900,7 +890,7 @@
 
   <div class="stat-grid">
     <div class="stat-card"><div class="value">~64.000</div><div class="label">Righe di codice</div></div>
-    <div class="stat-card accent"><div class="value">5</div><div class="label">Pipeline attive</div></div>
+    <div class="stat-card accent"><div class="value">4</div><div class="label">Pipeline attive</div></div>
     <div class="stat-card"><div class="value">165</div><div class="label">File sorgente</div></div>
     <div class="stat-card accent"><div class="value">6</div><div class="label">Repository</div></div>
     <div class="stat-card"><div class="value">103</div><div class="label">Commit Git</div></div>
@@ -940,7 +930,7 @@
 
   <h3 style="margin-top:28px;">Cosa comprende la piattaforma</h3>
   <div class="highlight-grid">
-    <div class="highlight-card"><h4>5 pipeline di produzione</h4><p>SmartBackup (AFI.ai), Veeam Backup, DESK365 Helpdesk, SmartPATCH (Action1), M365 Graph Security &amp; Health</p></div>
+    <div class="highlight-card"><h4>4 pipeline di produzione</h4><p>SmartBackup (include Veeam on-prem), SmartDESK (Service Desk), SmartPATCH (Patch Management), Smart365 (Servizi Microsoft 365)</p></div>
     <div class="highlight-card orange"><h4>19 workflow GitHub Actions</h4><p>4 reusable condivisi (fetch, analyze, report, notify) + 15 caller workflow specifici per pipeline</p></div>
     <div class="highlight-card"><h4>18 report generator</h4><p>Node.js: DOCX professionali, PPTX con grafici Chart.js, CSV per analisi. Branding EKO365 (Century Gothic, livrea viola/arancione)</p></div>
     <div class="highlight-card orange"><h4>24 data collector</h4><p>Python: retry con exponential backoff, pagination cursor-based, rate limiting, upload S3 automatico</p></div>
