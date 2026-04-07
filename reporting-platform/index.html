@@ -780,13 +780,12 @@
     <h2>6. Pipeline SmartInfra &mdash; Private Cloud Hosting</h2>
 
     <h3>Flusso Dati</h3>
-    <p style="font-size:0.85rem; margin:6px 0;">Due sorgenti dati cloud, interrogate in parallelo:</p>
     <div class="flow">
       <div class="flow-step source"><strong>PRTG Hosted API v1</strong><small>eko-prtg.my-prtg.com &middot; 605 sensori</small></div>
       <span class="flow-arrow">&#x27A1;</span>
       <div class="flow-step process"><strong>fetch_prtg_data.py</strong><small>VM, host, storage, network</small></div>
       <span class="flow-arrow">&#x27A1;</span>
-      <div class="flow-step storage"><strong>Wasabi S3</strong><small>infra/raw/prtg/{YYYY-MM}/</small></div>
+      <div class="flow-step storage"><strong>Wasabi S3</strong><small>infra/raw/prtg/</small></div>
       <span class="flow-arrow">&#x27A1;</span>
       <div class="flow-step process"><strong>analyze_infra.py</strong><small>KPI per-client + summary</small></div>
       <span class="flow-arrow">&#x27A1;</span>
@@ -799,31 +798,86 @@
       <span class="flow-arrow">&#x27A1;</span>
       <div class="flow-step process"><strong>fetch_unifi_data.py</strong><small>Devices, ISP metrics</small></div>
       <span class="flow-arrow">&#x27A1;</span>
-      <div class="flow-step storage"><strong>Wasabi S3</strong><small>infra/raw/unifi/{YYYY-MM}/</small></div>
+      <div class="flow-step storage"><strong>Wasabi S3</strong><small>infra/raw/unifi/</small></div>
       <span class="flow-arrow">&#x2934;</span>
-      <div class="flow-step" style="background:transparent;border:1px dashed var(--gray);color:var(--gray);"><small>Confluisce in analyze_infra.py</small></div>
+      <div class="flow-step process" style="opacity:0.6;"><strong>&#x2191; analyze_infra.py</strong><small>Confluisce nell&rsquo;analisi</small></div>
     </div>
 
-    <h3>Analisi &mdash; analyze_infra.py</h3>
-    <p style="font-size:0.85rem; margin:6px 0;">Calcola KPI per cliente: availability % (da canale Downtime), CPU avg/peak, Memory Active % (non Consumed &mdash; evita falsi positivi da cache filesystem Windows), storage NetApp (crescita, forecast esaurimento), traffico rete VM aggregato, UniFi device inventory e firmware compliance. Soglie di alert configurabili per cliente (downtime &lt;15 min = nessun alert, finestra manutentiva esclusa da SLA). Output: JSON per-client + summary cross-client.</p>
+    <h3>Data Modules (4 categorie PRTG + 1 UniFi)</h3>
+    <div class="module-grid">
+      <div class="module-card"><div class="mod-name">VM Performance</div><div class="mod-freq">Mensile</div><div class="mod-data">CPU, RAM Active, Disk I/O, Network, Downtime, Coverage</div></div>
+      <div class="module-card"><div class="mod-name">Host ESXi</div><div class="mod-freq">Mensile</div><div class="mod-data">CPU avg/max, availability per host fisico</div></div>
+      <div class="module-card"><div class="mod-name">Storage NetApp</div><div class="mod-freq">Mensile</div><div class="mod-data">Size Free, Physical Free %, Snapshot count, crescita</div></div>
+      <div class="module-card"><div class="mod-name">Network Sensors</div><div class="mod-freq">Mensile</div><div class="mod-data">Ping, HTTP, packet loss, latency (doppia sonda DC+RPi)</div></div>
+      <div class="module-card"><div class="mod-name">UniFi Inventory</div><div class="mod-freq">Mensile</div><div class="mod-data">Device status, firmware, ISP metrics (bandwidth, latency)</div></div>
+    </div>
 
-    <h3>Generatori Report</h3>
+    <h3>KPI Engine (7 aree)</h3>
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Availability</div>
+        <div class="kpi-value">%</div>
+        <div class="kpi-threshold"><span class="dot-green"></span>&ge;99.9 <span class="dot-yellow"></span>&ge;99 <span class="dot-red"></span>&lt;99</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">CPU Usage</div>
+        <div class="kpi-value">%</div>
+        <div class="kpi-threshold"><span class="dot-green"></span>&lt;70 <span class="dot-yellow"></span>&lt;85 <span class="dot-red"></span>&ge;85</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">RAM Active</div>
+        <div class="kpi-value">%</div>
+        <div class="kpi-threshold"><span class="dot-green"></span>&lt;70 <span class="dot-yellow"></span>&lt;85 <span class="dot-red"></span>&ge;85</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Storage Free</div>
+        <div class="kpi-value">%</div>
+        <div class="kpi-threshold"><span class="dot-green"></span>&gt;30 <span class="dot-yellow"></span>&gt;15 <span class="dot-red"></span>&le;15</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Firmware</div>
+        <div class="kpi-value">%</div>
+        <div class="kpi-threshold"><span class="dot-green"></span>100% <span class="dot-yellow"></span>&lt;100 <span class="dot-red"></span>outdated</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Packet Loss</div>
+        <div class="kpi-value">%</div>
+        <div class="kpi-threshold"><span class="dot-green"></span>&lt;0.5 <span class="dot-yellow"></span>&lt;1 <span class="dot-red"></span>&ge;1</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Downtime</div>
+        <div class="kpi-value">min</div>
+        <div class="kpi-threshold"><span class="dot-green"></span>&lt;15 <span class="dot-yellow"></span>&lt;60 <span class="dot-red"></span>&ge;60</div>
+      </div>
+    </div>
+
+    <h3>Report Generators (2)</h3>
     <table class="tech-table">
-      <thead><tr><th>Generatore</th><th>Output</th><th>Frequenza</th><th>Destinatari</th></tr></thead>
+      <thead><tr><th>Script</th><th>Output</th><th>Destinatario</th><th>Cadenza</th><th>Contenuto</th></tr></thead>
       <tbody>
-        <tr><td>generate_infra_report.js</td><td>DOCX (EXTERNAL viola)</td><td>Trimestrale</td><td>Cliente</td></tr>
-        <tr><td>generate_infra_bulletin.js</td><td>DOCX (INTERNAL arancione)</td><td>Mensile</td><td>Team EKO</td></tr>
+        <tr><td>generate_infra_report.js</td><td><span class="output-tag docx">DOCX</span></td><td>Clienti</td><td>Trimestrale</td><td>Availability, performance, connettivit&agrave;, UniFi, alert, raccomandazioni</td></tr>
+        <tr><td>generate_infra_bulletin.js</td><td><span class="output-tag docx">DOCX</span></td><td>Team EKO</td><td>Mensile</td><td>Cross-client overview, top consumers, storage trend, host ESXi</td></tr>
       </tbody>
     </table>
-    <p style="font-size:0.85rem; margin:6px 0;"><strong>Contenuto report cliente:</strong> Executive summary con semafori KPI, disponibilit&agrave; VM con SLA compliance, performance (CPU/RAM Active), connettivit&agrave; sede (sensori PRTG doppia sonda DC+Raspberry + UniFi inventory), traffico rete VM, alert e raccomandazioni.</p>
-    <p style="font-size:0.85rem; margin:6px 0;"><strong>Contenuto bollettino interno:</strong> Panoramica cross-cliente con delta mese precedente, top 5 consumatori risorse (CPU/Memory/Network), storage NetApp con trend 3 mesi e forecast, host ESXi, alert cross-client, raccomandazioni operative.</p>
-    <p style="font-size:0.85rem; margin:6px 0;"><strong>Storage NetApp:</strong> visibile solo nel bollettino interno. Il cliente paga il consumo logico (disco VM), non il fisico NetApp. Spazio fisico &times;3 (dati + backup + DR) per stima costi EKO.</p>
 
-    <h3>Clienti Hosting</h3>
-    <p style="font-size:0.85rem; margin:6px 0;">6 clienti mappati: KSGR (7 VM, DORA), DLPHRC (5 VM), TROVAMALA (5 VM), SACMAR (4 VM), TOSI (4 VM), QUANTUM (2 VM). Totale 27 VM su cluster VMware vSphere 8.x (DC Bernina + DR HOOX).</p>
+    <h3>Clienti Hosting (6 clienti, 27 VM)</h3>
+    <table class="tech-table">
+      <thead><tr><th>Codice</th><th>Cliente</th><th>VM</th><th>Storage</th><th>Network</th><th>DORA</th></tr></thead>
+      <tbody>
+        <tr><td>KSGR</td><td>Kryalos SGR</td><td>7</td><td>4 volumi (15 TB)</td><td>7 sensori + 37 UniFi</td><td>S&igrave;</td></tr>
+        <tr><td>DLPHRC</td><td>DLPHRC</td><td>5</td><td>1 volume (2 TB)</td><td>&mdash;</td><td>No</td></tr>
+        <tr><td>TROVAMALA</td><td>Trovamala</td><td>5</td><td>&mdash;</td><td>&mdash;</td><td>No</td></tr>
+        <tr><td>SACMAR</td><td>Sacmar</td><td>4</td><td>1 volume (3 TB)</td><td>19 UniFi</td><td>No</td></tr>
+        <tr><td>TOSI</td><td>Tosi</td><td>4</td><td>1 volume (2 TB)</td><td>&mdash;</td><td>No</td></tr>
+        <tr><td>QUANTUM</td><td>Quantum</td><td>2</td><td>1 volume (3 TB)</td><td>&mdash;</td><td>No</td></tr>
+      </tbody>
+    </table>
 
     <h3>Autenticazione</h3>
-    <p style="font-size:0.85rem; margin:6px 0;"><strong>PRTG:</strong> API Key read-only come query parameter (<code>apitoken=</code>). Rate limit 5 req/min. Storico 365 giorni. <strong>UniFi:</strong> API Key in header <code>X-API-Key</code>. EA endpoints, rate limit 100 req/min. ISP metrics 1h retention 30 giorni.</p>
+    <p style="font-size:0.85rem; margin:6px 0;"><strong>PRTG:</strong> API Key read-only come query parameter (<code>apitoken=</code>). Rate limit 5 req/min. Storico 365 giorni su Hosted. <strong>UniFi:</strong> API Key in header <code>X-API-Key</code>. EA endpoints, rate limit 100 req/min. ISP metrics 1h retention 30 giorni.</p>
+
+    <h3>Note tecniche</h3>
+    <p style="font-size:0.85rem; margin:6px 0;"><strong>Memory Active vs Consumed:</strong> i sensori VMware riportano RAM Consumed al 95-100% su Windows Server (cache filesystem). Il KPI corretto &egrave; Memory Active (working set reale). <strong>Storage:</strong> dati NetApp (fisico, post-dedup) solo nel bollettino interno. Il cliente paga il logico (IaaS). Fisico &times;3 per stima costi EKO (dati + backup + DR).</p>
   </div>
 
   <!-- 7. DORA CONSOLIDATED -->
@@ -831,7 +885,6 @@
     <h2>7. Pipeline DORA Consolidated &mdash; Report Compliance</h2>
 
     <h3>Flusso Dati</h3>
-    <p style="font-size:0.85rem; margin:6px 0;">Aggrega i dati di tutte le 6 pipeline in un unico JSON consolidato. Non ha fetch proprio &mdash; legge gli output delle altre pipeline.</p>
     <div class="flow">
       <div class="flow-step source"><strong>6 pipeline JSON</strong><small>Backup + Veeam + PATCH + 365 + DESK + Infra</small></div>
       <span class="flow-arrow">&#x27A1;</span>
@@ -839,25 +892,40 @@
       <span class="flow-arrow">&#x27A1;</span>
       <div class="flow-step storage"><strong>consolidated.json</strong><small>9 KPI + profilo DORA</small></div>
       <span class="flow-arrow">&#x27A1;</span>
-      <div class="flow-step output"><strong>DORA_Report_{CLIENT}_{Q}.docx</strong><small>Report Art. 28</small></div>
+      <div class="flow-step output"><strong>generate_dora_report.js</strong><small>DOCX Art. 28</small></div>
     </div>
 
     <h3>KPI Contrattuali (9 indicatori)</h3>
+    <div class="kpi-row">
+      <div class="kpi-card"><div class="kpi-label">Backup Cloud</div><div class="kpi-value">&ge;98%</div><div class="kpi-threshold">SmartBackup (AFI.ai)</div></div>
+      <div class="kpi-card"><div class="kpi-label">Backup On-Prem</div><div class="kpi-value">&ge;98%</div><div class="kpi-threshold">Veeam B&amp;R</div></div>
+      <div class="kpi-card"><div class="kpi-label">Patch Status</div><div class="kpi-value">0 crit</div><div class="kpi-threshold">SmartPATCH (Action1)</div></div>
+      <div class="kpi-card"><div class="kpi-label">Secure Score</div><div class="kpi-value">&ge;80%</div><div class="kpi-threshold">Smart365 (Graph)</div></div>
+      <div class="kpi-card"><div class="kpi-label">Alert Critici</div><div class="kpi-value">0</div><div class="kpi-threshold">Smart365 (Defender)</div></div>
+      <div class="kpi-card"><div class="kpi-label">VM Availability</div><div class="kpi-value">&ge;99.9%</div><div class="kpi-threshold">SmartInfra (PRTG)</div></div>
+      <div class="kpi-card"><div class="kpi-label">SLA VM</div><div class="kpi-value">100%</div><div class="kpi-threshold">SmartInfra (PRTG)</div></div>
+      <div class="kpi-card"><div class="kpi-label">Firmware Rete</div><div class="kpi-value">100%</div><div class="kpi-threshold">SmartInfra (UniFi)</div></div>
+      <div class="kpi-card"><div class="kpi-label">Risposta P1</div><div class="kpi-value">&le;15 min</div><div class="kpi-threshold">SmartDESK (Desk365)</div></div>
+    </div>
+
+    <h3>Report Generator (1)</h3>
     <table class="tech-table">
-      <thead><tr><th>KPI</th><th>Fonte</th><th>Target</th></tr></thead>
+      <thead><tr><th>Script</th><th>Output</th><th>Destinatario</th><th>Cadenza</th><th>Contenuto</th></tr></thead>
       <tbody>
-        <tr><td>Backup Success Rate (Cloud)</td><td>SmartBackup</td><td>&ge;98%</td></tr>
-        <tr><td>Backup Success Rate (On-Prem)</td><td>Veeam</td><td>&ge;98%</td></tr>
-        <tr><td>Patch Management Status</td><td>SmartPATCH</td><td>0 gap critici</td></tr>
-        <tr><td>Secure Score M365</td><td>Smart365</td><td>&ge;80%</td></tr>
-        <tr><td>Alert Alta Severit&agrave;</td><td>Smart365</td><td>0</td></tr>
-        <tr><td>Disponibilit&agrave; VM Critiche</td><td>SmartInfra</td><td>&ge;99.9%</td></tr>
-        <tr><td>SLA Compliance VM</td><td>SmartInfra</td><td>100%</td></tr>
-        <tr><td>Firmware Rete Aggiornato</td><td>SmartInfra (UniFi)</td><td>100%</td></tr>
-        <tr><td>Tempo Prima Risposta</td><td>SmartDESK</td><td>&le;15 min (P1)</td></tr>
+        <tr><td>generate_dora_report.js</td><td><span class="output-tag docx">DOCX</span></td><td>Cliente DORA + Autorit&agrave;</td><td>Trimestrale</td><td>Profilo DORA, matrice SLA, evidenza DR, servizi, incidenti, raccomandazioni</td></tr>
       </tbody>
     </table>
-    <p style="font-size:0.85rem; margin:6px 0;">Clienti DORA: attualmente solo KSGR (Kryalos SGR &mdash; Art. 2(1)(f) DORA). Il profilo DORA definisce SLA, RTO/RPO, frequenza test DR, classificazione incidenti, residenza dati.</p>
+
+    <h3>Clienti DORA</h3>
+    <table class="tech-table">
+      <thead><tr><th>Cliente</th><th>Entity Type</th><th>Contratto</th><th>Test DR</th><th>Incidenti</th></tr></thead>
+      <tbody>
+        <tr><td>Kryalos SGR (KSGR)</td><td>Art. 2(1)(f) &mdash; Gestore fondi</td><td>2026&ndash;2028</td><td>Semestrale</td><td>Classificazione DORA via Desk365</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Profilo DORA</h3>
+    <p style="font-size:0.85rem; margin:6px 0;">Il file <code>dora_profile_KSGR.json</code> definisce: SLA contrattuali (availability, response/resolution per priorit&agrave;), RTO/RPO per classe di servizio (critical: 4h/1h), frequenza test DR, classificazione incidenti, residenza dati (Fastweb Milano primary, Equinix Milano DR, EU Azure/M365), pipeline mapping per aggregazione automatica.</p>
   </div>
 
   <!-- 8. INFRASTRUTTURA CONDIVISA -->
