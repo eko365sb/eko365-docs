@@ -779,21 +779,29 @@
   <div class="detail-section">
     <h2>6. Pipeline SmartInfra &mdash; Private Cloud Hosting</h2>
 
-    <h3>Architettura Sorgente</h3>
-    <p style="font-size:0.85rem; margin:6px 0;">Due sorgenti dati cloud, interrogate in parallelo da GitHub Actions:</p>
-    <div class="flow-diagram">
+    <h3>Flusso Dati</h3>
+    <p style="font-size:0.85rem; margin:6px 0;">Due sorgenti dati cloud, interrogate in parallelo:</p>
+    <div class="flow">
       <div class="flow-step source"><strong>PRTG Hosted API v1</strong><small>eko-prtg.my-prtg.com &middot; 605 sensori</small></div>
-      <div class="flow-arrow">&rarr;</div>
-      <div class="flow-step transform"><strong>fetch_prtg_data.py</strong><small>VM, host ESXi, storage NetApp, network</small></div>
-      <div class="flow-arrow">&rarr;</div>
-      <div class="flow-step output"><strong>vm_sensors / host_sensors / storage_sensors / network_sensors</strong><small>JSON giornaliero per mese</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step process"><strong>fetch_prtg_data.py</strong><small>VM, host, storage, network</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step storage"><strong>Wasabi S3</strong><small>infra/raw/prtg/{YYYY-MM}/</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step process"><strong>analyze_infra.py</strong><small>KPI per-client + summary</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step storage"><strong>Wasabi S3</strong><small>infra/{CLIENT}/analysis/</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step output"><strong>Report DOCX</strong><small>EXT per-client + INT bulletin</small></div>
     </div>
-    <div class="flow-diagram" style="margin-top:8px;">
-      <div class="flow-step source"><strong>UniFi Site Manager API</strong><small>api.ui.com &middot; EA endpoints</small></div>
-      <div class="flow-arrow">&rarr;</div>
-      <div class="flow-step transform"><strong>fetch_unifi_data.py</strong><small>Hosts, sites, devices, ISP metrics</small></div>
-      <div class="flow-arrow">&rarr;</div>
-      <div class="flow-step output"><strong>unifi_{YYYY-MM}.json</strong><small>Inventory + ISP 1h metrics</small></div>
+    <div class="flow" style="margin-top:8px;">
+      <div class="flow-step source"><strong>UniFi Site Mgr API</strong><small>api.ui.com &middot; EA &middot; 6 siti</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step process"><strong>fetch_unifi_data.py</strong><small>Devices, ISP metrics</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step storage"><strong>Wasabi S3</strong><small>infra/raw/unifi/{YYYY-MM}/</small></div>
+      <span class="flow-arrow">&#x2934;</span>
+      <div class="flow-step" style="background:transparent;border:1px dashed var(--gray);color:var(--gray);"><small>Confluisce in analyze_infra.py</small></div>
     </div>
 
     <h3>Analisi &mdash; analyze_infra.py</h3>
@@ -822,14 +830,16 @@
   <div class="detail-section">
     <h2>7. Pipeline DORA Consolidated &mdash; Report Compliance</h2>
 
-    <h3>Architettura</h3>
-    <p style="font-size:0.85rem; margin:6px 0;">Aggrega i dati di tutte le 6 pipeline in un unico JSON consolidato per la generazione del report DORA Art. 28. Non ha una propria fase di fetch &mdash; legge gli output delle altre pipeline.</p>
-    <div class="flow-diagram">
-      <div class="flow-step source"><strong>6 pipeline analysis JSON</strong><small>SmartBackup + Veeam + SmartPATCH + Smart365 + SmartDESK + SmartInfra</small></div>
-      <div class="flow-arrow">&rarr;</div>
-      <div class="flow-step transform"><strong>collect_quarterly_data.py</strong><small>SLA comparison + DR evidence</small></div>
-      <div class="flow-arrow">&rarr;</div>
-      <div class="flow-step output"><strong>DORA_Report_{CLIENT}_{Q}.docx</strong><small>Report trimestrale compliance</small></div>
+    <h3>Flusso Dati</h3>
+    <p style="font-size:0.85rem; margin:6px 0;">Aggrega i dati di tutte le 6 pipeline in un unico JSON consolidato. Non ha fetch proprio &mdash; legge gli output delle altre pipeline.</p>
+    <div class="flow">
+      <div class="flow-step source"><strong>6 pipeline JSON</strong><small>Backup + Veeam + PATCH + 365 + DESK + Infra</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step process"><strong>collect_quarterly_data.py</strong><small>SLA comparison + DR evidence</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step storage"><strong>consolidated.json</strong><small>9 KPI + profilo DORA</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step output"><strong>DORA_Report_{CLIENT}_{Q}.docx</strong><small>Report Art. 28</small></div>
     </div>
 
     <h3>KPI Contrattuali (9 indicatori)</h3>
