@@ -994,16 +994,16 @@
 
   <h3 style="margin-top:28px;">Cosa comprende la piattaforma</h3>
   <div class="highlight-grid">
-    <div class="highlight-card"><h4>4 pipeline di produzione</h4><p>SmartBackup (include Veeam on-prem), SmartDESK (Service Desk), SmartPATCH (Patch Management), Smart365 (Servizi Microsoft 365)</p></div>
-    <div class="highlight-card orange"><h4>19 workflow GitHub Actions</h4><p>4 reusable condivisi (fetch, analyze, report, notify) + 15 caller workflow specifici per pipeline</p></div>
-    <div class="highlight-card"><h4>18 report generator</h4><p>Node.js: DOCX professionali, PPTX con grafici Chart.js, CSV per analisi. Branding EKO365 (Century Gothic, livrea viola/arancione)</p></div>
-    <div class="highlight-card orange"><h4>24 data collector</h4><p>Python: retry con exponential backoff, pagination cursor-based, rate limiting, upload S3 automatico</p></div>
-    <div class="highlight-card"><h4>10 tenant clienti</h4><p>Autenticazione multi-tenant GDAP + OAuth2 + API key. 5 sorgenti dati integrate</p></div>
-    <div class="highlight-card orange"><h4>Zero intervento manuale</h4><p>Schedulazione completamente automatica. Collection giornaliera/settimanale, report mensili, client-facing trimestrali.</p></div>
+    <div class="highlight-card"><h4>6 pipeline di produzione</h4><p>SmartBackup (include Veeam on-prem), SmartDESK (Service Desk), SmartPATCH (Patch Management), Smart365 (Microsoft 365), SmartInfra (Private Cloud), DORA Consolidated</p></div>
+    <div class="highlight-card orange"><h4>22 workflow GitHub Actions</h4><p>4 reusable condivisi (fetch, analyze, report, notify) + 18 caller workflow specifici per pipeline</p></div>
+    <div class="highlight-card"><h4>27 report generator</h4><p>Node.js: 19 DOCX (packDocument) + 8 PPTX (PptxGenJS) con grafici Chart.js, CSV. Libreria condivisa @eko365/docx-lib</p></div>
+    <div class="highlight-card orange"><h4>28 data collector</h4><p>Python: retry con exponential backoff, pagination, rate limiting, upload S3. Fetch da 7 sorgenti dati esterne</p></div>
+    <div class="highlight-card"><h4>10+ clienti gestiti</h4><p>Autenticazione multi-tenant GDAP + OAuth2 + API key. 7 sorgenti dati integrate (Desk365, AFI.ai, Veeam, Graph, Action1, PRTG, UniFi)</p></div>
+    <div class="highlight-card orange"><h4>Zero intervento manuale</h4><p>Schedulazione completamente automatica. Collection giornaliera/settimanale, report mensili, client-facing trimestrali. Template per nuove pipeline.</p></div>
   </div>
 
   <p style="font-size:0.78rem;color:var(--gray);margin-top:24px;padding-top:16px;border-top:1px solid #e0e0e0;">
-    <strong>Ultimo aggiornamento:</strong> 23 marzo 2026 &mdash; Metriche calcolate con <code>find + wc -l</code> (esclusi node_modules, __pycache__, data/, .git). Valori in <strong>righe di codice</strong>.
+    <strong>Ultimo aggiornamento:</strong> 7 aprile 2026 &mdash; Metriche calcolate con <code>find + wc -l</code> (esclusi node_modules, __pycache__, data/, .git). Valori in <strong>righe di codice</strong>.
   </p>
 
 </div>
