@@ -195,7 +195,7 @@
 
 <div class="header">
   <h1>EKO365 MSSP — Automated Reporting Platform</h1>
-  <div class="subtitle">Architettura dei servizi di reportistica automatizzata — 4 pipeline, 10 tenant, 3 livelli di output</div>
+  <div class="subtitle">Architettura dei servizi di reportistica automatizzata — 6 pipeline, 10+ clienti, 3 livelli di output</div>
 </div>
 
 <div class="doc-links">
@@ -319,6 +319,37 @@
           <span class="output-tag docx">DOCX</span>
           <span class="output-tag pptx">PPTX</span>
         </div>
+      </div>
+
+      <div class="hl-pipeline">
+        <div class="badge">Mensile / Trim.</div>
+        <h3>SmartInfra — Private Cloud Hosting</h3>
+        <div class="phases">
+          <span class="phase fetch">Fetch &times;2</span>
+          <span class="phase analyze">Analyze</span>
+          <span class="phase report">Report</span>
+        </div>
+        <div class="freq">2&ordm; del mese, 07:00 UTC</div>
+        <div class="outputs">
+          <span class="output-tag docx">DOCX</span>
+          <span class="output-tag json">JSON</span>
+        </div>
+        <div style="font-size:0.72rem;color:var(--gray);margin-top:4px;">PRTG + UniFi | 6 clienti, 27 VM</div>
+      </div>
+
+      <div class="hl-pipeline" style="border-left-color: var(--primary);">
+        <div class="badge" style="background: var(--primary);">Trimestrale</div>
+        <h3>DORA Consolidated — Compliance</h3>
+        <div class="phases">
+          <span class="phase analyze">Collect</span>
+          <span class="phase report">Report</span>
+        </div>
+        <div class="freq">Trimestrale (aggrega 6 pipeline)</div>
+        <div class="outputs">
+          <span class="output-tag docx">DOCX</span>
+          <span class="output-tag json">JSON</span>
+        </div>
+        <div style="font-size:0.72rem;color:var(--gray);margin-top:4px;">9 KPI contrattuali | KSGR (DORA)</div>
       </div>
     </div>
 
@@ -787,6 +818,11 @@
       <span class="desc">Ogni giorno, 07:00 UTC (09:00 IT) &mdash; SmartPATCH tutti i moduli + KPI (auto-detect phase)</span>
       <span class="pipeline-tag tag-smartpatch">SmartPATCH</span>
     </div>
+    <div class="schedule-row">
+      <span class="cron">0 7 2 * *</span>
+      <span class="desc">2&ordm; del mese, 07:00 UTC &mdash; SmartInfra fetch PRTG + UniFi (parallelo), analyze, report. Auto quarter-end</span>
+      <span class="pipeline-tag" style="background:#E8F5E9;color:#1B5E20;">SmartInfra</span>
+    </div>
 
     <h3>Storage — Wasabi S3</h3>
     <p style="font-size: 0.85rem; color: var(--gray); margin-bottom: 12px;">Bucket unico <code>eko365-pipelines</code> (eu-south-1), partizionato per pipeline</p>
@@ -839,6 +875,16 @@
   <span class="file">{YYYY-MM-DD}_ops_detail.json</span>    <span class="comment"># Reachability, shadow IT</span>
       </div>
 
+      <div class="s3-tree">
+<span class="comment"># SmartInfra (PRTG + UniFi)</span>
+<span class="folder">infra/</span>
+  <span class="file">raw/prtg/{YYYY-MM}/</span>           <span class="comment"># VM, host, storage, network sensors</span>
+  <span class="file">raw/unifi/{YYYY-MM}/</span>          <span class="comment"># Device inventory, ISP metrics</span>
+  <span class="file">{CLIENT}/analysis/</span>            <span class="comment"># Per-client KPI JSON</span>
+  <span class="file">analysis/</span>                     <span class="comment"># Cross-client summary</span>
+  <span class="file">reports/</span>                      <span class="comment"># Bollettino + DOCX per-client</span>
+      </div>
+
     </div>
 
     <h3>Autenticazione per Pipeline</h3>
@@ -850,6 +896,8 @@
         <tr><td>SmartBackup (Veeam)</td><td>Client Credentials (MSAL)</td><td>EKO365-Pipeline-MailReader</td><td>Graph Mail.Read + Application Access Policy</td></tr>
         <tr><td>Smart365</td><td>GDAP + OBO Refresh Token</td><td>EKO365-MSP-Automation (44 scope)</td><td>Graph API multi-tenant</td></tr>
         <tr><td>SmartPATCH</td><td>OAuth2 Client Credentials</td><td>&mdash; (API key/secret)</td><td>Action1 REST API &middot; EU</td></tr>
+        <tr><td>SmartInfra (PRTG)</td><td>API Key (query param)</td><td>&mdash;</td><td>PRTG Hosted API v1</td></tr>
+        <tr><td>SmartInfra (UniFi)</td><td>API Key (header)</td><td>&mdash;</td><td>UniFi Site Manager EA API</td></tr>
       </tbody>
     </table>
 
