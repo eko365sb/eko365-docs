@@ -14,6 +14,12 @@
     text-transform: uppercase; letter-spacing: 0.12em; color: var(--gray);
     border-bottom: 1px solid #ddd; padding-bottom: 8px;
   }
+  .status-private {
+    background: #FCEBEA; color: #922B21;
+  }
+  .access-note {
+    padding: 4px 40px 0; font-size: 0.72rem; color: var(--gray); font-style: italic;
+  }
 </style>
 </head>
 <body>
@@ -34,21 +40,77 @@
 
   <a href="reporting-platform/" class="hub-card">
     <span class="status status-live">Live</span>
-    <h2>SmartREPORTING — Platform Architecture</h2>
-    <p>Schema architetturale delle 5 pipeline SmartREPORTING: Desk365, SmartBackup (AFI), Veeam Backup, Microsoft 365, SmartPATCH (Action1).</p>
+    <h2>SmartReporting Platform</h2>
+    <p>Architettura end-to-end: 6 pipeline (smartinfra, smartbackup, smartpatch, smart365, smartdesk, dora-consolidated) + supervisor + manifest contract + CLI download. Include calendario mensile, runbook operativo e lessons learned post-F4.</p>
     <div class="meta">
-      <span>Ultimo aggiornamento: Marzo 2026</span>
-      <span>2 viste (overview + dettaglio)</span>
+      <span>Aggiornato Maggio 2026</span>
+      <span>4 viste: Overview / Pipeline / Supervisor / Runbook</span>
     </div>
   </a>
 
   <a href="platform-stats/" class="hub-card">
     <span class="status status-live">Live</span>
-    <h2>SmartREPORTING — Platform Statistics</h2>
+    <h2>SmartReporting Statistics</h2>
     <p>Metriche di sviluppo: righe di codice, file, commit, linguaggi, dettaglio per repository e componenti della piattaforma.</p>
     <div class="meta">
-      <span>Ultimo aggiornamento: Marzo 2026</span>
+      <span>Aggiornato Marzo 2026</span>
       <span>~64.000 righe, 6 repo, 103 commit</span>
+    </div>
+  </a>
+
+</div>
+
+<!-- SEZIONE: Documentazione tecnica deep -->
+<div class="hub-section-label">Documentazione tecnica</div>
+<p class="access-note">I link in questa sezione richiedono accesso al repo privato <code>eko365sb/pipeline-workflows-docs</code> (team EKO365 con membership all'org).</p>
+<div class="hub-grid">
+
+  <a href="https://github.com/eko365sb/pipeline-workflows-docs/blob/main/ARCHITECTURE.md" class="hub-card">
+    <span class="status status-private">Private</span>
+    <h2>ARCHITECTURE.md</h2>
+    <p>Documentazione tecnica completa: 6 pipeline, reusable workflows GitHub Actions, dependency graph foundation tooling, dependency F3+F4. Per il team tecnico interno.</p>
+    <div class="meta">
+      <span>Repo privato</span>
+      <span>Aggiornato 2026-05-01</span>
+    </div>
+  </a>
+
+  <a href="https://github.com/eko365sb/pipeline-workflows-docs/blob/main/docs/manifest-contract.md" class="hub-card">
+    <span class="status status-private">Private</span>
+    <h2>Manifest Contract</h2>
+    <p>Source of truth del contratto pipeline ↔ supervisor: schema JSON, naming convention DOCX, S3 layout, helper Python <code>runs.write_manifest()</code> e <code>discover_reports()</code>.</p>
+    <div class="meta">
+      <span>Versione contract: 1.0</span>
+      <span>Stable</span>
+    </div>
+  </a>
+
+  <a href="https://github.com/eko365sb/pipeline-workflows-docs/blob/main/docs/Manuale_Operativo_Pipeline.md" class="hub-card">
+    <span class="status status-private">Private</span>
+    <h2>Manuale Operativo</h2>
+    <p>Runbook quotidiano: scaricare report con <code>eko365-download</code>, gestire failure, triggerare run manuali, onboardare un nuovo cliente.</p>
+    <div class="meta">
+      <span>Repo privato</span>
+      <span>v2.0 (post-F4)</span>
+    </div>
+  </a>
+
+  <a href="https://github.com/eko365sb/pipeline-workflows-docs/blob/main/docs/foundation-tooling.md" class="hub-card">
+    <span class="status status-private">Private</span>
+    <h2>Foundation Tooling</h2>
+    <p><code>eko365-pipeline-core</code> v0.1.4, <code>@eko365/docx-lib</code> v1.6.0, <code>@eko365/msp-config</code> v0.1.0. API, sotto-moduli, naming convention deliverable.</p>
+    <div class="meta">
+      <span>Repo privato</span>
+    </div>
+  </a>
+
+  <a href="https://github.com/eko365sb/pipeline-workflows-docs/blob/main/docs/workflow-integration-pattern.md" class="hub-card">
+    <span class="status status-private">Private</span>
+    <h2>Workflow Integration Pattern</h2>
+    <p>Lesson learned post-F4.2: pattern "code works but not called". Come tracciare la invocation chain del workflow di produzione e dove scrivere il manifest write.</p>
+    <div class="meta">
+      <span>Repo privato</span>
+      <span>Best practice</span>
     </div>
   </a>
 
