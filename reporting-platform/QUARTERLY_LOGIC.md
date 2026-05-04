@@ -9,8 +9,8 @@ How each EKO365 reporting pipeline handles automatic quarterly report generation
 | SmartBackup (AFI.ai) | smartbackup-reports | `0 6 2 * *` | 2nd | 03, 06, 09, 12 |
 | Veeam Backup | smartbackup-reports | `0 10 * * *` | 2nd (auto-detect) | 03, 06, 09, 12 |
 | SmartPATCH | smartpatch-reports | `0 7 * * *` | 1st (auto-detect) | 03, 06, 09, 12 |
-| M365 Graph | m365-graph-pipeline | `0 14 3 * *` | 3rd | 03, 06, 09, 12 |
-| Desk365 | desk365-reports | `0 6 3 * *` | 3rd | 03, 06, 09, 12 |
+| M365 Graph | smart365-pipeline | `0 14 3 * *` | 3rd | 03, 06, 09, 12 |
+| Desk365 | smartdesk-reports | `0 6 3 * *` | 3rd | 03, 06, 09, 12 |
 
 ## Quarter-End Detection Patterns
 
