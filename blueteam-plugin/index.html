@@ -1,0 +1,2087 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EKO365 BlueTeam Plugin — Guida Operativa</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --orange:   #EE774A;
+    --purple:   #4332AC;
+    --body:     #4A4660;
+    --bg:       #F8F7FC;
+    --sidebar-bg: #1E1A3A;
+    --sidebar-text: #C9C5E8;
+    --sidebar-active: #EE774A;
+    --card-bg:  #FFFFFF;
+    --border:   #E8E5F4;
+    --green:    #2ECC71;
+    --yellow:   #F39C12;
+    --red:      #E74C3C;
+    --blue:     #3498DB;
+    --code-bg:  #1E1A3A;
+    --row-alt:  #F5F4F9;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', 'Century Gothic', sans-serif;
+    color: var(--body);
+    background: var(--bg);
+    display: flex;
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── SIDEBAR ── */
+  #sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    overflow-y: auto;
+    z-index: 100;
+  }
+
+  .sidebar-logo {
+    padding: 24px 20px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .sidebar-logo .brand {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--orange);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .sidebar-logo .plugin-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    margin-top: 4px;
+  }
+  .sidebar-logo .version {
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+    margin-top: 2px;
+  }
+
+  .sidebar-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.25);
+    padding: 20px 20px 6px;
+  }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 20px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+    font-size: 13.5px;
+    color: var(--sidebar-text);
+    text-decoration: none;
+  }
+  .sidebar-item:hover {
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+  }
+  .sidebar-item.active {
+    border-left-color: var(--orange);
+    background: rgba(238,119,74,0.1);
+    color: #fff;
+    font-weight: 500;
+  }
+  .sidebar-item .icon {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .badge-type {
+    margin-left: auto;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge-readonly  { background: rgba(46,204,113,0.2); color: #2ECC71; }
+  .badge-write     { background: rgba(238,119,74,0.2); color: var(--orange); }
+
+  /* ── MAIN ── */
+  #main {
+    margin-left: 260px;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .section { display: none; }
+  .section.visible { display: block; }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    padding: 14px 40px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .topbar-breadcrumb {
+    font-size: 12px;
+    color: rgba(74,70,96,0.45);
+  }
+  .topbar-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--body);
+  }
+
+  /* ── CONTENT ── */
+  .content {
+    padding: 36px 48px;
+    max-width: 900px;
+  }
+
+  h1 { font-size: 26px; font-weight: 700; color: var(--purple); margin-bottom: 8px; }
+  h2 { font-size: 18px; font-weight: 600; color: var(--purple); margin: 32px 0 12px; }
+  h3 { font-size: 15px; font-weight: 600; color: var(--body); margin: 20px 0 8px; }
+  p  { margin-bottom: 12px; }
+
+  .subtitle {
+    font-size: 15px;
+    color: rgba(74,70,96,0.6);
+    margin-bottom: 28px;
+  }
+
+  /* ── SKILL HERO ── */
+  .skill-hero {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 28px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .skill-hero-icon {
+    width: 52px; height: 52px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  .bg-orange { background: rgba(238,119,74,0.12); }
+  .bg-purple { background: rgba(67,50,172,0.12); }
+  .bg-green  { background: rgba(46,204,113,0.12); }
+  .bg-blue   { background: rgba(52,152,219,0.12); }
+  .bg-red    { background: rgba(231,76,60,0.12); }
+
+  .skill-hero-body h1 { font-size: 22px; margin-bottom: 4px; }
+  .skill-hero-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+
+  .chip {
+    font-size: 11px; font-weight: 600;
+    padding: 3px 10px; border-radius: 20px;
+    letter-spacing: 0.3px;
+  }
+  .chip-readonly { background: rgba(46,204,113,0.12); color: #27AE60; }
+  .chip-write    { background: rgba(238,119,74,0.12); color: #D35400; }
+  .chip-freq     { background: rgba(67,50,172,0.1); color: var(--purple); }
+  .chip-trigger  { background: rgba(74,70,96,0.08); color: var(--body); }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: rgba(74,70,96,0.45);
+    margin-bottom: 12px;
+  }
+
+  /* ── STEPS ── */
+  .steps { list-style: none; }
+  .steps li {
+    display: flex; gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .steps li:last-child { border-bottom: none; padding-bottom: 0; }
+  .step-num {
+    width: 26px; height: 26px;
+    background: var(--purple);
+    color: white;
+    border-radius: 50%;
+    font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .step-body { flex: 1; }
+  .step-title { font-weight: 600; color: var(--body); margin-bottom: 4px; }
+  .step-desc  { font-size: 13.5px; color: rgba(74,70,96,0.75); }
+
+  /* ── CODE ── */
+  .code-block {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 10px 0;
+    position: relative;
+  }
+  .code-block pre {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 13px;
+    color: #C9C5E8;
+    white-space: pre;
+    overflow-x: auto;
+  }
+  .code-block .copy-btn {
+    position: absolute; top: 10px; right: 10px;
+    background: rgba(255,255,255,0.1);
+    border: none; border-radius: 5px;
+    color: rgba(255,255,255,0.6);
+    font-size: 11px; font-weight: 600;
+    padding: 4px 10px; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .code-block .copy-btn:hover { background: rgba(255,255,255,0.2); color: white; }
+  .code-block .copy-btn.copied { background: rgba(46,204,113,0.3); color: #2ECC71; }
+
+  .inline-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    background: rgba(67,50,172,0.08);
+    color: var(--purple);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  /* ── COMMAND PILL ── */
+  .command-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px; font-weight: 500;
+    color: var(--orange);
+    cursor: pointer;
+    border: 1px solid rgba(238,119,74,0.3);
+    transition: all 0.15s;
+    margin: 4px 0;
+  }
+  .command-pill:hover { border-color: var(--orange); background: #2A2550; }
+  .command-pill .cp-icon { font-size: 12px; }
+
+  /* ── OUTPUT PREVIEW ── */
+  .output-preview {
+    background: #0F0D1F;
+    border: 1px solid rgba(238,119,74,0.2);
+    border-radius: 8px;
+    padding: 16px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    color: #A8A3C9;
+    line-height: 1.7;
+    margin: 8px 0;
+  }
+  .output-preview .o-header { color: var(--orange); font-weight: 600; }
+  .output-preview .o-section { color: #7EC8E3; }
+  .output-preview .o-ok    { color: #2ECC71; }
+  .output-preview .o-warn  { color: #F39C12; }
+  .output-preview .o-dim   { color: #5A556E; }
+
+  /* ── WARNING / NOTE ── */
+  .callout {
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 12px 0;
+    display: flex; gap: 10px;
+    font-size: 13.5px;
+  }
+  .callout-warn  { background: rgba(243,156,18,0.08); border-left: 3px solid var(--yellow); }
+  .callout-error { background: rgba(231,76,60,0.07);  border-left: 3px solid var(--red); }
+  .callout-ok    { background: rgba(46,204,113,0.07); border-left: 3px solid var(--green); }
+  .callout-info  { background: rgba(67,50,172,0.07);  border-left: 3px solid var(--purple); }
+  .callout-icon  { font-size: 16px; margin-top: 1px; flex-shrink: 0; }
+
+  /* ── TABLE ── */
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13.5px; }
+  th {
+    background: var(--purple);
+    color: white;
+    padding: 9px 14px;
+    text-align: left;
+    font-size: 12px; font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  th:first-child { border-radius: 6px 0 0 0; }
+  th:last-child  { border-radius: 0 6px 0 0; }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--border); }
+  tr:nth-child(even) td { background: var(--row-alt); }
+
+  /* ── GRID OVERVIEW ── */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .skill-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-top: 3px solid var(--purple);
+  }
+  .skill-card:hover {
+    box-shadow: 0 4px 16px rgba(67,50,172,0.12);
+    transform: translateY(-2px);
+  }
+  .skill-card.orange-top { border-top-color: var(--orange); }
+  .skill-card h3 { font-size: 14px; margin: 8px 0 4px; }
+  .skill-card p  { font-size: 12.5px; color: rgba(74,70,96,0.65); margin: 0; }
+  .skill-card .sc-icon { font-size: 22px; }
+  .skill-card .sc-cmd  {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--orange);
+    margin-top: 8px;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+  }
+
+  /* ── RULE CARDS ── */
+  .rule-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .rule-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; font-weight: 700;
+    background: var(--purple);
+    color: white;
+    padding: 3px 9px;
+    border-radius: 5px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+  .rule-badge.orange { background: var(--orange); }
+  .rule-body { flex: 1; font-size: 13.5px; }
+  .rule-body strong { color: var(--body); }
+
+  /* ── ANTIPATTERN ── */
+  .antipattern {
+    display: flex; gap: 10px;
+    background: rgba(231,76,60,0.05);
+    border-radius: 7px;
+    padding: 11px 14px;
+    margin-bottom: 8px;
+    font-size: 13.5px;
+    border-left: 3px solid var(--red);
+  }
+  .antipattern .ap-icon { color: var(--red); flex-shrink: 0; margin-top: 1px; }
+
+  /* ── WELCOME HERO ── */
+  .welcome-hero {
+    background: linear-gradient(135deg, var(--purple) 0%, #2E2480 100%);
+    border-radius: 14px;
+    padding: 36px 40px;
+    color: white;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .welcome-hero::after {
+    content: '🛡️';
+    position: absolute;
+    right: 32px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 72px;
+    opacity: 0.15;
+  }
+  .welcome-hero h1 { color: white; font-size: 24px; margin-bottom: 8px; }
+  .welcome-hero p  { color: rgba(255,255,255,0.75); font-size: 15px; margin: 0; }
+  .welcome-hero .wh-tag {
+    display: inline-block;
+    background: rgba(238,119,74,0.3);
+    color: var(--orange);
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 4px;
+    margin-bottom: 12px;
+  }
+
+  /* ── PROGRESS INSTALL ── */
+  .install-step {
+    display: flex; gap: 16px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .install-step::before {
+    content: '';
+    position: absolute;
+    left: 19px; top: 36px;
+    width: 2px;
+    height: calc(100% - 10px);
+    background: var(--border);
+  }
+  .install-step:last-child::before { display: none; }
+  .is-num {
+    width: 38px; height: 38px;
+    background: var(--purple);
+    color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px;
+    flex-shrink: 0;
+    z-index: 1;
+  }
+  .is-body { flex: 1; padding-top: 6px; }
+  .is-title { font-weight: 600; margin-bottom: 6px; }
+  .is-desc  { font-size: 13.5px; color: rgba(74,70,96,0.7); margin-bottom: 8px; }
+
+  /* ── SCROLLBAR ── */
+  #sidebar::-webkit-scrollbar { width: 4px; }
+  #sidebar::-webkit-scrollbar-track { background: transparent; }
+  #sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+  /* ── DECISION FLOW ── */
+  .flow-box {
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 8px 0;
+    font-size: 13.5px;
+    background: white;
+  }
+  .flow-arrow {
+    text-align: center;
+    color: rgba(74,70,96,0.35);
+    font-size: 18px;
+    margin: 2px 0;
+  }
+  .flow-decision {
+    background: rgba(67,50,172,0.07);
+    border-color: var(--purple);
+    border-style: dashed;
+    font-weight: 500;
+  }
+  .flow-ok { border-color: var(--green); }
+  .flow-warn { border-color: var(--yellow); }
+  .flow-error { border-color: var(--red); }
+
+  /* ── QUICK REF ── */
+  .qr-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13.5px;
+  }
+  .qr-row:last-child { border-bottom: none; }
+  .qr-skill { width: 130px; font-weight: 600; flex-shrink: 0; }
+  .qr-cmd {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--orange);
+    width: 200px; flex-shrink: 0;
+  }
+  .qr-desc { flex: 1; color: rgba(74,70,96,0.7); }
+  .qr-type { flex-shrink: 0; }
+
+  /* ── LINGUAGGIO NATURALE ── */
+  .nl-table { width: 100%; border-collapse: collapse; margin: 14px 0; }
+  .nl-table td { padding: 0; vertical-align: middle; }
+  .nl-bubble {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 14px 14px 14px 4px;
+    padding: 9px 14px;
+    font-size: 13.5px;
+    color: var(--body);
+    display: inline-block;
+    max-width: 100%;
+    line-height: 1.4;
+  }
+  .nl-bubble .nl-tenant {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 2px;
+  }
+  .nl-arrow {
+    text-align: center;
+    font-size: 18px;
+    color: rgba(74,70,96,0.25);
+    padding: 0 10px;
+    white-space: nowrap;
+  }
+  .nl-cmd {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--orange);
+    background: rgba(238,119,74,0.08);
+    border: 1px solid rgba(238,119,74,0.25);
+    border-radius: 6px;
+    padding: 5px 10px;
+    white-space: nowrap;
+  }
+  .nl-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .nl-row:last-child { margin-bottom: 0; }
+
+  .nl-skill-block {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 14px 0 0;
+  }
+  .nl-skill-block .nl-label {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 1.2px; text-transform: uppercase;
+    color: rgba(74,70,96,0.35);
+    margin-bottom: 12px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     SIDEBAR
+══════════════════════════════════════════ -->
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand">EKO365 SOC</div>
+    <div class="plugin-name">BlueTeam Plugin</div>
+    <div class="version">v0.1.0-beta · Guida Operativa</div>
+  </div>
+
+  <div class="sidebar-section-label">Introduzione</div>
+  <a class="sidebar-item active" onclick="show('welcome')" href="#">
+    <span class="icon">🏠</span> Benvenuto/a nel SOC
+  </a>
+  <a class="sidebar-item" onclick="show('concepts')" href="#">
+    <span class="icon">🧩</span> Plugin, Skill e MCP
+  </a>
+  <a class="sidebar-item" onclick="show('install')" href="#">
+    <span class="icon">⚙️</span> Installazione
+  </a>
+  <a class="sidebar-item" onclick="show('credentials')" href="#">
+    <span class="icon">🔐</span> Setup credenziali
+  </a>
+  <a class="sidebar-item" onclick="show('overview')" href="#">
+    <span class="icon">🗺️</span> Panoramica Skill
+  </a>
+
+  <div class="sidebar-section-label">Le 5 Skills</div>
+  <a class="sidebar-item" onclick="show('morning')" href="#">
+    <span class="icon">🌅</span> morning-checklist
+    <span class="badge-type badge-readonly">lettura</span>
+  </a>
+  <a class="sidebar-item" onclick="show('triage-ooal')" href="#">
+    <span class="icon">📍</span> triage-ooal
+    <span class="badge-type badge-write">chiusura</span>
+  </a>
+  <a class="sidebar-item" onclick="show('triage-burst')" href="#">
+    <span class="icon">📂</span> triage-burst
+    <span class="badge-type badge-write">chiusura</span>
+  </a>
+  <a class="sidebar-item" onclick="show('investigate')" href="#">
+    <span class="icon">🔍</span> investigate-user
+    <span class="badge-type badge-readonly">lettura</span>
+  </a>
+  <a class="sidebar-item" onclick="show('diagnose')" href="#">
+    <span class="icon">🩺</span> diagnose-stale
+    <span class="badge-type badge-readonly">lettura</span>
+  </a>
+
+  <div class="sidebar-section-label">Riferimento</div>
+  <a class="sidebar-item" onclick="show('quickref')" href="#">
+    <span class="icon">⚡</span> Quick Reference
+  </a>
+  <a class="sidebar-item" onclick="show('antipatterns')" href="#">
+    <span class="icon">🚫</span> Anti-pattern
+  </a>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════════ -->
+<main id="main">
+
+  <!-- ─── WELCOME ─── -->
+  <div id="section-welcome" class="section visible">
+    <div class="topbar">
+      <span class="topbar-breadcrumb">EKO365 BlueTeam Plugin</span>
+      <span style="color:rgba(74,70,96,0.3)">›</span>
+      <span class="topbar-title">Benvenuto/a</span>
+    </div>
+    <div class="content">
+      <div class="welcome-hero">
+        <div class="wh-tag">SOC EKO365 · Guida Operativa</div>
+        <h1>Benvenuto/a nel BlueTeam Plugin!</h1>
+        <p>Questa guida accompagna ogni nuovo operatore SOC nell'attivazione e nell'uso delle 5 skill operative che automatizzano i flussi più frequenti — dalla gestione OOAL alla diagnosi ticket, passando per la checklist mattutina.</p>
+      </div>
+
+      <h2>Cos'è questo plugin?</h2>
+      <p>Il <strong>BlueTeam Plugin</strong> è un estensione privata EKO365 per Claude (desktop o CLI) che espone cinque <em>skill</em> orientate al flusso operativo SOC. Ogni skill orchestra in automatico le chiamate al server MCP <span class="inline-code">blueteam</span>, presenta l'evidenza in formato strutturato e — quando necessario — propone la chiusura con un <strong>sì/no</strong> operatore prima di scrivere qualsiasi cosa.</p>
+
+      <div class="callout callout-ok">
+        <span class="callout-icon">✅</span>
+        <div><strong>Sicurezza by design.</strong> Le due skill di chiusura (triage-ooal e triage-burst) mostrano sempre una proposta e attendono la tua conferma. Nessuna scrittura avviene senza il tuo Y esplicito.</div>
+      </div>
+
+      <h2>Le 5 skill in un colpo d'occhio</h2>
+      <div class="skills-grid">
+        <div class="skill-card" onclick="show('morning')">
+          <div class="sc-icon">🌅</div>
+          <h3>morning-checklist</h3>
+          <p>Dashboard giornaliera: coda, salute Argentino, backlog stagnante, prioritizzazione.</p>
+          <div class="sc-cmd">/blueteam:morning-checklist</div>
+        </div>
+        <div class="skill-card orange-top" onclick="show('triage-ooal')">
+          <div class="sc-icon">📍</div>
+          <h3>triage-ooal</h3>
+          <p>Flusso completo per ticket Outside Approved Location. Regole R12/R17 + LLM fallback.</p>
+          <div class="sc-cmd">/blueteam:triage-ooal &lt;ticket&gt;</div>
+        </div>
+        <div class="skill-card orange-top" onclick="show('triage-burst')">
+          <div class="sc-icon">📂</div>
+          <h3>triage-burst</h3>
+          <p>Gestione burst File Download/Upload Limit. Individua ticket padre e figli, chiude l'intero insieme.</p>
+          <div class="sc-cmd">/blueteam:triage-burst &lt;ticket&gt;</div>
+        </div>
+        <div class="skill-card" onclick="show('investigate')">
+          <div class="sc-icon">🔍</div>
+          <h3>investigate-user</h3>
+          <p>Profilo utente M365: baseline location, device Intune, anomalie 24h, sign-in.</p>
+          <div class="sc-cmd">/blueteam:investigate-user &lt;email&gt;</div>
+        </div>
+        <div class="skill-card" onclick="show('diagnose')">
+          <div class="sc-icon">🩺</div>
+          <h3>diagnose-stale</h3>
+          <p>Diagnosi ticket stagnante: cronologia Argentino, errori provider, azione consigliata.</p>
+          <div class="sc-cmd">/blueteam:diagnose-stale &lt;ticket&gt;</div>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div>Inizia dall'<strong>installazione</strong> se non hai ancora attivato il plugin, poi esplora ogni skill dalla sidebar.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── CONCEPTS ─── -->
+  <div id="section-concepts" class="section">
+    <div class="topbar">
+      <span class="topbar-breadcrumb">EKO365 BlueTeam Plugin</span>
+      <span style="color:rgba(74,70,96,0.3)">›</span>
+      <span class="topbar-title">Plugin, Skill e MCP</span>
+    </div>
+    <div class="content">
+      <h1>🧩 Plugin, Skill e MCP — come funzionano</h1>
+      <p class="subtitle">Tre concetti fondamentali per capire cosa fa il BlueTeam Plugin sotto il cofano.</p>
+
+      <!-- CLAUDE -->
+      <div class="card" style="border-top: 3px solid var(--purple); margin-bottom: 24px;">
+        <div style="display:flex; gap:16px; align-items:flex-start;">
+          <div class="skill-hero-icon bg-purple" style="width:44px;height:44px;font-size:20px;flex-shrink:0;">🤖</div>
+          <div>
+            <h3 style="margin-top:0;">Claude — l'assistente</h3>
+            <p style="margin-bottom:8px;">Claude è il modello linguistico di Anthropic che fa da cervello dell'intero sistema. Nelle sessioni Cowork o Claude Code, Claude non si limita a rispondere: <strong>ragiona, pianifica, chiama strumenti esterni e presenta i risultati</strong> in formato strutturato per l'operatore.</p>
+            <p style="margin:0;font-size:13.5px;color:rgba(74,70,96,0.7);">Nel nostro SOC, Claude legge i ticket su Desk365, consulta Entra Admin Center e SaaS Alerts via MCP, applica le nostre regole di classificazione e — solo su tua conferma — scrive la nota di chiusura.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLUGIN -->
+      <div class="card" style="border-top: 3px solid var(--orange); margin-bottom: 24px;">
+        <div style="display:flex; gap:16px; align-items:flex-start;">
+          <div class="skill-hero-icon bg-orange" style="width:44px;height:44px;font-size:20px;flex-shrink:0;">📦</div>
+          <div>
+            <h3 style="margin-top:0;">Plugin — il pacchetto</h3>
+            <p style="margin-bottom:8px;">Un <strong>plugin</strong> è un pacchetto installabile che estende le capacità di Claude aggiungendo skill, configurazioni e connessioni a strumenti specifici. Si installa una volta sola e resta disponibile in tutte le sessioni.</p>
+            <p style="margin-bottom:8px;font-size:13.5px;color:rgba(74,70,96,0.7);">Il <strong>BlueTeam Plugin</strong> è un plugin privato EKO365 che raggruppa le 5 skill operative SOC. Una volta installato, Claude sa come comportarsi quando gli chiedi di analizzare un ticket OOAL o avviare la checklist mattutina — perché il plugin gli fornisce le istruzioni.</p>
+            <div style="background:var(--row-alt);border-radius:6px;padding:10px 14px;font-size:13px;">
+              <strong>Analogia:</strong> pensa al plugin come alla nostra <em>procedura operativa standard</em> caricata in memoria. Invece di aprire manualmente Desk365, Entra Admin Center e il portale SaaS Alerts seguendo un protocollo, Claude lo fa in automatico — rispettando esattamente le stesse regole operative del nostro SOC.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SKILL -->
+      <div class="card" style="border-top: 3px solid #2ECC71; margin-bottom: 24px;">
+        <div style="display:flex; gap:16px; align-items:flex-start;">
+          <div class="skill-hero-icon bg-green" style="width:44px;height:44px;font-size:20px;flex-shrink:0;">⚡</div>
+          <div>
+            <h3 style="margin-top:0;">Skill — il flusso operativo</h3>
+            <p style="margin-bottom:8px;">Una <strong>skill</strong> è un flusso operativo pre-configurato che Claude esegue quando viene invocato con il comando slash corrispondente. Ogni skill definisce: quali dati raccogliere, in quale ordine, come interpretarli e come presentare il risultato all'operatore.</p>
+            <p style="margin-bottom:10px;font-size:13.5px;color:rgba(74,70,96,0.7);">Nel BlueTeam Plugin, ogni skill corrisponde a un tipo di compito SOC ricorrente. Invece di aprire manualmente Desk365, Entra Admin Center e il portale SaaS Alerts uno per uno — come facevamo prima — scrivi un comando e Claude fa tutto il lavoro di raccolta. Tu validi e decidi.</p>
+            <table style="margin:0;">
+              <thead><tr><th>Comando</th><th>Cosa fa la skill</th></tr></thead>
+              <tbody>
+                <tr><td><span class="inline-code">/blueteam:morning-checklist</span></td><td>Aggrega coda, salute agente, backlog</td></tr>
+                <tr><td><span class="inline-code">/blueteam:triage-ooal &lt;N&gt;</span></td><td>Analizza e propone chiusura ticket OOAL</td></tr>
+                <tr><td><span class="inline-code">/blueteam:triage-burst &lt;N&gt;</span></td><td>Gestisce burst File Limit (padre + figli)</td></tr>
+                <tr><td><span class="inline-code">/blueteam:investigate-user &lt;email&gt;</span></td><td>Profila un utente M365 completamente</td></tr>
+                <tr><td><span class="inline-code">/blueteam:diagnose-stale &lt;N&gt;</span></td><td>Diagnostica perché un ticket è fermo</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- MCP -->
+      <div class="card" style="border-top: 3px solid var(--blue); margin-bottom: 24px;">
+        <div style="display:flex; gap:16px; align-items:flex-start;">
+          <div class="skill-hero-icon bg-blue" style="width:44px;height:44px;font-size:20px;flex-shrink:0;">🔌</div>
+          <div>
+            <h3 style="margin-top:0;">MCP Server — il ponte verso i sistemi</h3>
+            <p style="margin-bottom:8px;"><strong>MCP</strong> (Model Context Protocol) è il protocollo standard che permette a Claude di interagire con i nostri sistemi in modo controllato e sicuro. Il <strong>server MCP blueteam</strong> è il componente che espone a Claude le operazioni sui nostri portali SOC.</p>
+            <p style="margin-bottom:10px;font-size:13.5px;color:rgba(74,70,96,0.7);">Senza il server MCP, Claude potrebbe ragionare ma non aprire Desk365 per leggere i ticket, non consultare Entra Admin Center per i log di accesso, non scrivere la nota di chiusura. È il server MCP che abilita quelle operazioni — con guardrail integrati (idempotenza, autorizzazioni, audit log).</p>
+
+            <div style="background:var(--row-alt);border-radius:8px;padding:14px 16px;">
+              <div style="font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(74,70,96,0.4);margin-bottom:10px;">Strumenti esposti dal server MCP blueteam</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;">
+                <div><span class="inline-code">scan_queue</span> — coda ticket su Desk365</div>
+                <div><span class="inline-code">ticket_details</span> — dettaglio ticket su Desk365</div>
+                <div><span class="inline-code">user_security_overview</span> — profilo da Entra Admin Center</div>
+                <div><span class="inline-code">signin_logs</span> — Sign-in logs su Entra Admin Center</div>
+                <div><span class="inline-code">device_check</span> — device dell'utente su Intune</div>
+                <div><span class="inline-code">argentino_health</span> — stato agente autonomo</div>
+                <div><span class="inline-code">ticket_diagnose</span> — diagnosi da Desk365 + SaaS Alerts</div>
+                <div><span class="inline-code" style="color:var(--orange);">close_ticket</span> — scrive la chiusura su Desk365 ✱</div>
+              </div>
+              <div style="font-size:12px;color:rgba(74,70,96,0.5);margin-top:10px;">✱ Unico strumento in scrittura — richiede conferma operatore e ha guardrail server-side.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COME FUNZIONANO INSIEME -->
+      <h2>Come i tre livelli lavorano insieme</h2>
+      <p>Quando lanci <span class="inline-code">/blueteam:triage-ooal 15712</span>, ecco cosa succede sotto il cofano:</p>
+
+      <div style="margin:16px 0;">
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:white;border:1px solid var(--border);border-radius:8px;border-left:4px solid var(--purple);">
+          <div style="font-size:22px;">⌨️</div>
+          <div><strong>Tu scrivi il comando</strong><br><span style="font-size:13px;color:rgba(74,70,96,0.65);">/blueteam:triage-ooal 15712 → Claude riceve l'invocazione</span></div>
+        </div>
+        <div style="text-align:center;color:rgba(74,70,96,0.3);font-size:20px;padding:4px 0;">↓</div>
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:white;border:1px solid var(--border);border-radius:8px;border-left:4px solid var(--orange);">
+          <div style="font-size:22px;">📦</div>
+          <div><strong>Il Plugin carica la Skill</strong><br><span style="font-size:13px;color:rgba(74,70,96,0.65);">Claude legge le istruzioni di triage-ooal: quali dati raccogliere, in quale ordine, quali regole applicare</span></div>
+        </div>
+        <div style="text-align:center;color:rgba(74,70,96,0.3);font-size:20px;padding:4px 0;">↓</div>
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:white;border:1px solid var(--border);border-radius:8px;border-left:4px solid var(--blue);">
+          <div style="font-size:22px;">🔌</div>
+          <div><strong>Il Server MCP consulta i nostri portali</strong><br><span style="font-size:13px;color:rgba(74,70,96,0.65);">Desk365 (ticket) · Entra Admin Center (accessi e profilo) · SaaS Alerts (evento sorgente)</span></div>
+        </div>
+        <div style="text-align:center;color:rgba(74,70,96,0.3);font-size:20px;padding:4px 0;">↓</div>
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:white;border:1px solid var(--border);border-radius:8px;border-left:4px solid #2ECC71;">
+          <div style="font-size:22px;">🤖</div>
+          <div><strong>Claude applica le regole e presenta la proposta</strong><br><span style="font-size:13px;color:rgba(74,70,96,0.65);">Evidenza strutturata + verdict (R17d) + note + richiesta conferma Y/n</span></div>
+        </div>
+        <div style="text-align:center;color:rgba(74,70,96,0.3);font-size:20px;padding:4px 0;">↓</div>
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:rgba(46,204,113,0.06);border:1px solid #2ECC71;border-radius:8px;">
+          <div style="font-size:22px;">✅</div>
+          <div><strong>Tu confermi → il ticket viene chiuso su Desk365</strong><br><span style="font-size:13px;color:rgba(74,70,96,0.65);">Nota di chiusura, verdict e minuti fatturabili scritti direttamente su Desk365, con audit trail completo</span></div>
+        </div>
+      </div>
+
+      <!-- LINGUAGGIO NATURALE -->
+      <h2>Non devi ricordare i comandi</h2>
+      <p>Le skill riconoscono il linguaggio naturale. Puoi descrivere il problema come faresti con un collega — Claude capisce il contesto, individua la skill giusta e la avvia da solo.</p>
+
+      <div class="card" style="margin-bottom:0;">
+        <div class="nl-label">Esempi reali — dici a Claude...</div>
+
+        <div class="nl-row">
+          <div class="nl-bubble"><div class="nl-tenant">Turno mattutino</div>Com'è la coda stamattina? Ci sono ticket fermi su Kryalos o VBC?</div>
+          <div class="nl-arrow">→</div>
+          <div class="nl-cmd">/blueteam:morning-checklist</div>
+        </div>
+
+        <div class="nl-row">
+          <div class="nl-bubble"><div class="nl-tenant">OOAL · Kryalos</div>mario.rossi@kryalos.com ha un accesso da Praga nel ticket #15712 — è pulito?</div>
+          <div class="nl-arrow">→</div>
+          <div class="nl-cmd">/blueteam:triage-ooal 15712</div>
+        </div>
+
+        <div class="nl-row">
+          <div class="nl-bubble"><div class="nl-tenant">Burst · SACMAR</div>anna.verdi@sacmar.it ha generato 4 ticket File Limit in 10 minuti. Gestisci il burst dal #15700.</div>
+          <div class="nl-arrow">→</div>
+          <div class="nl-cmd">/blueteam:triage-burst 15700</div>
+        </div>
+
+        <div class="nl-row">
+          <div class="nl-bubble"><div class="nl-tenant">Verifica utente · DLPHRC</div>Ho dubbi su luca.ferrari@dlphrc.it — dove si è collegato questa settimana?</div>
+          <div class="nl-arrow">→</div>
+          <div class="nl-cmd">/blueteam:investigate-user luca.ferrari@dlphrc.it</div>
+        </div>
+
+        <div class="nl-row" style="margin-bottom:0;">
+          <div class="nl-bubble"><div class="nl-tenant">Ticket fermo · VBC</div>Il #15634 su VBC è fermo da ieri sera. Argentino lo ha visto?</div>
+          <div class="nl-arrow">→</div>
+          <div class="nl-cmd">/blueteam:diagnose-stale 15634</div>
+        </div>
+      </div>
+
+      <div class="callout callout-ok" style="margin-top:16px;">
+        <span class="callout-icon">✅</span>
+        <div>Più contesto dai, più Claude è preciso. Citare il numero ticket, l'utente o il tenant nella frase riduce le domande di chiarimento e velocizza il flusso.</div>
+      </div>
+
+      <div class="callout callout-info" style="margin-top:12px;">
+        <span class="callout-icon">💡</span>
+        <div>Vuoi saperne di più su Plugin e MCP? La documentazione ufficiale di Anthropic è su <strong>docs.claude.ai</strong>. Per il server MCP blueteam, consulta <span class="inline-code">docs/architecture.md</span> nel repository del plugin.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── INSTALL ─── -->
+  <div id="section-install" class="section">
+    <div class="topbar">
+      <span class="topbar-breadcrumb">EKO365 BlueTeam Plugin</span>
+      <span style="color:rgba(74,70,96,0.3)">›</span>
+      <span class="topbar-title">Installazione</span>
+    </div>
+    <div class="content">
+      <h1>⚙️ Installazione del plugin</h1>
+      <p class="subtitle">Segui questi passaggi una sola volta. Tempo stimato: ~5 minuti.</p>
+
+      <div class="callout callout-warn">
+        <span class="callout-icon">⚠️</span>
+        <div><strong>Prerequisiti:</strong> Claude desktop (o Claude Code CLI) installato e funzionante, GitHub CLI (<span class="inline-code">gh</span>) autenticato con accesso a <span class="inline-code">eko365sb</span>. Le credenziali per Desk365/Graph/SaaS Alerts vengono configurate nel prossimo capitolo (🔐 Setup credenziali) via Bitwarden Vault. Non è più necessario nessun <span class="inline-code">.env</span> manuale.</div>
+      </div>
+
+      <h2>Procedura di installazione</h2>
+
+      <div class="install-step">
+        <div class="is-num">1</div>
+        <div class="is-body">
+          <div class="is-title">Aggiungi il marketplace EKO365 (una sola volta)</div>
+          <div class="is-desc">Questo registra il repository privato EKO365 come sorgente per i plugin. Va fatto una sola volta per macchina.</div>
+          <div class="code-block">
+            <pre>claude plugin marketplace add eko365sb/claude-plugins</pre>
+            <button class="copy-btn" onclick="copyCode(this)">Copia</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="install-step">
+        <div class="is-num">2</div>
+        <div class="is-body">
+          <div class="is-title">Installa il plugin BlueTeam</div>
+          <div class="is-desc">Scarica e attiva il plugin dalla sorgente EKO365.</div>
+          <div class="code-block">
+            <pre>claude plugin install blueteam@eko365-plugins</pre>
+            <button class="copy-btn" onclick="copyCode(this)">Copia</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="install-step">
+        <div class="is-num">3</div>
+        <div class="is-body">
+          <div class="is-title">Verifica l'installazione</div>
+          <div class="is-desc">Apri una nuova sessione Claude e lancia la checklist mattutina. Se vedi l'output strutturato, il plugin è attivo.</div>
+          <div class="code-block">
+            <pre>/blueteam:morning-checklist</pre>
+            <button class="copy-btn" onclick="copyCode(this)">Copia</button>
+          </div>
+          <div class="output-preview" style="margin-top:10px;font-size:11.5px;">
+            <span class="o-header">📋 CHECKLIST MATTUTINA SOC — 04/05/2026</span><br><br>
+            <span class="o-section">📊 CODA CORRENTE</span><br>
+            <span class="o-dim">   • Aperti totali: 12</span><br>
+            <span class="o-dim">   • In lavorazione umana: 2 (fabio)</span><br>
+            <span class="o-dim">   • Da analizzare: 10</span><br><br>
+            <span class="o-section">🤖 ARGENTINO</span><br>
+            <span class="o-ok">   • Stato: GREEN</span><br>
+            <span class="o-dim">   • ...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="install-step">
+        <div class="is-num">4</div>
+        <div class="is-body">
+          <div class="is-title">In caso di errore "skill non trovata"</div>
+          <div class="is-desc">Controlla nell'ordine:</div>
+          <div class="card" style="margin-top:8px;">
+            <div class="code-block" style="margin:0 0 8px 0;">
+              <pre>claude plugin list</pre>
+              <button class="copy-btn" onclick="copyCode(this)">Copia</button>
+            </div>
+            <p style="font-size:13px;margin:0;">Il plugin <span class="inline-code">blueteam</span> deve comparire come <span class="inline-code">installed</span>. Se non c'è, ripeti il passo 2.</p>
+          </div>
+          <ul style="font-size:13.5px;padding-left:18px;margin-top:8px;line-height:2;">
+            <li>Il tuo account è stato aggiunto in <span class="inline-code">operators.py</span> dall'amministratore del plugin?</li>
+            <li>Stai usando la sessione aperta <strong>dopo</strong> l'installazione?</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="install-step">
+        <div class="is-num">5</div>
+        <div class="is-body">
+          <div class="is-title">Configura le credenziali</div>
+          <div class="is-desc">Procedi al capitolo successivo <strong>🔐 Setup credenziali</strong> per consumare il vault Bitwarden.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── CREDENTIALS ─── -->
+  <div id="section-credentials" class="section">
+    <div class="topbar">
+      <span class="topbar-breadcrumb">EKO365 BlueTeam Plugin</span>
+      <span style="color:rgba(74,70,96,0.3)">›</span>
+      <span class="topbar-title">Setup credenziali</span>
+    </div>
+    <div class="content">
+      <h1>🔐 Setup credenziali (Bitwarden Vault)</h1>
+      <p class="subtitle">Una sola volta al primo setup. Tempo stimato: ~3 minuti.</p>
+
+      <div class="callout callout-ok">
+        <span class="callout-icon">🔑</span>
+        <div><strong>Le tue credenziali sono in Bitwarden Vault.</strong> L'MCP BlueTeam le legge automaticamente al boot. Tu non vedi mai i valori — vedi solo il risultato delle query (ticket, alert, signin, ecc.).</div>
+      </div>
+
+      <h2>Il flusso di setup</h2>
+      <div class="output-preview" style="font-size:12px;line-height:1.7;">
+        <span class="o-header">FABIO (admin)</span>           genera Access Token in Bitwarden web UI<br>
+        <span class="o-dim">                       │</span><br>
+        <span class="o-dim">                       ▼ Bitwarden Send (link cifrato monouso)</span><br>
+        <span class="o-header">TU (operatore)</span>          ricevi token + Organization ID<br>
+        <span class="o-dim">                       │</span><br>
+        <span class="o-dim">                       ▼ eko365-blueteam-init --token US:... --org ...</span><br>
+        <span class="o-section">~/.eko365/bitwarden_config.env</span> creato sul tuo PC<br>
+        <span class="o-dim">                       │</span><br>
+        <span class="o-dim">                       ▼ source ~/.eko365/bitwarden_config.env</span><br>
+        <span class="o-section">MCP boot reads from vault</span><br>
+        <span class="o-dim">                       │</span><br>
+        <span class="o-ok">/blueteam:morning-checklist OK</span>
+      </div>
+
+      <h2>Procedura</h2>
+
+      <div class="install-step">
+        <div class="is-num">1</div>
+        <div class="is-body">
+          <div class="is-title">Ricevi Access Token e Organization ID dall'admin</div>
+          <div class="is-desc">L'admin (Fabio) ti invia 2 stringhe:
+          <ul>
+            <li>Un <strong>Access Token</strong> (formato <span class="inline-code">0.xxx...</span>) tramite Bitwarden Send (link cifrato monouso)</li>
+            <li>L'<strong>Organization ID</strong> (UUID), tipicamente <span class="inline-code">f090dcd7-df9e-43db-b230-b440011f75c5</span> per EKO365</li>
+          </ul>
+          </div>
+          <div class="callout callout-warn">
+            <span class="callout-icon">⚠️</span>
+            <div><strong>Non condividere il token.</strong> Chi lo possiede può leggere tutte le credenziali EKO365 BlueTeam.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="install-step">
+        <div class="is-num">2</div>
+        <div class="is-body">
+          <div class="is-title">Esegui il comando di init</div>
+          <div class="is-desc">Sul tuo terminale (PowerShell su Windows, Terminal su Mac), nella directory del workspace BlueTeam:</div>
+          <div class="code-block">
+<pre>./scripts/eko365-blueteam-init.py \
+  --token "0.xxx-paste-the-real-token-here-xxx" \
+  --org "f090dcd7-df9e-43db-b230-b440011f75c5"</pre>
+            <button class="copy-btn" onclick="copyCode(this)">Copia</button>
+          </div>
+          <div class="output-preview" style="margin-top:8px;font-size:11.5px;">
+            <span class="o-header">EKO365 BlueTeam — first-time setup</span><br><br>
+            <span class="o-ok">[1/4]</span> <span class="o-dim">Validating token format...                  ✓</span><br>
+            <span class="o-ok">[2/4]</span> <span class="o-dim">Persisting config to ~/.eko365/...           ✓</span><br>
+            <span class="o-ok">[3/4]</span> <span class="o-dim">Verifying read access (8 records, 13 secrets)... ✓</span><br>
+            <span class="o-ok">[4/4]</span> <span class="o-dim">Setup complete.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="install-step">
+        <div class="is-num">3</div>
+        <div class="is-body">
+          <div class="is-title">Attiva il vault nella tua shell</div>
+          <div class="is-desc">Per attivare il vault override nella sessione corrente:</div>
+          <div class="code-block">
+<pre>source ~/.eko365/bitwarden_config.env</pre>
+            <button class="copy-btn" onclick="copyCode(this)">Copia</button>
+          </div>
+          <div class="is-desc" style="margin-top:8px;">Per attivarlo automaticamente in tutte le shell future:</div>
+          <div class="code-block">
+<pre>echo '[ -f ~/.eko365/bitwarden_config.env ] && source ~/.eko365/bitwarden_config.env' >> ~/.zshrc</pre>
+            <button class="copy-btn" onclick="copyCode(this)">Copia</button>
+          </div>
+        </div>
+      </div>
+
+      <h2>Verifica con il doctor</h2>
+      <p>In ogni momento puoi controllare lo stato delle tue credenziali:</p>
+      <div class="code-block">
+<pre>./scripts/eko365-blueteam-doctor.py</pre>
+        <button class="copy-btn" onclick="copyCode(this)">Copia</button>
+      </div>
+      <div class="output-preview" style="margin-top:8px;font-size:11.5px;">
+        <span class="o-header">EKO365 BlueTeam — doctor</span><br><br>
+        <span class="o-section">Configuration sources:</span><br>
+        <span class="o-dim">  .env file:           found (22 vars)</span><br>
+        <span class="o-dim">  BW config file:      found (~/.eko365/bitwarden_config.env)</span><br>
+        <span class="o-dim">  EKO365_SECRETS_BACKEND: bitwarden</span><br>
+        <span class="o-dim">  BW_ACCESS_TOKEN:        set</span><br><br>
+        <span class="o-section">Backend connectivity:</span><br>
+        <span class="o-dim">  Backend:             BitwardenBackend</span><br>
+        <span class="o-dim">  Vault connectivity:  </span><span class="o-ok">OK (8 records, 186ms)</span><br><br>
+        <span class="o-section">Required env vars:</span><br>
+        <span class="o-dim">  ANTHROPIC_API_KEY            </span><span class="o-ok">OK</span><span class="o-dim"> (from vault)</span><br>
+        <span class="o-dim">  ... (13 totali)</span><br><br>
+        <span class="o-ok">Status: HEALTHY</span>
+      </div>
+
+      <h2>Problemi comuni</h2>
+      <table>
+        <thead>
+          <tr><th style="width:35%;">Sintomo</th><th style="width:30%;">Causa</th><th>Cosa fare</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Init dice "Token format invalid"</td>
+            <td>Hai incollato il token con caratteri extra (spazi, virgolette, ecc.)</td>
+            <td>Re-incolla pulito; deve iniziare con <span class="inline-code">0.</span> e essere lungo &gt;30 caratteri</td>
+          </tr>
+          <tr>
+            <td>Init dice "Authentication failed"</td>
+            <td>Token revocato o expired</td>
+            <td>Chiedi un nuovo Access Token all'admin (Fabio)</td>
+          </tr>
+          <tr>
+            <td>Doctor dice "Status: DEGRADED" con vault non disponibile</td>
+            <td>Hai dimenticato <span class="inline-code">source ~/.eko365/bitwarden_config.env</span>, oppure è scaduto il token</td>
+            <td>Source il file e re-run doctor; se ancora DEGRADED, chiedi nuovo token</td>
+          </tr>
+          <tr>
+            <td>MCP parte ma morning-checklist dà errore 401</td>
+            <td>Un secret nel vault è stato ruotato e il valore upstream è cambiato</td>
+            <td>Restart Claude Code (per forzare reload cache); se persiste, contatta admin</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Se devi reinstallare</h2>
+      <p>Laptop nuovo, format, ecc.:</p>
+      <ol>
+        <li>Chiedi all'admin un <strong>nuovo</strong> Access Token (il vecchio andrebbe revocato per pulizia)</li>
+        <li>Reinstalla Claude Code + plugin BlueTeam come da capitolo Installazione</li>
+        <li>Esegui di nuovo <span class="inline-code">eko365-blueteam-init.py</span> con il nuovo token</li>
+      </ol>
+
+      <h2>Sicurezza e responsabilità</h2>
+      <div class="callout callout-warn">
+        <span class="callout-icon">🔒</span>
+        <div>
+          <strong>Cosa NON fare:</strong>
+          <ul style="margin-top:6px;padding-left:20px;line-height:1.8;">
+            <li>Non copiare <span class="inline-code">~/.eko365/bitwarden_config.env</span> su altri dispositivi</li>
+            <li>Non condividere screenshot del terminale che mostrano il token (anche solo visivamente)</li>
+            <li>Non lasciare il PC sbloccato in luoghi pubblici</li>
+          </ul>
+          <strong>Se sospetti un problema</strong> (laptop rubato, malware, accesso non autorizzato): notifica l'admin <em>entro 1 ora</em>. La revoca del tuo Access Token richiede meno di 5 minuti e blocca completamente l'accesso al vault.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── OVERVIEW ─── -->
+  <div id="section-overview" class="section">
+    <div class="topbar">
+      <span class="topbar-breadcrumb">EKO365 BlueTeam Plugin</span>
+      <span style="color:rgba(74,70,96,0.3)">›</span>
+      <span class="topbar-title">Panoramica Skills</span>
+    </div>
+    <div class="content">
+      <h1>🗺️ Panoramica delle 5 skill</h1>
+      <p class="subtitle">Frequenza attesa, tipo di operazione e quando usarle.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Skill</th>
+            <th>Comando</th>
+            <th>Tipo</th>
+            <th>Frequenza</th>
+            <th>Argomento</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>🌅 morning-checklist</strong></td>
+            <td><span class="inline-code">/blueteam:morning-checklist</span></td>
+            <td><span class="chip chip-readonly">Sola lettura</span></td>
+            <td>1-2 / giorno</td>
+            <td>Nessuno</td>
+          </tr>
+          <tr>
+            <td><strong>📍 triage-ooal</strong></td>
+            <td><span class="inline-code">/blueteam:triage-ooal &lt;ticket&gt;</span></td>
+            <td><span class="chip chip-write">Lettura + chiusura</span></td>
+            <td>~15 / settimana</td>
+            <td>Numero ticket</td>
+          </tr>
+          <tr>
+            <td><strong>📂 triage-burst</strong></td>
+            <td><span class="inline-code">/blueteam:triage-burst &lt;ticket&gt;</span></td>
+            <td><span class="chip chip-write">Lettura + chiusura</span></td>
+            <td>~10 / settimana</td>
+            <td>Numero ticket</td>
+          </tr>
+          <tr>
+            <td><strong>🔍 investigate-user</strong></td>
+            <td><span class="inline-code">/blueteam:investigate-user &lt;email&gt;</span></td>
+            <td><span class="chip chip-readonly">Sola lettura</span></td>
+            <td>~5 / settimana</td>
+            <td>Email utente</td>
+          </tr>
+          <tr>
+            <td><strong>🩺 diagnose-stale</strong></td>
+            <td><span class="inline-code">/blueteam:diagnose-stale &lt;ticket&gt;</span></td>
+            <td><span class="chip chip-readonly">Sola lettura</span></td>
+            <td>~3 / settimana</td>
+            <td>Numero ticket</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Flusso decisionale giornaliero</h2>
+      <p>Ecco come le skill si inseriscono nella giornata operativa tipica:</p>
+
+      <div class="flow-box flow-ok" style="text-align:center;font-weight:600;">🌅 Inizio turno → <span class="inline-code">/blueteam:morning-checklist</span></div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-box flow-decision">📊 Coda: ci sono ticket da analizzare?</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:4px 0;">
+        <div>
+          <div class="flow-arrow">↓ Ticket OOAL</div>
+          <div class="flow-box"><span class="inline-code">/blueteam:triage-ooal #N</span><br><span style="font-size:12px;color:rgba(74,70,96,0.6)">Regole R12/R17 o LLM</span></div>
+        </div>
+        <div>
+          <div class="flow-arrow">↓ Ticket File Limit</div>
+          <div class="flow-box"><span class="inline-code">/blueteam:triage-burst #N</span><br><span style="font-size:12px;color:rgba(74,70,96,0.6)">Identifica parent + children</span></div>
+        </div>
+      </div>
+      <div class="flow-arrow">↓ Ticket stuck o utente sospetto?</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:4px 0;">
+        <div>
+          <div class="flow-box"><span class="inline-code">/blueteam:diagnose-stale #N</span><br><span style="font-size:12px;color:rgba(74,70,96,0.6)">Perché è ancora aperto?</span></div>
+        </div>
+        <div>
+          <div class="flow-box"><span class="inline-code">/blueteam:investigate-user email</span><br><span style="font-size:12px;color:rgba(74,70,96,0.6)">Profilazione completa utente</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── MORNING CHECKLIST ─── -->
+  <div id="section-morning" class="section">
+    <div class="topbar">
+      <span class="topbar-breadcrumb">Skills</span>
+      <span style="color:rgba(74,70,96,0.3)">›</span>
+      <span class="topbar-title">morning-checklist</span>
+    </div>
+    <div class="content">
+      <div class="skill-hero">
+        <div class="skill-hero-icon bg-purple">🌅</div>
+        <div class="skill-hero-body">
+          <h1>morning-checklist</h1>
+          <p>Dashboard sintetica giornaliera per l'operatore SOC. Aggrega coda corrente, salute di Argentino, ticket assegnati e backlog stagnante in un'unica lettura <em>decision-ready</em>.</p>
+          <div class="skill-hero-meta">
+            <span class="chip chip-readonly">Sola lettura</span>
+            <span class="chip chip-freq">1-2 volte al giorno</span>
+            <span class="chip chip-trigger">morning</span>
+            <span class="chip chip-trigger">checklist</span>
+            <span class="chip chip-trigger">riassunto giornata</span>
+            <span class="chip chip-trigger">status BlueTeam</span>
+          </div>
+        </div>
+      </div>
+
+      <h2>Come si usa</h2>
+      <div class="command-pill" onclick="copyText('/blueteam:morning-checklist', this)">
+        <span>/blueteam:morning-checklist</span>
+        <span class="cp-icon">📋</span>
+      </div>
+      <p style="font-size:13px;color:rgba(74,70,96,0.6);margin-top:6px;">Nessun argomento richiesto. Lancia all'inizio del turno, o in qualsiasi momento per aggiornare il quadro.</p>
+
+      <div class="nl-skill-block">
+        <div class="nl-label">Puoi anche dirlo così — Claude capisce e avvia la skill</div>
+        <div class="nl-row">
+          <div class="nl-bubble">Com'è la coda stamattina? Ci sono ticket fermi su Kryalos o VBC?</div>
+        </div>
+        <div class="nl-row">
+          <div class="nl-bubble">Dammi un quadro della situazione prima di iniziare il turno.</div>
+        </div>
+        <div class="nl-row">
+          <div class="nl-bubble">Come sta Argentino? Ha lavorato bene stanotte?</div>
+        </div>
+        <div class="nl-row" style="margin-bottom:0;">
+          <div class="nl-bubble">Ci sono ticket assegnati a me su Desk365?</div>
+        </div>
+      </div>
+
+      <h2>Cosa fa internamente</h2>
+      <ul class="steps">
+        <li>
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Scansiona la coda (<span class="inline-code">scan_queue</span>)</div>
+            <div class="step-desc">Recupera tutti i ticket aperti su tutti i tenant. Distingue quelli in lavorazione umana (Pending / In progress + assegnatario) da quelli disponibili per il triage.</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Verifica salute Argentino (<span class="inline-code">argentino_health</span>)</div>
+            <div class="step-desc">Controlla liveness, ultimo run, conteggio final-fail 48h, fast-path attivati. Classifica lo stato in GREEN / YELLOW / RED.</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">Ticket assegnati (<span class="inline-code">assigned_tickets</span>)</div>
+            <div class="step-desc">Aggrega per operatore i ticket in carico. Utile per vedere cosa sta facendo l'altro operatore senza dover aprire Desk365.</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <div class="step-title">Backlog stagnante</div>
+            <div class="step-desc">Estrae dalla risposta di <span class="inline-code">argentino_health</span> i ticket aperti da oltre 24 ore con assegnatario e soggetto.</div>
+          </div>
+        </li>
+      </ul>
+
+      <h2>Output atteso</h2>
+      <div class="output-preview">
+<span class="o-header">📋 CHECKLIST MATTUTINA SOC — 04/05/2026</span>
+
+<span class="o-section">📊 CODA CORRENTE</span>
+   • Aperti totali: 12
+   • In lavorazione umana: 2 (fabio: #15701, #15698)
+   • Da analizzare: 10
+
+<span class="o-section">🤖 ARGENTINO</span>
+<span class="o-ok">   • Stato: GREEN</span>
+   • Ultimo run: ~8min fa, modalità standard
+   • Final-fail 48h: 0
+   • Fast-path attivati 7gg: R17 (x24), R16a (x11), R12 (x8)
+
+<span class="o-warn">⚠️ BACKLOG STAGNANTE > 24h</span>
+   • #15634 (36h) — mario.rossi@kryalos.com — OOAL — assegnato: nessuno
+   • #15621 (29h) — guest@dlphrc.it — File Download Limit — assegnato: nessuno
+
+<span class="o-section">🎯 PRIORITIZZAZIONE CONSIGLIATA</span>
+   1. Triage #15634 (OOAL stagnante, candidato R17d)
+   2. Analisi #15621 (burst download, verificare padre/figli)
+   3. Coda rimanente per ordine di arrivo</div>
+
+      <div class="callout callout-warn">
+        <span class="callout-icon">⚠️</span>
+        <div><strong>Attenzione:</strong> se Argentino mostra <span class="inline-code">external_error</span>, non allarmarti subito. Conta i <em>final-fail</em>, non i tentativi. Se i final-fail sono 0 e lo stato è recovered, l'agente funziona correttamente.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── TRIAGE OOAL ─── -->
+  <div id="section-triage-ooal" class="section">
+    <div class="topbar">
+      <span class="topbar-breadcrumb">Skills</span>
+      <span style="color:rgba(74,70,96,0.3)">›</span>
+      <span class="topbar-title">triage-ooal</span>
+    </div>
+    <div class="content">
+      <div class="skill-hero">
+        <div class="skill-hero-icon bg-orange">📍</div>
+        <div class="skill-hero-body">
+          <h1>triage-ooal</h1>
+          <p>Flusso completo per ticket <strong>Outside Approved Location (OOAL)</strong>. Recupera l'evidenza autoritativa, classifica con regole rapide, attiva il ragionamento LLM se necessario, propone chiusura e scrive su Desk365 solo dopo la tua conferma.</p>
+          <div class="skill-hero-meta">
+            <span class="chip chip-write">Lettura + chiusura</span>
+            <span class="chip chip-freq">~15 / settimana</span>
+            <span class="chip chip-trigger">triage OOAL</span>
+            <span class="chip chip-trigger">outside approved</span>
+            <span class="chip chip-trigger">triage location</span>
+          </div>
+        </div>
+      </div>
+
+      <h2>Come si usa</h2>
+      <div class="command-pill" onclick="copyText('/blueteam:triage-ooal 15712', this)">
+        <span>/blueteam:triage-ooal &lt;numero-ticket&gt;</span>
+        <span class="cp-icon">📍</span>
+      </div>
+      <p style="font-size:13px;color:rgba(74,70,96,0.6);margin-top:6px;">Se dimentichi il numero, la skill te lo chiede.</p>
+
+      <div class="nl-skill-block">
+        <div class="nl-label">Puoi anche dirlo così — Claude capisce e avvia la skill</div>
+        <div class="nl-row">
+          <div class="nl-bubble"><div class="nl-tenant">Kryalos</div>mario.rossi@kryalos.com ha un accesso da Praga nel ticket #15712 — è pulito?</div>
+        </div>
+        <div class="nl-row">
+          <div class="nl-bubble"><div class="nl-tenant">VBC</div>Ho un outside approved location su VBC che non torna — guarda il #15698.</div>
+        </div>
+        <div class="nl-row">
+          <div class="nl-bubble"><div class="nl-tenant">DLPHRC</div>anna.bianchi@dlphrc.it si è collegata dalla Rep. Ceca, è nel ticket #15701. Lo escaliamo?</div>
+        </div>
+        <div class="nl-row" style="margin-bottom:0;">
+          <div class="nl-bubble"><div class="nl-tenant">C2Partners</div>Ticket OOAL #15689 su C2Partners — fammi vedere l'evidenza e proponi.</div>
+        </div>
+      </div>
+
+      <h2>Flusso operativo (8 passi)</h2>
+      <ul class="steps">
+        <li>
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Recupero contesto base</div>
+            <div class="step-desc">Legge il ticket da Desk365. Se è già chiuso, o assegnato ad altri, si ferma e te lo segnala prima di procedere.</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Estrazione metadata</div>
+            <div class="step-desc">Dal soggetto del ticket estrae tenant_code e email utente (es. <span class="inline-code">C2PARTNERS → C2P</span>, <span class="inline-code">DLPHRC → DLP</span>).</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">Profilo utente (168h)</div>
+            <div class="step-desc">Recupera sign-in Graph, device Intune, eventi SaaS Alerts delle ultime 7 giorni.</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <div class="step-title">Source event autoritativo</div>
+            <div class="step-desc">I ticket Respond rule hanno IP "Not Provided" nel corpo. La skill recupera automaticamente l'evento sorgente <span class="inline-code">outside.own.location</span> su SaaS Alerts — quello con l'IP reale.</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <div class="step-title">Classificazione con regole rapide</div>
+            <div class="step-desc">Tenta le regole in ordine di priorità. Alla prima corrispondenza, propone la chiusura.</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">6</div>
+          <div class="step-body">
+            <div class="step-title">LLM Reasoning (se nessuna regola corrisponde)</div>
+            <div class="step-desc">Analisi guidata con evidenza sintetica, ragionamento passo-passo e confidenza ALTA/MEDIA/BASSA. Se BASSA → nessuna proposta, escalation obbligatoria.</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">7</div>
+          <div class="step-body">
+            <div class="step-title">Decision point</div>
+            <div class="step-desc">Mostra evidenza, verdict e note proposte. Aspetta il tuo <strong>Y / n / explain</strong>.</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">8</div>
+          <div class="step-body">
+            <div class="step-title">Esecuzione</div>
+            <div class="step-desc">Su Y chiude il ticket via <span class="inline-code">close_ticket</span>. Su n registra il rifiuto senza scrivere nulla. Su explain apre un dialogo per il verdict alternativo.</div>
+          </div>
+        </li>
+      </ul>
+
+      <h2>Le regole rapide (gerarchia)</h2>
+      <div class="rule-card">
+        <div class="rule-badge">R12</div>
+        <div class="rule-body"><strong>Grace period:</strong> OOAL precedenti recenti dalla stessa location negli ultimi 7 giorni. Viene valutata per prima come ottimizzazione — se corrisponde, non serve raccogliere il resto dell'evidenza.</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-badge">R17</div>
+        <div class="rule-body"><strong>Italia, device compliant, tutto pulito:</strong> Country IT + device Intune compliant + sign-in success + risk none + CA success + ESCALATE_IDENTITY. Caso tipico: VPN aziendale.</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-badge">R17b</div>
+        <div class="rule-body"><strong>Italia, backbone ASN:</strong> Country IT + ASN backbone (Level3, Cloudflare, HE, GTT, NTT...) + device compliant. IP backbone = geolocalizzazione inconsistente, false positive frequente.</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-badge">R17c</div>
+        <div class="rule-body"><strong>Italia, backbone, device personale:</strong> Come R17b ma device non-compliant (BYOD). Richiede baseline same-IP ≥ 2 nelle ultime 4 settimane come ulteriore conferma.</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-badge orange">R17d</div>
+        <div class="rule-body"><strong>EU/OECD, non datacenter:</strong> Country EU o OECD (CZ, FR, DE, GB, US...) + ASN non datacenter + device compliant + baseline ≥ 2 + threat clean. Tipico caso trasferta.</div>
+      </div>
+
+      <h2>Output — esempio decision point</h2>
+      <div class="output-preview">
+<span class="o-header">📍 TRIAGE OOAL #15712</span>
+
+<span class="o-section">📊 EVIDENZA</span>
+   Utente: mario.rossi@kryalos.com
+   Source event IP: 80.249.210.33 (Praga, CZ)
+   ASN: AS6830 Liberty Global — ISP consumer, non datacenter
+   Device Intune: LAPTOP-MR01 (compliant=True, primary user)
+   Baseline 30gg same-IP: 3 sign-in success
+   Threat: clean | Risk: none
+
+<span class="o-section">🎯 PROPOSTA</span>
+   Regola: <span class="o-ok">R17d</span> (Country CZ, ISP consumer, device compliant, baseline 3)
+   Verdict: FP_CERTO — 15 min — Data Protection
+   Nota: "Accesso da Praga (CZ), ISP Liberty Global non datacenter.
+   Device aziendale compliant. Baseline 3 accessi stesso IP 30gg.
+   Chiusura automatica R17d. [BlueTeam Fast-Path]"
+
+▶️  Procedi con close FP_CERTO (15 min)? [Y/n/explain]</div>
+
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div><strong>Quando rispondere "explain":</strong> scrivi <span class="inline-code">explain</span> se vuoi capire il ragionamento dietro la proposta prima di decidere. La skill entra in modalità interattiva e risponde alle tue domande.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── TRIAGE BURST ─── -->
+  <div id="section-triage-burst" class="section">
+    <div class="topbar">
+      <span class="topbar-breadcrumb">Skills</span>
+      <span style="color:rgba(74,70,96,0.3)">›</span>
+      <span class="topbar-title">triage-burst</span>
+    </div>
+    <div class="content">
+      <div class="skill-hero">
+        <div class="skill-hero-icon bg-orange">📂</div>
+        <div class="skill-hero-body">
+          <h1>triage-burst</h1>
+          <p>Flusso operativo per ticket <strong>File Download/Upload Limit Exceeded</strong>. Identifica automaticamente il parent e tutti i children del burst, applica le regole R16, chiude il set in un'unica operazione.</p>
+          <div class="skill-hero-meta">
+            <span class="chip chip-write">Lettura + chiusura</span>
+            <span class="chip chip-freq">~10 / settimana</span>
+            <span class="chip chip-trigger">triage burst</span>
+            <span class="chip chip-trigger">file download limit</span>
+            <span class="chip chip-trigger">bulk download</span>
+            <span class="chip chip-trigger">bulk upload</span>
+          </div>
+        </div>
+      </div>
+
+      <h2>Come si usa</h2>
+      <div class="command-pill" onclick="copyText('/blueteam:triage-burst 15698', this)">
+        <span>/blueteam:triage-burst &lt;numero-ticket&gt;</span>
+        <span class="cp-icon">📂</span>
+      </div>
+      <p style="font-size:13px;color:rgba(74,70,96,0.6);margin-top:6px;">Puoi passare uno qualsiasi dei ticket del burst — la skill individua da sola il ticket padre e tutti i figli.</p>
+
+      <div class="nl-skill-block">
+        <div class="nl-label">Puoi anche dirlo così — Claude capisce e avvia la skill</div>
+        <div class="nl-row">
+          <div class="nl-bubble"><div class="nl-tenant">SACMAR</div>anna.verdi@sacmar.it ha generato 4 ticket File Download Limit in 10 minuti. Gestisci il burst dal #15700.</div>
+        </div>
+        <div class="nl-row">
+          <div class="nl-bubble"><div class="nl-tenant">VBC</div>marco.bianchi@vbc.it — bulk upload OneDrive, 3 ticket aperti. Il padre dovrebbe essere il #15702.</div>
+        </div>
+        <div class="nl-row">
+          <div class="nl-bubble"><div class="nl-tenant">C2Partners</div>Ticket #15698 File Limit su C2Partners — controlla se ci sono fratelli e chiudi tutto.</div>
+        </div>
+        <div class="nl-row" style="margin-bottom:0;">
+          <div class="nl-bubble"><div class="nl-tenant">Kryalos</div>C'è un burst di download su Kryalos. Ho visto il #15710 ma potrebbero essercene altri.</div>
+        </div>
+      </div>
+
+      <h2>Il concetto di burst: ticket padre e ticket figli</h2>
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div>Un burst File Limit genera <strong>più ticket per lo stesso utente e stesso tipo di evento</strong> in una finestra di ~1 ora. Il <strong>ticket padre</strong> è il più vecchio (base della fatturazione: 15 min). I <strong>ticket figli</strong> sono i successivi (0 min — il costo è già sul padre).</div>
+      </div>
+
+      <h2>Flusso operativo</h2>
+      <ul class="steps">
+        <li>
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Recupera contesto base + verifica idempotenza</div>
+            <div class="step-desc">Legge il ticket passato. Controlla se già chiuso, se assegnato ad altri.</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Identifica il burst</div>
+            <div class="step-desc">Estrae email utente, tipo evento (download/upload), finestra temporale. Poi scansiona la coda del tenant cercando ticket fratelli dello stesso utente nella finestra ±1h.</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">Determina il parent</div>
+            <div class="step-desc">Il ticket con <span class="inline-code">created_on</span> più vecchio è il parent. Tutti gli altri sono children.</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <div class="step-title">Classifica il parent (regole R16)</div>
+            <div class="step-desc">Applica R16a (folder-zip download), R16d (bulk upload OneDrive sync), R16b (recurrent downloader storico ≥3/90gg). Se nessuna corrisponde, attiva LLM reasoning.</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <div class="step-title">Decision point + esecuzione</div>
+            <div class="step-desc">Mostra il set completo (parent + children), verdict e billing. Su Y chiude prima il parent (15 min), poi ogni child (0 min) in sequenza. In caso di errore su un child si ferma — gli altri restano aperti.</div>
+          </div>
+        </li>
+      </ul>
+
+      <h2>Le regole R16</h2>
+      <div class="rule-card">
+        <div class="rule-badge">R16a</div>
+        <div class="rule-body"><strong>Folder-zip download:</strong> Joint type download + User-Agent <span class="inline-code">ms_internal</span> (es. ODMTADemand-Transform_Zip) + hosting Microsoft Corporation + threat clean. Pattern tipico: ZIP di cartella SharePoint.</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-badge">R16d</div>
+        <div class="rule-body"><strong>Bulk upload OneDrive sync:</strong> Joint type upload + ASN Microsoft Corporation hosting + target = drive personale utente + threat clean. Pattern tipico: sincronizzazione OneDrive su nuovo device.</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-badge orange">R16b</div>
+        <div class="rule-body"><strong>Recurrent downloader:</strong> Storico utente con ≥ 3 ticket simili negli ultimi 90 giorni chiusi come FP. Indipendente da UA o ASN.</div>
+      </div>
+
+      <h2>Output — esempio decision point</h2>
+      <div class="output-preview">
+<span class="o-header">📂 BURST IDENTIFICATO — #15698</span>
+
+<span class="o-section">📊 SET COMPLETO</span>
+   Parent: #15698 (creato 04/05/2026 09:14)
+   Children: [#15699, #15700, #15701] — 3 totali
+   User: anna.verdi@sacmar.it
+   Tipo: File Download Limit (download)
+   UA: ODMTADemand-Transform_Zip (ms_internal)
+   Hosting: Microsoft Corporation
+   Threat: clean
+
+<span class="o-section">🎯 PROPOSTA</span>
+   Regola: <span class="o-ok">R16a</span> (folder-zip SharePoint)
+   Parent #15698 → FP_CERTO, 15 min, Data Protection
+   Children #15699, #15700, #15701 → FP_CERTO, <span class="o-warn">0 min</span> ciascuno
+
+▶️  Procedi? [Y/n/explain]</div>
+
+      <div class="callout callout-error">
+        <span class="callout-icon">🚨</span>
+        <div><strong>Critico:</strong> non chiudere mai un ticket figlio con minuti &gt; 0. La fatturazione è aggregata sul padre per progetto. I ticket figli vanno <strong>sempre a 0 min</strong>.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── INVESTIGATE USER ─── -->
+  <div id="section-investigate" class="section">
+    <div class="topbar">
+      <span class="topbar-breadcrumb">Skills</span>
+      <span style="color:rgba(74,70,96,0.3)">›</span>
+      <span class="topbar-title">investigate-user</span>
+    </div>
+    <div class="content">
+      <div class="skill-hero">
+        <div class="skill-hero-icon bg-blue">🔍</div>
+        <div class="skill-hero-body">
+          <h1>investigate-user</h1>
+          <p>Profilazione completa di un utente M365: baseline geografica 14 giorni, device Intune, eventi SaaS Alerts 168h, sign-in recenti, anomalie evidenziate. Skill di sola lettura — non tira conclusioni, fornisce l'evidenza.</p>
+          <div class="skill-hero-meta">
+            <span class="chip chip-readonly">Sola lettura</span>
+            <span class="chip chip-freq">~5 / settimana</span>
+            <span class="chip chip-trigger">investiga utente</span>
+            <span class="chip chip-trigger">baseline location</span>
+            <span class="chip chip-trigger">verifica utente</span>
+            <span class="chip chip-trigger">controllo accessi</span>
+          </div>
+        </div>
+      </div>
+
+      <h2>Come si usa</h2>
+      <div class="command-pill" onclick="copyText('/blueteam:investigate-user mario.rossi@kryalos.com', this)">
+        <span>/blueteam:investigate-user &lt;email&gt;</span>
+        <span class="cp-icon">🔍</span>
+      </div>
+
+      <div class="nl-skill-block">
+        <div class="nl-label">Puoi anche dirlo così — Claude capisce e avvia la skill</div>
+        <div class="nl-row">
+          <div class="nl-bubble"><div class="nl-tenant">Kryalos</div>Dimmi tutto su mario.rossi@kryalos.com — ho visto un OOAL strano e voglio capire il contesto.</div>
+        </div>
+        <div class="nl-row">
+          <div class="nl-bubble"><div class="nl-tenant">DLPHRC</div>Ho dubbi su luca.ferrari@dlphrc.it — dove si è collegato questa settimana su Entra?</div>
+        </div>
+        <div class="nl-row">
+          <div class="nl-bubble"><div class="nl-tenant">VBC</div>Profilami marco.bianchi@vbc.it, voglio vedere la baseline e i device Intune.</div>
+        </div>
+        <div class="nl-row" style="margin-bottom:0;">
+          <div class="nl-bubble"><div class="nl-tenant">C2Partners</div>Questo utente di C2Partners mi sembra anomalo: g.esposito@c2partners.it — controllalo.</div>
+        </div>
+      </div>
+
+      <h2>Cosa recupera (in sequenza)</h2>
+      <ul class="steps">
+        <li>
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Profilo aggregato (<span class="inline-code">user_security_overview</span>, 168h)</div>
+            <div class="step-desc">Panoramica accessi da Entra Admin Center, eventi dal portale SaaS Alerts, stato licenze e compliance M365.</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Device gestiti (<span class="inline-code">device_check</span>)</div>
+            <div class="step-desc">Lista dei device associati all'utente su Intune — quello che vedresti in Intune Admin Center sotto <em>Devices › All devices</em> filtrando per utente.</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">Cronologia eventi (<span class="inline-code">timeline_user</span>, 24h)</div>
+            <div class="step-desc">Tutti gli alert dell'utente nel portale SaaS Alerts nelle ultime 24h — equivalente alla vista <em>Events › per utente</em> filtrata sulle ultime 24 ore.</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <div class="step-title">Log di accesso (<span class="inline-code">signin_logs</span>, 24h)</div>
+            <div class="step-desc">Accessi dell'utente con paese, IP, codici errore e risultato MFA — quello che trovi in Entra Admin Center sotto <em>Users › [utente] › Sign-in logs</em>.</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <div class="step-title">Sintesi con anomalie</div>
+            <div class="step-desc">Baseline location top-5 (14gg), device compliant vs non-compliant su Intune, anomalie 24h, discrepanze geografiche tra Entra Admin Center e SaaS Alerts.</div>
+          </div>
+        </li>
+      </ul>
+
+      <h2>Output atteso</h2>
+      <div class="output-preview">
+<span class="o-header">🔍 PROFILO UTENTE: mario.rossi@kryalos.com</span>
+
+<span class="o-section">📊 BASELINE LOCATION 14gg</span>
+   • Milano, IT: 78% (45 sign-in)
+   • Roma, IT: 14% (8 sign-in)
+   • Praga, CZ: 8% (5 sign-in)
+
+<span class="o-section">💻 DEVICE INTUNE</span>
+   • LAPTOP-MR01: compliant=True, primary user, Windows 11 23H2
+   • IPHONE-MR: compliant=True, iOS 17.4
+
+<span class="o-section">🕒 ATTIVITÀ ULTIME 24h</span>
+   • Sign-in success: 12 (da 2 paesi: IT, CZ)
+   • Sign-in failure: 1 (codice: AADSTS50126 — password errata)
+   • Eventi SaaS Alerts: 2 (OOAL: 1, altri: 1)
+
+<span class="o-warn">⚠️ ANOMALIE EVIDENZIATE</span>
+   • OOAL da Praga (CZ) — ma presenza in baseline (8%, 5 accessi 14gg)
+   • 1 MFA failure alle 08:33 UTC — isolato, non seguito da ulteriori fail
+
+<span class="o-section">💡 NOTE OPERATIVE</span>
+   Pattern accesso CZ ricorrente in baseline — probabile trasferta abituale.</div>
+
+      <div class="callout callout-warn">
+        <span class="callout-icon">⚠️</span>
+        <div><strong>Attenzione agli IP backbone:</strong> non affidarsi al country mostrato in Entra Admin Center per IP di provider backbone (Cloudflare, Level3, HE, GTT, NTT). La geolocalizzazione è inconsistente. Il source event nel portale SaaS Alerts è il dato autoritativo.</div>
+      </div>
+
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div><strong>Questa skill è solo profilazione:</strong> non conclude se il caso è FP o escalation. Usa l'output come input per le skill di analisi ticket o per una valutazione manuale.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── DIAGNOSE STALE ─── -->
+  <div id="section-diagnose" class="section">
+    <div class="topbar">
+      <span class="topbar-breadcrumb">Skills</span>
+      <span style="color:rgba(74,70,96,0.3)">›</span>
+      <span class="topbar-title">diagnose-stale</span>
+    </div>
+    <div class="content">
+      <div class="skill-hero">
+        <div class="skill-hero-icon bg-green">🩺</div>
+        <div class="skill-hero-body">
+          <h1>diagnose-stale</h1>
+          <p>Diagnostica perché un ticket è ancora aperto. Analizza la cronologia dell'agente Argentino, gli errori provider correlati, l'evento sorgente SaaS Alerts e restituisce un'azione consigliata.</p>
+          <div class="skill-hero-meta">
+            <span class="chip chip-readonly">Sola lettura</span>
+            <span class="chip chip-freq">~3 / settimana</span>
+            <span class="chip chip-trigger">perché aperto</span>
+            <span class="chip chip-trigger">ticket stuck</span>
+            <span class="chip chip-trigger">ticket stagnante</span>
+            <span class="chip chip-trigger">diagnose stale</span>
+          </div>
+        </div>
+      </div>
+
+      <h2>Come si usa</h2>
+      <div class="command-pill" onclick="copyText('/blueteam:diagnose-stale 15634', this)">
+        <span>/blueteam:diagnose-stale &lt;numero-ticket&gt;</span>
+        <span class="cp-icon">🩺</span>
+      </div>
+
+      <div class="nl-skill-block">
+        <div class="nl-label">Puoi anche dirlo così — Claude capisce e avvia la skill</div>
+        <div class="nl-row">
+          <div class="nl-bubble"><div class="nl-tenant">VBC</div>Il #15634 su VBC è fermo da ieri sera. Argentino lo ha visto? Perché è ancora aperto?</div>
+        </div>
+        <div class="nl-row">
+          <div class="nl-bubble"><div class="nl-tenant">Kryalos</div>Ticket #15589 stuck da 30 ore su Kryalos — cosa è successo nella cronologia Argentino?</div>
+        </div>
+        <div class="nl-row">
+          <div class="nl-bubble"><div class="nl-tenant">SACMAR</div>Il #15621 di SACMAR non si muove da ieri. C'erano errori provider quando è stato creato?</div>
+        </div>
+        <div class="nl-row" style="margin-bottom:0;">
+          <div class="nl-bubble"><div class="nl-tenant">DL-LAW</div>Questo ticket di DL-LAW è aperto da 2 giorni, nessuno lo ha toccato — diagnosi.</div>
+        </div>
+      </div>
+
+      <h2>Flusso</h2>
+      <ul class="steps">
+        <li>
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Aggrega tutto con <span class="inline-code">ticket_diagnose</span></div>
+            <div class="step-desc">Un'unica chiamata che restituisce: header ticket, cronologia azioni Argentino (contact_fixer, triage_analyst, auto_closer, manual close), evento sorgente SaaS Alerts, errori provider nella finestra di creazione.</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Analisi dei pattern</div>
+            <div class="step-desc">Classifica il caso in uno dei 4 scenari tipici e formula la diagnosi.</div>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">Diagnosi + azione consigliata</div>
+            <div class="step-desc">Output strutturato con contesto, cronologia, interpretazione e una o più azioni concrete.</div>
+          </div>
+        </li>
+      </ul>
+
+      <h2>I 4 scenari tipici</h2>
+      <table>
+        <thead>
+          <tr><th>Scenario</th><th>Sintomo</th><th>Causa probabile</th><th>Azione</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Argentino mai visto</strong></td>
+            <td>Cronologia vuota</td>
+            <td>cf_Triage Source ≠ Operator/vuoto; status escluso dalla scansione; cache fail</td>
+            <td>Verifica cf_Triage Source, valuta presa in carico manuale</td>
+          </tr>
+          <tr>
+            <td><strong>Solo contact_fixer</strong></td>
+            <td>Vede il ticket ma non agisce</td>
+            <td>Pattern non coperto dai percorsi rapidi; ticket in stato Pending con operatore assegnato</td>
+            <td>Triage manuale o attesa se assegnato</td>
+          </tr>
+          <tr>
+            <td><strong>Valutato, non chiuso</strong></td>
+            <td>triage_event presente, no chiusura</td>
+            <td>Argentino ha lasciato in needs_reasoning (Sonnet non ha chiuso)</td>
+            <td>Avvia l'analisi manuale con la skill appropriata</td>
+          </tr>
+          <tr>
+            <td><strong>Errori provider</strong></td>
+            <td>Timeout / 5xx nel periodo creazione</td>
+            <td>Degrado SaaS Alerts o Desk365 al momento della generazione</td>
+            <td>Valuta ri-trigger via update ticket</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Output atteso</h2>
+      <div class="output-preview">
+<span class="o-header">🔍 DIAGNOSI TICKET #15634</span>
+
+<span class="o-section">📊 CONTESTO</span>
+   Subject: SaaS Alerts - KRYALOS - mario.rossi@kryalos.com - Outside Approved Location
+   Status: Open | Age: 36h | Assegnatario: nessuno
+   cf_Triage Source: Operator
+
+<span class="o-section">🕒 CRONOLOGIA AGENT</span>
+   Nessuna azione Argentino registrata.
+
+<span class="o-section">💡 INTERPRETAZIONE</span>
+   Argentino non ha mai processato questo ticket.
+   cf_Triage Source = Operator → candidato per triage manuale.
+   Possibile causa: ticket creato quando Argentino era in pausa schedulata.
+
+<span class="o-section">▶️ AZIONE CONSIGLIATA</span>
+   1. Usa /blueteam:triage-ooal 15634 per processarlo ora.
+   2. Oppure assegna a te il ticket su Desk365 per lavorazione manuale.</div>
+
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div><strong>Skill solo diagnostica:</strong> non propone mai la chiusura. L'azione di chiusura va poi eseguita con <span class="inline-code">triage-ooal</span> o <span class="inline-code">triage-burst</span>.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── QUICK REFERENCE ─── -->
+  <div id="section-quickref" class="section">
+    <div class="topbar">
+      <span class="topbar-breadcrumb">EKO365 BlueTeam Plugin</span>
+      <span style="color:rgba(74,70,96,0.3)">›</span>
+      <span class="topbar-title">Quick Reference</span>
+    </div>
+    <div class="content">
+      <h1>⚡ Quick Reference</h1>
+      <p class="subtitle">Tutte le skill in un colpo d'occhio. Stampa o tieni aperta come seconda scheda.</p>
+
+      <div class="card">
+        <div class="qr-row" style="background:var(--purple);border-radius:6px 6px 0 0;color:white;font-size:12px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;">
+          <div class="qr-skill">Skill</div>
+          <div class="qr-cmd">Comando</div>
+          <div class="qr-desc">Quando usarla</div>
+          <div class="qr-type">Tipo</div>
+        </div>
+        <div class="qr-row">
+          <div class="qr-skill">🌅 morning-checklist</div>
+          <div class="qr-cmd">/blueteam:morning-checklist</div>
+          <div class="qr-desc">Inizio turno. Coda, Argentino, backlog stagnante, priorità.</div>
+          <div class="qr-type"><span class="chip chip-readonly">lettura</span></div>
+        </div>
+        <div class="qr-row">
+          <div class="qr-skill">📍 triage-ooal</div>
+          <div class="qr-cmd">/blueteam:triage-ooal &lt;N&gt;</div>
+          <div class="qr-desc">Ticket Outside Approved Location. R12/R17/LLM + proposta chiusura.</div>
+          <div class="qr-type"><span class="chip chip-write">chiusura</span></div>
+        </div>
+        <div class="qr-row">
+          <div class="qr-skill">📂 triage-burst</div>
+          <div class="qr-cmd">/blueteam:triage-burst &lt;N&gt;</div>
+          <div class="qr-desc">File Download/Upload Limit. Trova parent+children, chiude tutto il burst.</div>
+          <div class="qr-type"><span class="chip chip-write">chiusura</span></div>
+        </div>
+        <div class="qr-row">
+          <div class="qr-skill">🔍 investigate-user</div>
+          <div class="qr-cmd">/blueteam:investigate-user &lt;email&gt;</div>
+          <div class="qr-desc">Profilo utente completo: baseline geo, device, sign-in, anomalie 24h.</div>
+          <div class="qr-type"><span class="chip chip-readonly">lettura</span></div>
+        </div>
+        <div class="qr-row" style="border-bottom:none;">
+          <div class="qr-skill">🩺 diagnose-stale</div>
+          <div class="qr-cmd">/blueteam:diagnose-stale &lt;N&gt;</div>
+          <div class="qr-desc">Ticket stuck: perché Argentino non l'ha processato? Cronologia + azione.</div>
+          <div class="qr-type"><span class="chip chip-readonly">lettura</span></div>
+        </div>
+      </div>
+
+      <h2>Gerarchia regole OOAL</h2>
+      <table>
+        <thead><tr><th>#</th><th>Regola</th><th>Condizioni chiave</th><th>Caso tipico</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><strong>R12</strong></td><td>OOAL stesso IP ultimi 7gg</td><td>Grace period — già visto</td></tr>
+          <tr><td>2</td><td><strong>R17</strong></td><td>IT + compliant + risk none + CA ok</td><td>VPN aziendale IT</td></tr>
+          <tr><td>3</td><td><strong>R17b</strong></td><td>IT + ASN backbone + compliant</td><td>Rete Level3/CF/HE in Italia</td></tr>
+          <tr><td>4</td><td><strong>R17c</strong></td><td>IT + backbone + BYOD + baseline ≥2</td><td>Dispositivo personale IT</td></tr>
+          <tr><td>5</td><td><strong>R17d</strong></td><td>EU/OECD + ISP non datacenter + compliant + baseline ≥2</td><td>Trasferta estera</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Regole burst File Limit</h2>
+      <table>
+        <thead><tr><th>Regola</th><th>Tipo</th><th>Condizioni chiave</th><th>Fatturazione (padre)</th></tr></thead>
+        <tbody>
+          <tr><td><strong>R16a</strong></td><td>Download</td><td>UA ms_internal (ODMTADemand...) + Microsoft hosting + threat clean</td><td>15 min</td></tr>
+          <tr><td><strong>R16d</strong></td><td>Upload</td><td>ASN Microsoft + target = drive personale + threat clean</td><td>15 min</td></tr>
+          <tr><td><strong>R16b</strong></td><td>Download o Upload</td><td>Storico ≥3 ticket simili/90gg chiusi FP</td><td>15 min</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-ok" style="margin-top:20px;">
+        <span class="callout-icon">📌</span>
+        <div><strong>Regola d'oro:</strong> ticket figli del burst → sempre <strong>0 min</strong>. LLM confidence BASSA → sempre <strong>escalation manuale</strong>. IP backbone → usa source event SaaS Alerts come dato autoritativo per il country.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── ANTI-PATTERN ─── -->
+  <div id="section-antipatterns" class="section">
+    <div class="topbar">
+      <span class="topbar-breadcrumb">EKO365 BlueTeam Plugin</span>
+      <span style="color:rgba(74,70,96,0.3)">›</span>
+      <span class="topbar-title">Anti-pattern</span>
+    </div>
+    <div class="content">
+      <h1>🚫 Anti-pattern operativi</h1>
+      <p class="subtitle">Cosa non fare mai — raccolta di errori comuni e comportamenti da evitare.</p>
+
+      <h2>Triage OOAL</h2>
+      <div class="antipattern">
+        <span class="ap-icon">✗</span>
+        <div><strong>Non affidarsi al solo country mostrato in Entra Admin Center per IP backbone.</strong> Level3, Lumen, Cloudflare, Hurricane Electric, GTT, NTT: la geolocalizzazione è inconsistente tra la GeoDB Microsoft e MaxMind/IPinfo. Il source event nel portale SaaS Alerts è il dato autoritativo per il paese di accesso.</div>
+      </div>
+      <div class="antipattern">
+        <span class="ap-icon">✗</span>
+        <div><strong>Non applicare R17 a country diverso da IT.</strong> R17 è solo per Italia. Per paesi EU/OECD usa R17d.</div>
+      </div>
+      <div class="antipattern">
+        <span class="ap-icon">✗</span>
+        <div><strong>Non chiudere se baseline 30gg = 0 e country non in approved list.</strong> Se l'utente non ha mai avuto accessi da quella location, meglio escalation manuale.</div>
+      </div>
+      <div class="antipattern">
+        <span class="ap-icon">✗</span>
+        <div><strong>Non fidarti di trust_score &lt; 80</strong> anche se gli altri segnali sono positivi. Declassare a confidenza MEDIA o BASSA.</div>
+      </div>
+      <div class="antipattern">
+        <span class="ap-icon">✗</span>
+        <div><strong>Non inventare pattern simili a regole rapide se non corrispondono esatto.</strong> Meglio LLM reasoning con disclaimer chiaro che forzare una regola rapida non calzante.</div>
+      </div>
+
+      <h2>Triage burst</h2>
+      <div class="antipattern">
+        <span class="ap-icon">✗</span>
+        <div><strong>Non chiudere i children con minuti &gt; 0.</strong> Il billing è aggregato sul parent per design. I children vanno sempre a 0 min. (vedi commit 0a014b8 per il bug storico sistemato)</div>
+      </div>
+      <div class="antipattern">
+        <span class="ap-icon">✗</span>
+        <div><strong>Non applicare R16a/R16d se is_datacenter=True ma l'ASN non è Microsoft.</strong> AWS, GCP o altri datacenter generici potrebbero essere exfiltration. Escalation manuale.</div>
+      </div>
+      <div class="antipattern">
+        <span class="ap-icon">✗</span>
+        <div><strong>Per upload bulk: verificare che il target sia il drive personale dell'utente.</strong> Se è un shared link verso esterni → escalation. Non è un caso OneDrive sync normale.</div>
+      </div>
+
+      <h2>investigate-user</h2>
+      <div class="antipattern">
+        <span class="ap-icon">✗</span>
+        <div><strong>Non usare investigate-user per concludere FP o escalation.</strong> È solo profilazione. L'output è input per le skill di analisi ticket o per una valutazione manuale.</div>
+      </div>
+      <div class="antipattern">
+        <span class="ap-icon">✗</span>
+        <div><strong>Se Argentino è in stato di degrado dei provider, dichiarare l'evidenza parziale.</strong> Alcuni dati potrebbero mancare — non trattare l'assenza di segnali negativi come conferma di sicurezza.</div>
+      </div>
+
+      <h2>diagnose-stale</h2>
+      <div class="antipattern">
+        <span class="ap-icon">✗</span>
+        <div><strong>Non proporre chiusura del ticket da diagnose-stale.</strong> Questa skill è solo diagnostica. La chiusura avviene con triage-ooal o triage-burst.</div>
+      </div>
+      <div class="antipattern">
+        <span class="ap-icon">✗</span>
+        <div><strong>Non inventare cause se i dati non sono chiari.</strong> Dichiarare "cause incerte, serve verifica manuale" è la risposta corretta quando i dati sono ambigui.</div>
+      </div>
+
+      <h2>morning-checklist</h2>
+      <div class="antipattern">
+        <span class="ap-icon">✗</span>
+        <div><strong>Non allarmarsi per Argentino in external_error se i final-fail sono 0.</strong> Conta i <em>final-fail</em>, non i tentativi. Errori esterni recovered non indicano un problema reale.</div>
+      </div>
+
+      <h2>Generale</h2>
+      <div class="antipattern">
+        <span class="ap-icon">✗</span>
+        <div><strong>Non sovrascrivere ticket con cf_Triage Source = "AI-Agent".</strong> Significa che Argentino ha già processato il ticket. Non sovrascrivere senza aver capito perché è rimasto aperto.</div>
+      </div>
+      <div class="antipattern">
+        <span class="ap-icon">✗</span>
+        <div><strong>Non procedere senza conferma per le skill di chiusura.</strong> Rispondere Y in modo riflessivo senza leggere l'evidenza vanifica il valore del sistema. Il punto è che tu validi.</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  function show(id) {
+    // Hide all sections
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+    // Show target
+    const target = document.getElementById('section-' + id);
+    if (target) target.classList.add('visible');
+
+    // Update sidebar active state
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+      item.classList.remove('active');
+    });
+    event.currentTarget.classList.add('active');
+
+    // Scroll to top
+    document.getElementById('main').scrollTop = 0;
+
+    return false;
+  }
+
+  function copyCode(btn) {
+    const pre = btn.parentElement.querySelector('pre');
+    navigator.clipboard.writeText(pre.textContent.trim()).then(() => {
+      btn.textContent = '✓ Copiato';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'Copia';
+        btn.classList.remove('copied');
+      }, 1800);
+    });
+  }
+
+  function copyText(text, el) {
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = el.innerHTML;
+      el.innerHTML = '<span>✓ Copiato negli appunti</span>';
+      setTimeout(() => { el.innerHTML = orig; }, 1800);
+    });
+  }
+</script>
+
+</body>
+</html>
