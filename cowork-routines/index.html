@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EKO365 Cowork &amp; Routines — Guida Operativa</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --orange:   #EE774A;
+    --purple:   #4332AC;
+    --body:     #4A4660;
+    --bg:       #F8F7FC;
+    --sidebar-bg: #1E1A3A;
+    --sidebar-text: #C9C5E8;
+    --sidebar-active: #EE774A;
+    --card-bg:  #FFFFFF;
+    --border:   #E8E5F4;
+    --green:    #2ECC71;
+    --yellow:   #F39C12;
+    --red:      #E74C3C;
+    --blue:     #3498DB;
+    --code-bg:  #1E1A3A;
+    --row-alt:  #F5F4F9;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', 'Century Gothic', sans-serif;
+    color: var(--body);
+    background: var(--bg);
+    display: flex;
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* SIDEBAR */
+  #sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    overflow-y: auto;
+    z-index: 100;
+  }
+  .sidebar-logo {
+    padding: 24px 20px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .sidebar-logo .brand {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--orange);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .sidebar-logo .plugin-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    margin-top: 4px;
+  }
+  .sidebar-logo .version {
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+    margin-top: 2px;
+  }
+  .sidebar-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.25);
+    padding: 20px 20px 6px;
+  }
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 20px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+    font-size: 13.5px;
+    color: var(--sidebar-text);
+    text-decoration: none;
+  }
+  .sidebar-item:hover {
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+  }
+  .sidebar-item.active {
+    border-left-color: var(--orange);
+    background: rgba(238,119,74,0.1);
+    color: #fff;
+    font-weight: 500;
+  }
+  .sidebar-item .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--orange);
+    width: 22px;
+    flex-shrink: 0;
+    font-weight: 700;
+  }
+
+  /* MAIN */
+  #main {
+    margin-left: 260px;
+    flex: 1;
+    overflow-y: auto;
+  }
+  .section { display: none; }
+  .section.visible { display: block; }
+
+  /* TOP BAR */
+  .topbar {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    padding: 14px 40px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .topbar-breadcrumb {
+    font-size: 12px;
+    color: rgba(74,70,96,0.45);
+  }
+  .topbar-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--body);
+  }
+
+  /* CONTENT */
+  .content {
+    padding: 36px 48px;
+    max-width: 960px;
+  }
+
+  h1 { font-size: 26px; font-weight: 700; color: var(--purple); margin-bottom: 8px; }
+  h2 { font-size: 18px; font-weight: 600; color: var(--purple); margin: 32px 0 12px; }
+  h3 { font-size: 15px; font-weight: 600; color: var(--body); margin: 20px 0 8px; }
+  p  { margin-bottom: 12px; }
+
+  .subtitle {
+    font-size: 15px;
+    color: rgba(74,70,96,0.6);
+    margin-bottom: 28px;
+  }
+
+  /* HERO */
+  .welcome-hero {
+    background: linear-gradient(135deg, var(--purple) 0%, #2E2480 100%);
+    border-radius: 14px;
+    padding: 36px 40px;
+    color: white;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .welcome-hero h1 { color: white; font-size: 24px; margin-bottom: 8px; }
+  .welcome-hero p  { color: rgba(255,255,255,0.78); font-size: 15px; margin: 0; }
+  .welcome-hero .wh-tag {
+    display: inline-block;
+    background: rgba(238,119,74,0.3);
+    color: var(--orange);
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 4px;
+    margin-bottom: 12px;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: rgba(74,70,96,0.45);
+    margin-bottom: 12px;
+  }
+
+  /* CODE */
+  .code-block {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 10px 0;
+    position: relative;
+  }
+  .code-block pre {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 13px;
+    color: #C9C5E8;
+    white-space: pre;
+    overflow-x: auto;
+  }
+  .code-block .copy-btn {
+    position: absolute; top: 10px; right: 10px;
+    background: rgba(255,255,255,0.1);
+    border: none; border-radius: 5px;
+    color: rgba(255,255,255,0.6);
+    font-size: 11px; font-weight: 600;
+    padding: 4px 10px; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .code-block .copy-btn:hover { background: rgba(255,255,255,0.2); color: white; }
+  .code-block .copy-btn.copied { background: rgba(46,204,113,0.3); color: #2ECC71; }
+
+  .inline-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    background: rgba(67,50,172,0.08);
+    color: var(--purple);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  /* CALLOUT */
+  .callout {
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 12px 0;
+    display: flex; gap: 10px;
+    font-size: 13.5px;
+  }
+  .callout-warn  { background: rgba(243,156,18,0.08); border-left: 3px solid var(--yellow); }
+  .callout-error { background: rgba(231,76,60,0.07);  border-left: 3px solid var(--red); }
+  .callout-ok    { background: rgba(46,204,113,0.07); border-left: 3px solid var(--green); }
+  .callout-info  { background: rgba(67,50,172,0.07);  border-left: 3px solid var(--purple); }
+  .callout-label {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    font-size: 11px;
+    margin-right: 6px;
+  }
+  .callout-warn  .callout-label { color: #B97706; }
+  .callout-error .callout-label { color: #C0392B; }
+  .callout-ok    .callout-label { color: #1E874B; }
+  .callout-info  .callout-label { color: var(--purple); }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13.5px; }
+  th {
+    background: var(--purple);
+    color: white;
+    padding: 9px 14px;
+    text-align: left;
+    font-size: 12px; font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  th:first-child { border-radius: 6px 0 0 0; }
+  th:last-child  { border-radius: 0 6px 0 0; }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:nth-child(even) td { background: var(--row-alt); }
+
+  /* INSTALL STEP */
+  .install-step {
+    display: flex; gap: 16px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .install-step::before {
+    content: '';
+    position: absolute;
+    left: 19px; top: 36px;
+    width: 2px;
+    height: calc(100% - 10px);
+    background: var(--border);
+  }
+  .install-step:last-child::before { display: none; }
+  .is-num {
+    width: 38px; height: 38px;
+    background: var(--purple);
+    color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px;
+    flex-shrink: 0;
+    z-index: 1;
+  }
+  .is-body { flex: 1; padding-top: 6px; }
+  .is-title { font-weight: 600; margin-bottom: 6px; color: var(--body); }
+  .is-desc  { font-size: 13.5px; color: rgba(74,70,96,0.75); margin-bottom: 8px; }
+
+  /* INCIDENT BLOCK (lessons learned) */
+  .incident {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--red);
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin-bottom: 18px;
+  }
+  .incident-id {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--red);
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+  .incident-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--body);
+    margin-bottom: 12px;
+  }
+  .incident-row {
+    display: flex; gap: 12px;
+    margin-bottom: 8px;
+    font-size: 13.5px;
+  }
+  .incident-row:last-child { margin-bottom: 0; }
+  .incident-label {
+    flex: 0 0 80px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-size: 11px;
+    padding-top: 2px;
+  }
+  .incident-symptom .incident-label { color: var(--red); }
+  .incident-cause   .incident-label { color: var(--yellow); }
+  .incident-fix     .incident-label { color: var(--green); }
+  .incident-body { flex: 1; color: rgba(74,70,96,0.85); }
+
+  /* PRODUCT CARD */
+  .prod-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin-bottom: 12px;
+  }
+  .prod-card.code   { border-top: 3px solid var(--purple); }
+  .prod-card.cowork { border-top: 3px solid var(--orange); }
+  .prod-card.routines { border-top: 3px solid var(--blue); }
+  .prod-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--body);
+    margin-bottom: 4px;
+  }
+  .prod-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .prod-tag.local { background: rgba(67,50,172,0.1); color: var(--purple); }
+  .prod-tag.cloud { background: rgba(52,152,219,0.1); color: var(--blue); }
+
+  /* SCROLLBAR */
+  #sidebar::-webkit-scrollbar { width: 4px; }
+  #sidebar::-webkit-scrollbar-track { background: transparent; }
+  #sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+  /* DIVIDER */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+  }
+
+  /* FOOTER */
+  .page-footer {
+    text-align: center;
+    color: rgba(74,70,96,0.55);
+    font-size: 12px;
+    padding: 24px 48px 40px;
+    font-style: italic;
+  }
+
+  /* LIST */
+  ul, ol { padding-left: 22px; margin-bottom: 12px; }
+  li { margin-bottom: 4px; }
+
+  /* LINK STYLING */
+  a { color: var(--purple); }
+  a:hover { color: var(--orange); }
+
+  /* REFERENCE LIST */
+  .ref-list {
+    list-style: none;
+    padding-left: 0;
+  }
+  .ref-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13.5px;
+  }
+  .ref-list li:last-child { border-bottom: none; }
+  .ref-list a {
+    text-decoration: none;
+    color: var(--purple);
+    font-weight: 500;
+  }
+  .ref-list a:hover { color: var(--orange); text-decoration: underline; }
+  .ref-list .ref-desc {
+    color: rgba(74,70,96,0.65);
+    font-size: 12.5px;
+    margin-top: 2px;
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand">EKO365 SOC</div>
+    <div class="plugin-name">Cowork &amp; Routines</div>
+    <div class="version">v1.0 · Guida Operativa</div>
+  </div>
+
+  <div class="sidebar-section-label">Concetti</div>
+  <a class="sidebar-item active" onclick="show('intro', event)" href="#intro">
+    <span class="num">00</span> Introduzione
+  </a>
+  <a class="sidebar-item" onclick="show('prodotti', event)" href="#prodotti">
+    <span class="num">01</span> I tre prodotti Anthropic
+  </a>
+  <a class="sidebar-item" onclick="show('architettura', event)" href="#architettura">
+    <span class="num">02</span> Architettura BlueTeam
+  </a>
+
+  <div class="sidebar-section-label">Runtime</div>
+  <a class="sidebar-item" onclick="show('cowork', event)" href="#cowork">
+    <span class="num">03</span> Cowork desktop
+  </a>
+  <a class="sidebar-item" onclick="show('routines', event)" href="#routines">
+    <span class="num">04</span> Routines cloud
+  </a>
+
+  <div class="sidebar-section-label">Distribuzione</div>
+  <a class="sidebar-item" onclick="show('distribution', event)" href="#distribution">
+    <span class="num">05</span> Plugin Org Settings
+  </a>
+  <a class="sidebar-item" onclick="show('environment', event)" href="#environment">
+    <span class="num">06</span> Environment Routines
+  </a>
+
+  <div class="sidebar-section-label">Operazioni</div>
+  <a class="sidebar-item" onclick="show('lessons', event)" href="#lessons">
+    <span class="num">07</span> Lessons learned
+  </a>
+  <a class="sidebar-item" onclick="show('procedure', event)" href="#procedure">
+    <span class="num">08</span> Procedure operative
+  </a>
+  <a class="sidebar-item" onclick="show('riferimenti', event)" href="#riferimenti">
+    <span class="num">09</span> Riferimenti
+  </a>
+</nav>
+
+<!-- MAIN -->
+<main id="main">
+
+  <!-- INTRO -->
+  <div id="section-intro" class="section visible">
+    <div class="topbar">
+      <span class="topbar-breadcrumb">EKO365 Internal Docs</span>
+      <span style="color:rgba(74,70,96,0.3)">›</span>
+      <span class="topbar-title">Cowork &amp; Routines — Introduzione</span>
+    </div>
+    <div class="content">
+      <div class="welcome-hero">
+        <div class="wh-tag">Guida Operativa · Validata 2026-05-06</div>
+        <h1>Cowork e Routines — guida operativa EKO365</h1>
+        <p>Documento operativo che raccoglie tutto il know-how Anthropic Claude Code, Cowork desktop e Routines cloud applicato all'infrastruttura EKO365 BlueTeam.</p>
+      </div>
+
+      <h2>Contesto</h2>
+      <p>EKO365 BlueTeam usa <strong>tre prodotti distinti</strong> della famiglia Claude — Claude Code (CLI), Cowork (desktop app) e Routines (cloud automation) — costruiti tutti sopra Claude Agent SDK ma con casi d'uso, runtime e UI differenti. Confonderli porta a errori architetturali, ad esempio trattare una Routine come un Managed Agent o assumere che un SessionStart hook funzioni in claude.ai web.</p>
+
+      <p>Questa guida è la sintesi operativa di quanto validato in produzione sul ciclo M1-M4 del plugin BlueTeam, con il loop orario di Argentino (agente autonomo SOC) attivo come Routine cloud e il plugin distribuito al team via Org Settings claude.ai.</p>
+
+      <div class="callout callout-info">
+        <span class="callout-label">Nota</span>
+        <div>Le sezioni seguono lo stesso ordine del file sorgente <span class="inline-code">docs/operations/cowork-and-routines.md</span> nel repo <span class="inline-code">EKO365-BlueTeam</span>. La pagina è pubblicata anche su <a href="https://eko365sb.github.io/eko365-docs/cowork-routines/">eko365sb.github.io/eko365-docs/cowork-routines/</a> per consultazione senza clone.</div>
+      </div>
+
+      <h2>Come leggere questa guida</h2>
+      <ul>
+        <li><strong>Sezioni 01-02</strong>: concetti — distinzione tra prodotti e architettura BlueTeam in produzione</li>
+        <li><strong>Sezioni 03-04</strong>: dettagli runtime per Cowork desktop e Routines cloud</li>
+        <li><strong>Sezioni 05-06</strong>: distribuzione plugin via Org Settings e configurazione Environment</li>
+        <li><strong>Sezioni 07-09</strong>: lessons learned dai 4 incident reali, procedure operative e riferimenti</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PRODOTTI -->
+  <div id="section-prodotti" class="section">
+    <div class="topbar">
+      <span class="topbar-breadcrumb">EKO365 Internal Docs</span>
+      <span style="color:rgba(74,70,96,0.3)">›</span>
+      <span class="topbar-title">I tre prodotti Anthropic</span>
+    </div>
+    <div class="content">
+      <h1>I tre prodotti Anthropic — distinzione chiave</h1>
+      <p class="subtitle">Tabella comparativa Claude Code / Cowork / Routines e quando usare ciascuno.</p>
+
+      <div class="prod-card code">
+        <div class="prod-name">Claude Code <span class="prod-tag local">Locale</span></div>
+        <p style="margin:0;font-size:13.5px;color:rgba(74,70,96,0.75)">Terminal CLI per developer interactive. Esecuzione sul PC dell'operatore, full local tools, permission prompts user-scoped. Plugin support attivo via marketplace.</p>
+      </div>
+
+      <div class="prod-card cowork">
+        <div class="prod-name">Claude Cowork <span class="prod-tag local">Locale</span></div>
+        <p style="margin:0;font-size:13.5px;color:rgba(74,70,96,0.75)">Desktop app nativa Mac/Windows scaricabile da claude.ai. Stesso formato plugin di Claude Code CLI. Ideale per knowledge worker interactive: SOC operator usa Cowork desktop con plugin BlueTeam installato.</p>
+      </div>
+
+      <div class="prod-card routines">
+        <div class="prod-name">Routines <span class="prod-tag cloud">Cloud Anthropic</span></div>
+        <p style="margin:0;font-size:13.5px;color:rgba(74,70,96,0.75)">Automation cloud-based — gira sui server Anthropic, machine off OK. Unattended automation scheduled via cron, API webhook <span class="inline-code">/fire</span> o GitHub event. Argentino loop SOC è una Routine.</p>
+      </div>
+
+      <h2>Tabella comparativa</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Aspetto</th>
+            <th>Claude Code</th>
+            <th>Claude Cowork</th>
+            <th>Routines</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Interfaccia</strong></td>
+            <td>Terminal CLI</td>
+            <td>Desktop app (Mac + Windows)</td>
+            <td>Cloud web claude.ai/code/routines + CLI <span class="inline-code">/schedule</span></td>
+          </tr>
+          <tr>
+            <td><strong>Execution</strong></td>
+            <td>Local machine</td>
+            <td>Local machine</td>
+            <td><strong>Anthropic cloud</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Machine on?</strong></td>
+            <td>Sì</td>
+            <td>Sì</td>
+            <td><strong>No</strong> (cloud-based)</td>
+          </tr>
+          <tr>
+            <td><strong>Uso primario</strong></td>
+            <td>Developer interactive</td>
+            <td>Knowledge worker interactive</td>
+            <td>Unattended automation scheduled</td>
+          </tr>
+          <tr>
+            <td><strong>Permission prompts</strong></td>
+            <td>Sì (user-scoped)</td>
+            <td>Limited (desktop scope)</td>
+            <td><strong>No</strong> (autonomous)</td>
+          </tr>
+          <tr>
+            <td><strong>SessionStart hook</strong></td>
+            <td>Sì</td>
+            <td>Sì (desktop) — non in claude.ai web</td>
+            <td>n/a (no plugin install)</td>
+          </tr>
+          <tr>
+            <td><strong>Persiste session closed</strong></td>
+            <td>No</td>
+            <td>No</td>
+            <td><strong>Sì</strong> (cloud)</td>
+          </tr>
+          <tr>
+            <td><strong>Tools</strong></td>
+            <td>Full local</td>
+            <td>Limited desktop</td>
+            <td>Repo + connectors MCP</td>
+          </tr>
+          <tr>
+            <td><strong>Plugin support</strong></td>
+            <td>Sì (marketplace + Org Settings)</td>
+            <td>Sì (marketplace + Org Settings)</td>
+            <td>n/a</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>URL ufficiali</h2>
+      <ul>
+        <li>Cowork prodotto: <a href="https://www.anthropic.com/product/claude-cowork">anthropic.com/product/claude-cowork</a></li>
+        <li>Cowork plugin docs: <a href="https://support.claude.com/en/articles/13837440-use-plugins-in-claude-cowork">support.claude.com/.../use-plugins-in-claude-cowork</a></li>
+        <li>Routines docs: <a href="https://code.claude.com/docs/en/routines">code.claude.com/docs/en/routines</a></li>
+        <li>Plugin reference: <a href="https://code.claude.com/docs/en/plugins-reference">code.claude.com/docs/en/plugins-reference</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ARCHITETTURA -->
+  <div id="section-architettura" class="section">
+    <div class="topbar">
+      <span class="topbar-breadcrumb">EKO365 Internal Docs</span>
+      <span style="color:rgba(74,70,96,0.3)">›</span>
+      <span class="topbar-title">Architettura BlueTeam</span>
+    </div>
+    <div class="content">
+      <h1>Architettura BlueTeam in produzione</h1>
+      <p class="subtitle">Distribuzione plugin via marketplace EKO365 + due runtime locali (Cowork/Claude Code) + un loop Routine cloud.</p>
+
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">Copia</button>
+        <pre>┌─────────────────────────────────────────────────────────────────────┐
+│                Marketplace EKO365 (eko365sb/claude-plugins)         │
+│                                                                     │
+│  marketplace.json al root → TOC dei plugin                          │
+│  ├─ blueteam → ./plugins/blueteam (v1.0.0 self-contained)           │
+│  └─ ekodocs  → ./plugins/ekodocs                                    │
+│                                                                     │
+│  Distribuzione: claude.ai → Org Settings → Sync from GitHub         │
+└─────────────────────────────────────────────────────────────────────┘
+                          │
+                          ▼ membri team installano
+   ┌──────────────────────┴──────────────────────┐
+   ▼                                             ▼
+┌────────────────────────┐              ┌────────────────────────┐
+│   Cowork desktop       │              │   Claude Code CLI      │
+│   (Mac/Win)            │              │   (Mac/Win/Linux)      │
+│                        │              │                        │
+│ Plugin auto-installed  │              │ Plugin via marketplace │
+│ SessionStart hook OK   │              │ SessionStart hook OK   │
+│ MCP server local       │              │ MCP server local       │
+└─────────┬──────────────┘              └─────────┬──────────────┘
+          │                                       │
+          └──────────┬────────────────────────────┘
+                     ▼
+       Operatori SOC: /blueteam:morning-checklist,
+       /blueteam:triage-ooal, ecc.
+
+   ┌──────────────────────┐
+   │ Routine cloud        │ ← Argentino loop schedulato (ogni ora)
+   │ "EKO365 BlueTeam     │
+   │  Loop"               │
+   │                      │
+   │ Repository:          │
+   │  EKO365-BlueTeam     │
+   │ Environment:         │
+   │  EKO365 BlueTeam     │
+   │ Repeats:             │
+   │  Every hour 5-19     │
+   └──────────┬───────────┘
+              │
+   ┌──────────┴───────────────────────────────┐
+   │                                          │
+   ▼                                          ▼
+┌─────────────────┐              ┌────────────────────────┐
+│ Bitwarden EU    │◄─────────────│ Wasabi S3              │
+│ vault.bitwarden │              │ s3.eu-south-1          │
+│ .eu             │              │ .wasabisys.com         │
+│                 │              │                        │
+│ 13 secrets +    │              │ action_log centrale    │
+│ 1 progetto +    │              │ refresh tokens         │
+│ N machine accts │              │                        │
+└─────────────────┘              └────────────────────────┘</pre>
+      </div>
+
+      <h2>Componenti chiave</h2>
+      <ul>
+        <li><strong>Marketplace privato</strong>: repo <span class="inline-code">eko365sb/claude-plugins</span> con <span class="inline-code">marketplace.json</span> al root come TOC</li>
+        <li><strong>Due runtime locali</strong>: Cowork desktop (preferito per operatori SOC) e Claude Code CLI (developer)</li>
+        <li><strong>Routine cloud</strong>: Argentino loop orario 5-19 con repository <span class="inline-code">EKO365-BlueTeam</span> e Environment dedicato</li>
+        <li><strong>Vault Bitwarden EU</strong>: secrets centralizzati con machine accounts dedicati per agente</li>
+        <li><strong>Wasabi S3 eu-south-1</strong>: action log centrale + refresh tokens per cross-tenant operations</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- COWORK -->
+  <div id="section-cowork" class="section">
+    <div class="topbar">
+      <span class="topbar-breadcrumb">EKO365 Internal Docs</span>
+      <span style="color:rgba(74,70,96,0.3)">›</span>
+      <span class="topbar-title">Cowork desktop</span>
+    </div>
+    <div class="content">
+      <h1>Cowork desktop — dettagli</h1>
+      <p class="subtitle">App desktop nativa per knowledge worker. Esecuzione locale, plugin support, ideale per operatori SOC.</p>
+
+      <h2>Caratteristiche</h2>
+      <ul>
+        <li>App desktop nativa macOS/Windows scaricabile da claude.ai</li>
+        <li>Stesso formato plugin di Claude Code CLI: <span class="inline-code">.claude-plugin/plugin.json</span> + skills/hooks/MCP servers</li>
+        <li>Plugin distribuiti via marketplace o tramite Org Settings (vedi sezione Distribuzione)</li>
+        <li>Esecuzione <strong>locale</strong> sul PC dell'operatore, non cloud</li>
+      </ul>
+
+      <h2>Vincoli importanti</h2>
+      <div class="callout callout-warn">
+        <span class="callout-label">Attenzione</span>
+        <div><strong>SessionStart hook NON funziona in claude.ai web puro</strong> — solo in Cowork desktop o Claude Code CLI. Plugin self-contained con bootstrap Python embedded richiede quindi <strong>Cowork desktop installato</strong>, non il browser.</div>
+      </div>
+      <ul>
+        <li>MCP server gira sul PC dell'utente — l'egress di rete passa via proxy Anthropic (range IP whitelistato)</li>
+        <li>Plugin auto-installed se l'organizzazione ha attivato l'<em>auto-install</em> in Org Settings; altrimenti opt-in da parte del member</li>
+        <li>Update plugin: il client Cowork sincronizza automaticamente le nuove version pubblicate su <span class="inline-code">marketplace.json</span></li>
+      </ul>
+
+      <h2>Quando usare Cowork desktop</h2>
+      <p>Per operatori SOC EKO365 (Fabio, Ilaria, futuri operatori) Cowork desktop è il client raccomandato. Permette:</p>
+      <ul>
+        <li>Invocazione skill BlueTeam con comandi slash (es. <span class="inline-code">/blueteam:morning-checklist</span>)</li>
+        <li>Bootstrap Python embedded del plugin via SessionStart hook (impossibile in web)</li>
+        <li>Accesso a MCP server <span class="inline-code">blueteam</span> in locale, con autenticazione operator-scoped</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ROUTINES -->
+  <div id="section-routines" class="section">
+    <div class="topbar">
+      <span class="topbar-breadcrumb">EKO365 Internal Docs</span>
+      <span style="color:rgba(74,70,96,0.3)">›</span>
+      <span class="topbar-title">Routines cloud</span>
+    </div>
+    <div class="content">
+      <h1>Routines — automation cloud Anthropic</h1>
+      <p class="subtitle">Feature ufficiale Claude Code v2.1.72+. Configurazione cloud per agenti unattended schedulati.</p>
+
+      <h2>Definizione</h2>
+      <p>Una Routine cloud è composta da:</p>
+      <ul>
+        <li><strong>Prompt</strong> (<span class="inline-code">Instructions</span>) — istruzioni testuali al Claude agent</li>
+        <li><strong>Repository</strong> GitHub — fresh clone ad ogni run</li>
+        <li><strong>Environment</strong> — entità separata con env vars + setup script</li>
+        <li><strong>MCP connectors</strong> — opzionali</li>
+        <li><strong>Trigger</strong> — schedule cron-like, API webhook <span class="inline-code">/fire</span>, GitHub events</li>
+      </ul>
+      <p>URL UI: <a href="https://claude.ai/code/routines">claude.ai/code/routines</a></p>
+
+      <h2>Sandbox di esecuzione</h2>
+      <ul>
+        <li><strong>bubblewrap</strong> per isolamento filesystem</li>
+        <li><strong>socat</strong> per network egress proxato (domain allowlist)</li>
+        <li>VM cloud isolate, credenziali (git creds, signing keys) NON nel sandbox</li>
+        <li>Filesystem effimero per session, ma con <strong>snapshot caching</strong> (vedi Environment)</li>
+        <li><strong>uv</strong> installato automaticamente per Python interpreter management</li>
+        <li>Python sandbox è <strong>Debian-based</strong> — alcuni pacchetti Python sono apt-installed con potenziali conflitti pip</li>
+      </ul>
+
+      <h2>Daily run cap per piano</h2>
+      <table>
+        <thead>
+          <tr><th>Piano</th><th>Run/giorno</th><th>Note</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Pro</td><td>5</td><td>Single user</td></tr>
+          <tr><td>Max</td><td>15</td><td>Heavy individual user</td></tr>
+          <tr><td>Team / Enterprise</td><td>25</td><td>Configurazione EKO365</td></tr>
+        </tbody>
+      </table>
+      <div class="callout callout-info">
+        <span class="callout-label">Nota</span>
+        <div>I <strong>Run now manuali NON contano</strong> contro il cap. Utile per debug e manual replay senza erodere il budget orario.</div>
+      </div>
+
+      <h2>API trigger <span class="inline-code">/fire</span> (opzionale)</h2>
+      <p>Endpoint webhook per trigger esterni:</p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">Copia</button>
+        <pre>POST https://api.anthropic.com/v1/claude_code/routines/trig_&lt;id&gt;/fire
+Authorization: Bearer sk-ant-oat01-...
+anthropic-beta: experimental-cc-routine-2026-04-01
+Content-Type: application/json
+
+{"text": "context"}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- DISTRIBUTION -->
+  <div id="section-distribution" class="section">
+    <div class="topbar">
+      <span class="topbar-breadcrumb">EKO365 Internal Docs</span>
+      <span style="color:rgba(74,70,96,0.3)">›</span>
+      <span class="topbar-title">Plugin distribution Org Settings</span>
+    </div>
+    <div class="content">
+      <h1>Plugin distribution via Org Settings — pattern monorepo</h1>
+      <p class="subtitle">Il marketplace EKO365 (<span class="inline-code">eko365sb/claude-plugins</span>) ospita più plugin in un monorepo distribuito al team via UI claude.ai.</p>
+
+      <h2>Il file <span class="inline-code">marketplace.json</span> (TOC del marketplace)</h2>
+      <p>File <span class="inline-code">eko365sb/claude-plugins/.claude-plugin/marketplace.json</span> — esempio strutturale:</p>
+
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">Copia</button>
+        <pre>{
+  "name": "eko365-plugins",
+  "owner": { "name": "EKO365 S.B. S.r.l.", "email": "info@eko365.it" },
+  "metadata": {
+    "description": "EKO365 private plugin marketplace",
+    "version": "1.0.0",
+    "pluginRoot": "./plugins"
+  },
+  "plugins": [
+    {
+      "name": "blueteam",
+      "source": "./plugins/blueteam",
+      "description": "...",
+      "version": "1.0.0",
+      "keywords": ["soc", "security", "blueteam", "..."],
+      "category": "security"
+    },
+    {
+      "name": "ekodocs",
+      "source": "./plugins/ekodocs",
+      "...": "..."
+    }
+  ]
+}</pre>
+      </div>
+
+      <h2>Procedura admin per Sync from GitHub</h2>
+
+      <div class="install-step">
+        <div class="is-num">1</div>
+        <div class="is-body">
+          <div class="is-title">Apri Org Settings</div>
+          <div class="is-desc">Vai a <span class="inline-code">claude.ai → Settings → Organization → Plugins → Sync from GitHub</span>.</div>
+        </div>
+      </div>
+
+      <div class="install-step">
+        <div class="is-num">2</div>
+        <div class="is-body">
+          <div class="is-title">Seleziona repository</div>
+          <div class="is-desc">Repository: <span class="inline-code">eko365sb/claude-plugins</span> (privato — la UI mostra solo private/internal).</div>
+        </div>
+      </div>
+
+      <div class="install-step">
+        <div class="is-num">3</div>
+        <div class="is-body">
+          <div class="is-title">Marketplace name</div>
+          <div class="is-desc">Auto-derivato dal nome del repository.</div>
+        </div>
+      </div>
+
+      <div class="install-step">
+        <div class="is-num">4</div>
+        <div class="is-body">
+          <div class="is-title">Sync automatically: ON</div>
+          <div class="is-desc">Propaga ogni push su main al team. Senza questo flag, l'admin deve triggerare sync manualmente.</div>
+        </div>
+      </div>
+
+      <div class="install-step">
+        <div class="is-num">5</div>
+        <div class="is-body">
+          <div class="is-title">Default access</div>
+          <div class="is-desc"><span class="inline-code">Available</span> (member opt-in) o <span class="inline-code">Auto-install</span> (force-install per tutti i member).</div>
+        </div>
+      </div>
+
+      <div class="install-step">
+        <div class="is-num">6</div>
+        <div class="is-body">
+          <div class="is-title">Save</div>
+          <div class="is-desc">I plugin del monorepo dichiarati in <span class="inline-code">marketplace.json</span> sono ora disponibili a tutti i member del team. Il subpath è gestito automaticamente dal manifest.</div>
+        </div>
+      </div>
+
+      <h2>Aggiungere un nuovo plugin al marketplace EKO365</h2>
+      <ol>
+        <li>Crea sottocartella <span class="inline-code">plugins/&lt;nome&gt;/</span> nel repo <span class="inline-code">claude-plugins</span></li>
+        <li>Aggiungi <span class="inline-code">.claude-plugin/plugin.json</span> per quel plugin</li>
+        <li><strong>Aggiungi entry nel <span class="inline-code">marketplace.json</span></strong> al root del repo:
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copia</button>
+            <pre>{ "name": "&lt;nome&gt;", "source": "./plugins/&lt;nome&gt;", "description": "...", "version": "1.0.0", ... }</pre>
+          </div>
+        </li>
+        <li>PR + merge su main</li>
+        <li>Auto-sync propaga il nuovo plugin agli utenti del team</li>
+      </ol>
+
+      <h2>Bump version di un plugin</h2>
+      <ol>
+        <li>Edita <span class="inline-code">plugins/&lt;nome&gt;/.claude-plugin/plugin.json</span> con la nuova version</li>
+        <li><strong>Anche</strong> <span class="inline-code">marketplace.json</span> al root deve avere la stessa version per il TOC</li>
+        <li>PR + merge → sync propaga</li>
+      </ol>
+      <div class="callout callout-warn">
+        <span class="callout-label">Importante</span>
+        <div>Se la version nel <span class="inline-code">plugin.json</span> e nel <span class="inline-code">marketplace.json</span> divergono, il sync può silenziosamente non aggiornare il client. Tieni i due numeri sempre allineati.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENVIRONMENT -->
+  <div id="section-environment" class="section">
+    <div class="topbar">
+      <span class="topbar-breadcrumb">EKO365 Internal Docs</span>
+      <span style="color:rgba(74,70,96,0.3)">›</span>
+      <span class="topbar-title">Environment per Routines</span>
+    </div>
+    <div class="content">
+      <h1>Configurazione Environment per Routines</h1>
+      <p class="subtitle">L'Environment è entità separata dalla Routine. Una Routine seleziona un Environment al momento della creazione.</p>
+
+      <h2>Cosa contiene un Environment</h2>
+      <ul>
+        <li><strong>Connectors</strong> — MCP server URLs, opzionali</li>
+        <li><strong>Environment variables</strong> — env vars + secrets</li>
+        <li><strong>Setup script</strong> — bash, eseguito pre-session</li>
+        <li><strong>Domain allowlist</strong> — egress whitelisting</li>
+      </ul>
+
+      <h2>Setup script — comportamento cache</h2>
+      <p>Pattern di caching validato empiricamente 2026-05-06:</p>
+      <ul>
+        <li>Setup script content <strong>invariato</strong> → snapshot riusato → setup script NON re-eseguito → benefici cache massimi</li>
+        <li>Setup script content <strong>modificato</strong> → snapshot invalidato → setup re-eseguito da zero</li>
+        <li>Cambi al codice del repo (file Python esistenti modificati) → fresh clone è sempre fatto → editable install vede dinamicamente i file → <strong>non serve toccare il setup script</strong></li>
+      </ul>
+      <div class="callout callout-warn">
+        <span class="callout-label">Eccezione</span>
+        <div>Se il refactor aggiunge <strong>nuovi sottomoduli</strong> al package, l'editable metadata cached potrebbe non risolverli. Mitigazione: bumpare un piccolo cambio nel setup script (es. echo aggiunto) per invalidare cache una volta. <strong>NON usare <span class="inline-code">--force-reinstall</span> ad ogni run</strong> per default — distrugge il cache benefit.</div>
+      </div>
+
+      <h2>Setup script raccomandato (cache-friendly)</h2>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">Copia</button>
+        <pre>#!/bin/bash
+set -ex
+
+# Find repo root via pyproject.toml
+REPO=$(find / -maxdepth 6 -name pyproject.toml -path '*EKO365-BlueTeam*' 2&gt;/dev/null | head -1)
+if [ -z "$REPO" ]; then
+  echo 'pyproject.toml non trovato'
+  exit 1
+fi
+cd "$(dirname "$REPO")"
+
+# Audit log: stampa il commit clonato per debug
+echo "Repo HEAD: $(git rev-parse --short HEAD) — $(git log -1 --format='%s')"
+
+# Bypass Debian-managed PyJWT (apt-installed, no RECORD file)
+pip3 install --break-system-packages --quiet --ignore-installed PyJWT
+
+# Editable install — cache-friendly
+pip3 install --break-system-packages --quiet -e .
+
+echo "Setup OK: commit $(git rev-parse --short HEAD)"</pre>
+      </div>
+
+      <h2>Setup script defensivo (con <span class="inline-code">--force-reinstall</span>)</h2>
+      <p>Variante usata in produzione su Argentino. Aggiunge ~5-10s/run ma è auto-robust per refactor del package:</p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">Copia</button>
+        <pre># (... stesso preambolo ...)
+
+pip3 install --break-system-packages --quiet --ignore-installed PyJWT
+pip3 install --break-system-packages --quiet --force-reinstall --no-deps -e .
+pip3 install --break-system-packages --quiet -e .
+
+echo "Setup OK: ..."</pre>
+      </div>
+      <p><strong>Vantaggio</strong>: ogni run ricrea i metadata editable, vedendo automaticamente nuovi sottomoduli. <strong>Trade-off</strong>: 5-10s extra/run, trascurabile per loop orario.</p>
+
+      <h2>Domain allowlist (egress)</h2>
+      <p>UI Environment → sezione "Allowed domains" → lista di domini puri (no protocol, no path).</p>
+
+      <h3>Allowlist EKO365 BlueTeam (per riuso futuri progetti)</h3>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">Copia</button>
+        <pre>graph.microsoft.com
+login.microsoft.com
+login.microsoftonline.com
+eko365sb.webhook.office.com
+eko365.desk365.io
+us-central1-the-byway-248217.cloudfunctions.net
+api.mailersend.com
+s3.eu-south-1.wasabisys.com
+www.virustotal.com
+proxy.eko365.it
+security.microsoft.com
+vault.bitwarden.eu</pre>
+      </div>
+      <p>Plus <strong>flag</strong> "<em>also include default list of common package managers</em>" → ON. Questo whitelista automaticamente i registry pubblici (pypi.org, github.com, npm, ecc.) necessari per <span class="inline-code">pip install</span> e <span class="inline-code">git clone</span> nel setup script.</p>
+
+      <div class="callout callout-error">
+        <span class="callout-label">Failure mode</span>
+        <div>Errore <span class="inline-code">403 Forbidden — host not in allowlist</span> quando un dominio non è whitelistato. Errore lato socat proxy, NON lato HTTP server target.</div>
+      </div>
+
+      <h2>Aggiungere un dominio all'allowlist</h2>
+      <ol>
+        <li>UI claude.ai → Settings → Organization → Environments → seleziona Environment</li>
+        <li>Sezione "Allowed domains" → aggiungi dominio (senza protocol)</li>
+        <li>Save</li>
+      </ol>
+      <p>Effetto immediato sulle prossime run.</p>
+    </div>
+  </div>
+
+  <!-- LESSONS -->
+  <div id="section-lessons" class="section">
+    <div class="topbar">
+      <span class="topbar-breadcrumb">EKO365 Internal Docs</span>
+      <span style="color:rgba(74,70,96,0.3)">›</span>
+      <span class="topbar-title">Lessons learned</span>
+    </div>
+    <div class="content">
+      <h1>Lessons learned (incident log)</h1>
+      <p class="subtitle">I 4 incident reali validati 2026-05-06 con sintomo, causa e fix per ognuno.</p>
+
+      <div class="incident">
+        <div class="incident-id">INCIDENT 7.1</div>
+        <div class="incident-title"><span class="inline-code">pip install</span> conflitti con pacchetti Debian (sandbox Routine)</div>
+        <div class="incident-row incident-symptom">
+          <div class="incident-label">Sintomo</div>
+          <div class="incident-body"><span class="inline-code">ERROR: Cannot uninstall PyJWT 2.7.0, RECORD file not found. Hint: The package was installed by debian.</span></div>
+        </div>
+        <div class="incident-row incident-cause">
+          <div class="incident-label">Causa</div>
+          <div class="incident-body">Il sandbox Anthropic Routine è Debian-based. Alcuni pacchetti Python sono apt-installed (no RECORD file pip), e <span class="inline-code">pip install</span> non li può uninstall/upgrade.</div>
+        </div>
+        <div class="incident-row incident-fix">
+          <div class="incident-label">Fix</div>
+          <div class="incident-body">Aggiungere <span class="inline-code">pip3 install --break-system-packages --ignore-installed PyJWT</span> PRIMA del <span class="inline-code">pip install -e .</span> principale. Variante più aggressiva se altri pacchetti Debian-managed danno problema:
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">Copia</button>
+              <pre>pip3 install --break-system-packages --ignore-installed -e .</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="incident">
+        <div class="incident-id">INCIDENT 7.2</div>
+        <div class="incident-title">Refactor Python package: import lazy/indented missed da sed bulk</div>
+        <div class="incident-row incident-symptom">
+          <div class="incident-label">Sintomo</div>
+          <div class="incident-body"><span class="inline-code">ModuleNotFoundError: No module named 'X'</span> a runtime, anche se il refactor sembra completo.</div>
+        </div>
+        <div class="incident-row incident-cause">
+          <div class="incident-label">Causa</div>
+          <div class="incident-body">I <span class="inline-code">from X import Y</span> lazy (dentro a funzioni, indentati) NON sono matchati da <span class="inline-code">sed -E '^from X '</span> ancorato a inizio riga. Plus i submoduli aggiunti DOPO l'editable install possono avere metadata stale.</div>
+        </div>
+        <div class="incident-row incident-fix">
+          <div class="incident-label">Fix</div>
+          <div class="incident-body">Sed senza anchor (<span class="inline-code">s|from X |from new.path |g</span>) + smoke test exhaustive che importa esplicitamente OGNI modulo del package post-refactor:
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">Copia</button>
+              <pre>import importlib
+modules = ['package.X', 'package.Y', ...]  # tutti
+for m in modules:
+    importlib.import_module(m)</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="incident">
+        <div class="incident-id">INCIDENT 7.3</div>
+        <div class="incident-title">Cache routine snapshot e propagazione fix</div>
+        <div class="incident-row incident-symptom">
+          <div class="incident-label">Sintomo</div>
+          <div class="incident-body">Fix mergeato in main, ma sandbox Routine continua ad eseguire codice pre-fix.</div>
+        </div>
+        <div class="incident-row incident-cause">
+          <div class="incident-label">Causa</div>
+          <div class="incident-body">Snapshot routine cache include filesystem post-setup. Setup script invariato → snapshot riusato → fresh clone OK ma metadata editable può essere stale.</div>
+        </div>
+        <div class="incident-row incident-fix">
+          <div class="incident-label">Fix</div>
+          <div class="incident-body">
+            <strong>Mitigation 1</strong>: cambiare contenuto del setup script (es. aggiungere echo) invalida lo snapshot e forza re-setup completo.<br>
+            <strong>Mitigation 2 — defensiva</strong>: usare <span class="inline-code">--force-reinstall --no-deps -e .</span> nel setup, costa 5-10s/run ma garantisce metadata sempre aggiornati.
+          </div>
+        </div>
+      </div>
+
+      <div class="incident">
+        <div class="incident-id">INCIDENT 7.4</div>
+        <div class="incident-title">Vault non raggiungibile dal sandbox Routine</div>
+        <div class="incident-row incident-symptom">
+          <div class="incident-label">Sintomo</div>
+          <div class="incident-body"><span class="inline-code">Vault backend not available; using .env values only.</span> (403 Forbidden host not in allowlist).</div>
+        </div>
+        <div class="incident-row incident-cause">
+          <div class="incident-label">Causa</div>
+          <div class="incident-body">Dominio <span class="inline-code">vault.bitwarden.eu</span> non nell'allowlist Environment.</div>
+        </div>
+        <div class="incident-row incident-fix">
+          <div class="incident-label">Fix</div>
+          <div class="incident-body">
+            Aggiungerlo all'allowlist (vedi sezione Environment).<br><br>
+            <strong>Pattern soft-migration secrets</strong>: tieni i 13 secrets cleartext come env vars + aggiungi <span class="inline-code">BW_ACCESS_TOKEN</span> / <span class="inline-code">BW_ORGANIZATION_ID</span> / <span class="inline-code">EKO365_SECRETS_BACKEND=bitwarden</span>. Il <span class="inline-code">secrets_loader</span> carica dal vault con priorità, fallback automatico ai cleartext se vault unreachable. Cleanup dei 13 cleartext solo dopo 24-48h di run consecutive con vault verde.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROCEDURE -->
+  <div id="section-procedure" class="section">
+    <div class="topbar">
+      <span class="topbar-breadcrumb">EKO365 Internal Docs</span>
+      <span style="color:rgba(74,70,96,0.3)">›</span>
+      <span class="topbar-title">Procedure operative</span>
+    </div>
+    <div class="content">
+      <h1>Procedure operative</h1>
+      <p class="subtitle">Sei procedure step-by-step per le operazioni più frequenti.</p>
+
+      <h2>8.1 — Creare una nuova Routine</h2>
+      <ol>
+        <li>Vai a <a href="https://claude.ai/code/routines">claude.ai/code/routines</a> → <strong>New routine</strong></li>
+        <li>Compila:
+          <ul>
+            <li><strong>Name</strong> — descrittivo (es. <span class="inline-code">EKO365 SmartBackup Daily Report</span>)</li>
+            <li><strong>Repository</strong> — GitHub repo collegato (es. <span class="inline-code">eko365sb/smartbackup-reports</span>)</li>
+            <li><strong>Environment</strong> — seleziona o crea (vedi 8.2)</li>
+            <li><strong>Trigger</strong> — schedule (cron-like UI), API webhook, o GitHub event</li>
+            <li><strong>Instructions</strong> — prompt per Claude agent (markdown supportato)</li>
+          </ul>
+        </li>
+        <li>Save → routine attiva, primo run sul prossimo schedule (o trigger manuale "Run now")</li>
+      </ol>
+
+      <h2>8.2 — Creare un nuovo Environment</h2>
+      <ol>
+        <li><span class="inline-code">claude.ai/code/routines</span> → Settings (icon) → Environments → New</li>
+        <li>Compila:
+          <ul>
+            <li><strong>Name</strong> (es. <span class="inline-code">EKO365 SmartBackup</span>)</li>
+            <li><strong>Allowed domains</strong> — lista, vedi sezione Environment</li>
+            <li><strong>Setup script</strong> — bash, vedi pattern in sezione Environment</li>
+            <li><strong>Environment variables</strong> — key=value</li>
+          </ul>
+        </li>
+        <li>Save → riusabile da N routine</li>
+      </ol>
+
+      <h2>8.3 — Aggiungere un nuovo plugin al marketplace EKO365</h2>
+      <p>Vedi sezione <a href="#distribution" onclick="show('distribution', event); return false;">Plugin Org Settings — Aggiungere un nuovo plugin</a>.</p>
+
+      <h2>8.4 — Bumpare un plugin esistente</h2>
+      <p>Vedi sezione <a href="#distribution" onclick="show('distribution', event); return false;">Plugin Org Settings — Bump version di un plugin</a>.</p>
+
+      <h2>8.5 — Onboarding nuovo operatore SOC</h2>
+      <ol>
+        <li><strong>Generare token Bitwarden personale</strong> (admin):
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copia</button>
+            <pre>cd ~/claude-workspace/EKO365-BlueTeam
+source ~/.eko365/bitwarden_config.env
+python3 scripts/bootstrap_vault.py --new-operator-token "&lt;nome&gt;"</pre>
+          </div>
+          Segui le istruzioni stampate (UI Bitwarden EU → machine account + project access + access token).
+        </li>
+        <li><strong>Inviare token via Bitwarden Send</strong> (canale sicuro): link expiring + password. Mai email/Slack/Teams cleartext.</li>
+        <li><strong>Setup operatore</strong> (lato lui/lei):
+          <ul>
+            <li>Installare Cowork desktop</li>
+            <li>Login con account Anthropic team EKO365</li>
+            <li>Plugin <span class="inline-code">blueteam</span> già disponibile (Org Settings auto-distribution)</li>
+            <li>Lanciare <span class="inline-code">/blueteam:setup</span> → incollare token (input nascosto)</li>
+            <li>Verifica: <span class="inline-code">/blueteam:morning-checklist</span> → output OK</li>
+          </ul>
+        </li>
+      </ol>
+
+      <h2>8.6 — Migration secrets di un agente al vault Bitwarden</h2>
+      <p>Pattern soft (validato Argentino M4):</p>
+      <ol>
+        <li>Generare machine account dedicato nel vault con scope project</li>
+        <li><strong>Aggiungere</strong> 3 env vars all'Environment dell'agente (sostituire i placeholder):
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copia</button>
+            <pre>EKO365_SECRETS_BACKEND=bitwarden
+BW_ACCESS_TOKEN=PLACEHOLDER_paste_your_machine_account_token_here
+BW_ORGANIZATION_ID=PLACEHOLDER_eko365_org_uuid</pre>
+          </div>
+        </li>
+        <li><strong>NON rimuovere</strong> i secrets cleartext esistenti (fallback)</li>
+        <li>Verificare allowlist contenga <span class="inline-code">vault.bitwarden.eu</span></li>
+        <li>Run now → verifica log:
+          <ul>
+            <li><span class="inline-code">Loaded 13 secrets from BitwardenBackend</span> (vault OK)</li>
+            <li><span class="inline-code">Vault backend not available; using .env values only.</span> (fallback attivo)</li>
+          </ul>
+        </li>
+        <li>Monitorare 24-48h di run consecutive</li>
+        <li>Solo se tutti verdi vault → <strong>rimuovere</strong> i cleartext dall'Environment</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- RIFERIMENTI -->
+  <div id="section-riferimenti" class="section">
+    <div class="topbar">
+      <span class="topbar-breadcrumb">EKO365 Internal Docs</span>
+      <span style="color:rgba(74,70,96,0.3)">›</span>
+      <span class="topbar-title">Riferimenti</span>
+    </div>
+    <div class="content">
+      <h1>Riferimenti</h1>
+      <p class="subtitle">Documentazione Anthropic ufficiale, repository EKO365 e documentazione interna correlata.</p>
+
+      <h2>Documentazione Anthropic ufficiale</h2>
+      <ul class="ref-list">
+        <li>
+          <a href="https://code.claude.com/docs/en/routines">Claude Code Routines</a>
+          <div class="ref-desc">Reference completa Routines: definizione, sandbox, trigger, daily caps</div>
+        </li>
+        <li>
+          <a href="https://code.claude.com/docs/en/scheduled-tasks">Scheduled tasks</a>
+          <div class="ref-desc">Configurazione cron-like e gestione schedule</div>
+        </li>
+        <li>
+          <a href="https://code.claude.com/docs/en/claude-code-on-the-web">Claude Code on the web</a>
+          <div class="ref-desc">Claude Code in browser claude.ai/code, vincoli rispetto al CLI</div>
+        </li>
+        <li>
+          <a href="https://code.claude.com/docs/en/plugins-reference">Plugin reference</a>
+          <div class="ref-desc">Schema <span class="inline-code">plugin.json</span>, <span class="inline-code">marketplace.json</span>, hooks, MCP servers embedded</div>
+        </li>
+        <li>
+          <a href="https://code.claude.com/docs/en/hooks">Hooks reference</a>
+          <div class="ref-desc">SessionStart, PreToolUse, PostToolUse, e altri hook events</div>
+        </li>
+        <li>
+          <a href="https://support.claude.com/en/articles/13837440-use-plugins-in-claude-cowork">Use plugins in Claude Cowork</a>
+          <div class="ref-desc">Guida utente per attivare plugin in Cowork desktop</div>
+        </li>
+        <li>
+          <a href="https://support.claude.com/en/articles/13837433-manage-claude-cowork-plugins-for-your-organization">Manage Cowork plugins for organization</a>
+          <div class="ref-desc">Sync from GitHub, default access, auto-install — guida admin</div>
+        </li>
+        <li>
+          <a href="https://www.anthropic.com/product/claude-cowork">Claude Cowork product page</a>
+          <div class="ref-desc">Pagina prodotto Anthropic con feature overview e download</div>
+        </li>
+        <li>
+          <a href="https://platform.claude.com/docs/en/api/claude-code/routines-fire">Routines API trigger</a>
+          <div class="ref-desc">Endpoint webhook <span class="inline-code">/fire</span> per trigger esterni</div>
+        </li>
+        <li>
+          <a href="https://platform.claude.com/docs/en/managed-agents/overview">Managed Agents (NON Routines, prodotto separato)</a>
+          <div class="ref-desc">Servizio Anthropic separato — beta 2026-04-01, semantica diversa da Routines</div>
+        </li>
+      </ul>
+
+      <h2>Repository EKO365</h2>
+      <ul class="ref-list">
+        <li>
+          <a href="https://github.com/eko365sb/claude-plugins">eko365sb/claude-plugins</a>
+          <div class="ref-desc">Marketplace plugin EKO365 (privato — TOC monorepo)</div>
+        </li>
+        <li>
+          <a href="https://github.com/eko365sb/EKO365-BlueTeam">eko365sb/EKO365-BlueTeam</a>
+          <div class="ref-desc">Core code BlueTeam — agente, MCP server, skill, Argentino loop</div>
+        </li>
+        <li>
+          <a href="https://github.com/eko365sb/eko365-docs">eko365sb/eko365-docs</a>
+          <div class="ref-desc">Documentazione pubblica EKO365 (questa Pages site)</div>
+        </li>
+      </ul>
+
+      <h2>Documentazione interna correlata</h2>
+      <ul class="ref-list">
+        <li>
+          <span class="inline-code">docs/superpowers/specs/2026-05-06-blueteam-plugin-mcp-embedded-design.md</span>
+          <div class="ref-desc">Spec architetturale del plugin self-contained con MCP embedded</div>
+        </li>
+        <li>
+          <span class="inline-code">docs/superpowers/plans/2026-05-06-blueteam-plugin-mcp-embedded-implementation.md</span>
+          <div class="ref-desc">Piano implementazione M1-M6</div>
+        </li>
+        <li>
+          <span class="inline-code">docs/secrets-vault/</span>
+          <div class="ref-desc">Gestione vault Bitwarden — architecture, rotation, offboarding</div>
+        </li>
+        <li>
+          <span class="inline-code">deploy/argentino/README.md</span>
+          <div class="ref-desc">Procedura deploy Argentino specifica</div>
+        </li>
+      </ul>
+
+      <hr class="divider">
+      <p style="font-size:13px;color:rgba(74,70,96,0.6);">
+        <strong>Versione documento</strong>: 1.0 (2026-05-06)<br>
+        <strong>Validato in produzione</strong>: M4 chiuso end-to-end con loop verde su Argentino + Mac dev Fabio.
+      </p>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    EKO365 S.B. S.r.l. — Internal Documentation — Riservato
+  </div>
+
+</main>
+
+<script>
+  function show(id, evt) {
+    // Hide all sections
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+    // Show target
+    const target = document.getElementById('section-' + id);
+    if (target) target.classList.add('visible');
+
+    // Update sidebar active state
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+      item.classList.remove('active');
+    });
+    if (evt && evt.currentTarget) {
+      evt.currentTarget.classList.add('active');
+    }
+
+    // Scroll to top
+    document.getElementById('main').scrollTop = 0;
+
+    return false;
+  }
+
+  function copyCode(btn) {
+    const pre = btn.parentElement.querySelector('pre');
+    navigator.clipboard.writeText(pre.textContent.trim()).then(() => {
+      btn.textContent = 'Copiato';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'Copia';
+        btn.classList.remove('copied');
+      }, 1800);
+    });
+  }
+
+  // Open the section matching the URL hash on load
+  window.addEventListener('DOMContentLoaded', () => {
+    const hash = window.location.hash.replace('#', '');
+    if (!hash) return;
+    const target = document.getElementById('section-' + hash);
+    if (!target) return;
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+    target.classList.add('visible');
+    document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+    const sidebarLink = document.querySelector('.sidebar-item[href="#' + hash + '"]');
+    if (sidebarLink) sidebarLink.classList.add('active');
+  });
+</script>
+
+</body>
+</html>
