@@ -3,279 +3,870 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SmartReporting — EKO365 Docs</title>
+<title>SmartReporting Platform — EKO365 Docs</title>
 <link rel="stylesheet" href="../css/eko365.css">
 <style>
-  .arch-canvas { display: flex; flex-direction: column; align-items: center; gap: 0; padding: 24px 0; }
-  .arch-row { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; }
-  .arch-pipeline-grid { display: grid; grid-template-columns: repeat(3, minmax(180px, 1fr)); gap: 14px; max-width: 720px; }
-  .arch-card { background: var(--white); border-radius: 10px; padding: 14px 18px; text-align: center; box-shadow: var(--shadow); border-top: 4px solid var(--accent); }
-  .arch-card .name { font-weight: 700; color: var(--primary); font-size: 0.95rem; }
-  .arch-card .src  { font-size: 0.72rem; color: var(--gray); margin-top: 3px; }
-  .arch-supervisor { background: var(--primary); color: var(--white); border-radius: 12px; padding: 18px 28px; text-align: center; box-shadow: var(--shadow); min-width: 360px; }
-  .arch-supervisor .name { font-weight: 700; font-size: 1.05rem; letter-spacing: 0.04em; }
-  .arch-supervisor .desc { font-size: 0.78rem; opacity: 0.85; margin-top: 4px; }
-  .arch-storage { background: var(--dark); color: var(--white); font-family: var(--mono); border-radius: 8px; padding: 12px 18px; font-size: 0.82rem; box-shadow: var(--shadow); min-width: 360px; text-align: center; }
-  .arch-output { background: var(--accent); color: var(--white); border-radius: 10px; padding: 12px 24px; font-weight: 700; font-size: 0.9rem; box-shadow: var(--shadow); }
-  .pipeline-table td.center { text-align: center; }
-  .digest-preview { background: var(--white); border: 1px solid #ddd; border-radius: 8px; padding: 16px 20px; max-width: 640px; margin: 12px auto; font-family: 'Century Gothic', Arial, sans-serif; box-shadow: var(--shadow); }
-  .digest-preview .subj { font-size: 0.78rem; color: var(--gray); border-bottom: 1px solid #eee; padding-bottom: 6px; margin-bottom: 10px; }
-  .digest-preview .subj b { color: var(--dark); }
-  .digest-preview h4 { color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 4px; font-size: 0.95rem; }
-  .digest-preview .kpi-line { background: var(--light); border-left: 3px solid var(--primary); padding: 10px 14px; margin: 10px 0; font-size: 0.82rem; }
-  .digest-preview .pl-row { border-bottom: 1px solid #eee; padding: 8px 0; font-size: 0.78rem; }
-  .b { display: inline-block; padding: 1px 6px; border-radius: 3px; color: var(--white); font-size: 0.68rem; font-weight: 700; margin-right: 6px; }
-  .b.success { background: #1E874B; }
-  .b.partial { background: #D97706; }
-  .b.failed { background: #991B1B; }
-  .b.missing { background: #6B6880; }
-  pre.cli { background: var(--dark); color: #A3E4D7; font-family: var(--mono); padding: 14px 18px; border-radius: 8px; font-size: 0.78rem; line-height: 1.5; overflow-x: auto; }
-  pre.cli .c { color: #7F8C8D; }
-  .lessons { background: #FEF3EC; border-left: 4px solid var(--accent); padding: 14px 18px; border-radius: 6px; margin: 12px 0; font-size: 0.82rem; }
-  .lessons strong { color: var(--accent); }
+  /* Diagramma architetturale */
+  .arch-flow { display: flex; flex-direction: column; align-items: center; padding: 16px 0; }
+  .arch-band { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin: 6px 0; }
+  .arch-source { background: var(--white); border: 2px solid var(--blue); border-radius: 8px; padding: 10px 14px; min-width: 140px; text-align: center; font-size: 0.78rem; }
+  .arch-source .ttl { font-weight: 700; color: var(--blue); font-size: 0.85rem; }
+  .arch-pipeline { background: var(--white); border-top: 4px solid var(--accent); border-radius: 10px; padding: 12px 14px; min-width: 150px; text-align: center; box-shadow: var(--shadow); }
+  .arch-pipeline .name { font-weight: 700; color: var(--primary); font-size: 0.9rem; }
+  .arch-pipeline .src  { font-size: 0.7rem; color: var(--gray); margin-top: 3px; }
+  .arch-control { background: var(--primary); color: var(--white); border-radius: 12px; padding: 16px 28px; text-align: center; box-shadow: var(--shadow); min-width: 380px; }
+  .arch-control .name { font-weight: 700; font-size: 1.05rem; letter-spacing: 0.04em; }
+  .arch-control .desc { font-size: 0.78rem; opacity: 0.88; margin-top: 4px; }
+  .arch-storage { background: var(--dark); color: var(--white); font-family: var(--mono); border-radius: 8px; padding: 12px 18px; font-size: 0.82rem; box-shadow: var(--shadow); min-width: 380px; text-align: center; }
+  .arch-delivery { background: var(--accent); color: var(--white); border-radius: 10px; padding: 10px 22px; font-weight: 700; font-size: 0.85rem; box-shadow: var(--shadow); min-width: 160px; text-align: center; }
+
+  /* Card tool */
+  .tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; margin: 12px 0; }
+  .tool-card { background: var(--white); border-radius: 10px; padding: 16px 18px; box-shadow: var(--shadow); border-left: 4px solid var(--primary); }
+  .tool-card.storage  { border-left-color: var(--dark); }
+  .tool-card.security { border-left-color: var(--accent); }
+  .tool-card.identity { border-left-color: var(--blue); }
+  .tool-card .tool-name { font-weight: 700; color: var(--primary); font-size: 0.95rem; margin-bottom: 4px; }
+  .tool-card .tool-role { font-size: 0.72rem; color: var(--gray); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+  .tool-card .tool-desc { font-size: 0.82rem; line-height: 1.5; color: var(--dark); }
+  .tool-card .tool-meta { font-size: 0.72rem; color: var(--gray); margin-top: 8px; padding-top: 6px; border-top: 1px solid #eee; }
+
+  /* Pipeline detail */
+  .pipe-detail { background: var(--white); border-radius: 10px; padding: 16px 20px; margin-bottom: 14px; box-shadow: var(--shadow); border-left: 4px solid var(--accent); }
+  .pipe-detail .pipe-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+  .pipe-detail h3 { color: var(--primary); font-size: 1.02rem; margin: 0; }
+  .pipe-detail .pipe-tag { font-size: 0.7rem; padding: 3px 10px; background: var(--light); color: var(--primary); border-radius: 12px; font-weight: 600; }
+  .pipe-detail .pipe-meta { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; margin: 8px 0; }
+  .pipe-detail .meta-item { font-size: 0.78rem; }
+  .pipe-detail .meta-label { font-size: 0.68rem; color: var(--gray); text-transform: uppercase; letter-spacing: 0.06em; }
+  .pipe-detail .meta-value { color: var(--dark); font-weight: 600; }
+  .pipe-detail .tenants { margin-top: 8px; }
+  .pipe-detail p { font-size: 0.82rem; line-height: 1.55; color: var(--dark); margin: 6px 0; }
+
+  /* Sicurezza */
+  .sec-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 12px 0; }
+  .sec-card { background: var(--light); border-radius: 8px; padding: 14px 16px; border-top: 3px solid var(--accent); }
+  .sec-card h4 { color: var(--primary); font-size: 0.9rem; margin-bottom: 6px; }
+  .sec-card p { font-size: 0.8rem; line-height: 1.55; }
+  .sec-card .meta { font-size: 0.7rem; color: var(--gray); margin-top: 6px; font-family: var(--mono); }
+  @media (max-width: 720px) { .sec-row { grid-template-columns: 1fr; } }
+
+  /* Infra repo grid */
+  .repo-table th { font-size: 0.75rem; }
+  .repo-role { font-size: 0.68rem; padding: 2px 7px; border-radius: 3px; font-weight: 600; display: inline-block; }
+  .repo-role.pipeline { background: #FADBD8; color: #922B21; }
+  .repo-role.control  { background: #D6EAF8; color: #2471A3; }
+  .repo-role.shared   { background: #D5F5E3; color: #1E8449; }
+  .repo-role.docs     { background: #FCF3CF; color: #7D6608; }
+  .repo-role.auth     { background: #E8DAEF; color: #6C3483; }
+
+  /* Callout */
+  .callout { background: #FEF3EC; border-left: 4px solid var(--accent); padding: 12px 16px; border-radius: 4px; margin: 12px 0; font-size: 0.82rem; }
+  .callout strong { color: var(--accent); }
+  .callout.note { background: #EAF2F8; border-left-color: var(--blue); }
+  .callout.note strong { color: var(--blue); }
+
+  /* Periodi banda */
+  .timing-band { display: flex; gap: 10px; flex-wrap: wrap; margin: 8px 0 16px; }
+  .timing-chip { background: var(--white); border: 1px solid #ddd; border-radius: 16px; padding: 5px 12px; font-size: 0.75rem; }
+  .timing-chip .tc-label { color: var(--gray); }
+  .timing-chip .tc-value { color: var(--primary); font-weight: 700; }
 </style>
 </head>
 <body>
 
 <div class="eko-header">
   <h1>SmartReporting Platform</h1>
-  <div class="subtitle">Architettura e operatività della piattaforma di reportistica MSSP EKO365</div>
+  <div class="subtitle">Documentazione funzionale — architettura, flussi dati, sicurezza, infrastruttura</div>
   <a href="../" class="back-link">&larr; Hub Documentazione</a>
 </div>
 
 <div class="view-toggle">
-  <button class="view-btn active" onclick="setView(event, 'overview')">Overview</button>
-  <button class="view-btn" onclick="setView(event, 'pipelines')">Pipeline</button>
-  <button class="view-btn" onclick="setView(event, 'supervisor')">Supervisor</button>
-  <button class="view-btn" onclick="setView(event, 'runbook')">Runbook</button>
+  <button class="view-btn active" onclick="setView(event, 'architettura')">Architettura</button>
+  <button class="view-btn" onclick="setView(event, 'pipeline')">Pipeline &amp; Flussi</button>
+  <button class="view-btn" onclick="setView(event, 'tool')">Tool &amp; Integrazioni</button>
+  <button class="view-btn" onclick="setView(event, 'sicurezza')">Sicurezza &amp; Auth</button>
+  <button class="view-btn" onclick="setView(event, 'github')">Infrastruttura GitHub</button>
 </div>
 
-<div class="view active" id="view-overview">
+<!-- ===================== VIEW 1: ARCHITETTURA ===================== -->
+<div class="view active" id="view-architettura">
+
   <div class="detail-section">
     <h2>Cos'è SmartReporting</h2>
-    <p style="font-size: 0.92rem; line-height: 1.6;">SmartReporting è la piattaforma di reportistica automatizzata MSSP di EKO365. Genera report mensili e trimestrali per <b>9 clienti</b> su <b>6 linee di servizio</b>, con un control plane centralizzato (<b>supervisor</b>) che orchestra le pipeline e produce un digest mensile aggregato. Tutti gli artefatti finiscono su Wasabi S3; un CLI dedicato (<code>eko365-download</code>) permette il pull selettivo dei report con tre layout di organizzazione.</p>
-    <h3>Architettura end-to-end</h3>
-    <div class="arch-canvas">
-      <div class="arch-pipeline-grid">
-        <div class="arch-card"><div class="name">SmartBackup</div><div class="src">AFI.ai cloud</div></div>
-        <div class="arch-card"><div class="name">SmartInfra</div><div class="src">PRTG &middot; UniFi &middot; RVTools</div></div>
-        <div class="arch-card"><div class="name">SmartPATCH</div><div class="src">Action1</div></div>
-        <div class="arch-card"><div class="name">Smart365</div><div class="src">Microsoft Graph &middot; EOP</div></div>
-        <div class="arch-card"><div class="name">SmartDESK</div><div class="src">Desk365 v3</div></div>
-        <div class="arch-card"><div class="name">DORA Cons.</div><div class="src">cross-pipeline</div></div>
+    <p style="font-size: 0.92rem; line-height: 1.6;">
+      SmartReporting è la piattaforma di reportistica automatizzata MSSP di EKO365. Raccoglie
+      dati operativi e di sicurezza da decine di sistemi (Microsoft 365, infrastrutture on-premise,
+      backup cloud e on-prem, ticketing, patch management), li aggrega per cliente e produce
+      mensilmente e trimestralmente i report contrattuali che documentano la qualità dei servizi
+      erogati e la conformità alle normative applicabili.
+    </p>
+    <p style="font-size: 0.85rem; line-height: 1.55; margin-top: 10px;">
+      L'origine è il regolamento europeo <b>DORA</b> (UE 2022/2554, in vigore dal 17 gennaio 2025):
+      le entità finanziarie devono dimostrare alle autorità di vigilanza che i propri fornitori
+      ICT operano con standard documentati. Per Kryalos SGR (cliente EKO365 e SGR vigilata da
+      Banca d'Italia) questo significa rendiconti periodici, strutturati, prodotti senza intervento
+      manuale. La piattaforma è stata estesa a tutti i clienti MSSP per ottenere uniformità di
+      servizio e poter rispondere rapidamente a richieste analoghe (NIS2, audit interni, valutazioni
+      contrattuali).
+    </p>
+  </div>
+
+  <div class="detail-section">
+    <h2>Architettura end-to-end</h2>
+    <p style="font-size: 0.85rem;">
+      Sei pipeline indipendenti producono dati e documenti. Un control plane centralizzato
+      (<b>supervisor</b>) li orchestra a posteriori tramite manifest contract: nessuna pipeline
+      è chiamata dal supervisor, ogni pipeline scrive sul manifest il proprio stato di run.
+    </p>
+
+    <div class="arch-flow">
+
+      <div class="section-label">Sorgenti dati</div>
+      <div class="arch-band">
+        <div class="arch-source"><div class="ttl">Microsoft 365</div><div>Graph &middot; EOP &middot; Intune</div></div>
+        <div class="arch-source"><div class="ttl">AFI.ai</div><div>backup M365 cloud</div></div>
+        <div class="arch-source"><div class="ttl">Veeam</div><div>backup on-prem</div></div>
+        <div class="arch-source"><div class="ttl">Action1</div><div>endpoint patching</div></div>
+        <div class="arch-source"><div class="ttl">PRTG &middot; UniFi &middot; RVTools</div><div>infra on-prem</div></div>
+        <div class="arch-source"><div class="ttl">Desk365</div><div>ticketing</div></div>
+        <div class="arch-source"><div class="ttl">SaaS Alerts</div><div>eventi M365</div></div>
       </div>
+
       <div class="arrow-down">&darr;</div>
-      <div class="arch-storage"><div><b>Wasabi S3</b> &middot; <code>eko365-pipelines</code></div><div style="font-size: 0.7rem; opacity: 0.7; margin-top: 4px;"><code>&lt;pipeline&gt;/reports/...</code> &middot; <code>_runs/&lt;pipeline&gt;/&lt;period&gt;/manifest.json</code></div></div>
-      <div class="arrow-down">&darr;</div>
-      <div class="arch-supervisor"><div class="name">SUPERVISOR</div><div class="desc">Aggrega manifest &middot; Digest mensile &middot; CLI download</div></div>
-      <div class="arrow-down">&darr;</div>
-      <div class="arch-row">
-        <div class="arch-output">Email digest mensile</div>
-        <div class="arch-output"><code>eko365-download</code></div>
-        <div class="arch-output">Per-pipeline failure alert</div>
+
+      <div class="section-label">Pipeline di raccolta &amp; analisi</div>
+      <div class="arch-band">
+        <div class="arch-pipeline"><div class="name">Smart365</div><div class="src">M365 security &amp; identity</div></div>
+        <div class="arch-pipeline"><div class="name">SmartBackup</div><div class="src">AFI.ai cloud</div></div>
+        <div class="arch-pipeline"><div class="name">Veeam</div><div class="src">backup on-prem</div></div>
+        <div class="arch-pipeline"><div class="name">SmartPATCH</div><div class="src">vulnerability mgmt</div></div>
+        <div class="arch-pipeline"><div class="name">SmartInfra</div><div class="src">datacenter health</div></div>
+        <div class="arch-pipeline"><div class="name">SmartDESK</div><div class="src">service desk KPI</div></div>
       </div>
+
+      <div class="arrow-down">&darr;</div>
+
+      <div class="section-label">Storage (object store)</div>
+      <div class="arch-band">
+        <div class="arch-storage">s3://eko365-pipelines/ (Wasabi, eu-south-1)</div>
+      </div>
+
+      <div class="arrow-down">&darr;</div>
+
+      <div class="section-label">Aggregazione trimestrale &amp; control plane</div>
+      <div class="arch-band">
+        <div class="arch-pipeline" style="border-top-color: var(--primary);"><div class="name">DORA Consolidated</div><div class="src">fascicolo trimestrale</div></div>
+        <div class="arch-control"><div class="name">eko365-supervisor</div><div class="desc">manifest watcher · digest mensile · CLI eko365-download</div></div>
+      </div>
+
+      <div class="arrow-down">&darr;</div>
+
+      <div class="section-label">Delivery</div>
+      <div class="arch-band">
+        <div class="arch-delivery">Email digest (MailerSend)</div>
+        <div class="arch-delivery">Download CLI (manifest-aware)</div>
+        <div class="arch-delivery">Fascicolo DORA cliente</div>
+      </div>
+
     </div>
-    <h3>Modello "silent on success, monthly digest"</h3>
+
+    <h3>Principi architetturali</h3>
+    <ul style="font-size: 0.82rem; padding-left: 22px; line-height: 1.7;">
+      <li><b>Disaccoppiamento pipeline ↔ supervisor</b> via <b>manifest contract</b>: ogni run scrive
+          <code>s3://eko365-pipelines/_runs/&lt;pipeline&gt;/&lt;periodo&gt;/manifest.json</code>.
+          Il supervisor li legge senza chiamare nessuna pipeline.</li>
+      <li><b>S3 come fonte di verità</b> (decisione architetturale 2026-05-15). Niente cache locale
+          come fonte primaria; ogni rigenerazione parte da S3.</li>
+      <li><b>Silent on success, alert on failure</b>: la pipeline non invia nulla quando funziona;
+          una mail dedicata parte solo se fallisce. Il digest mensile aggregato lo invia il supervisor.</li>
+      <li><b>Idempotenza</b>: re-run di un periodo storico è sicuro (overwrite manifest e report S3).</li>
+      <li><b>Naming convention deliverabili</b>: <code>&lt;Pipeline&gt;_&lt;EXT|INT&gt;_&lt;CLIENT&gt;_&lt;periodo&gt;.&lt;ext&gt;</code>
+          consente discovery automatica e popolamento manifest senza enumerazione manuale.</li>
+    </ul>
+  </div>
+
+  <div class="detail-section">
+    <h2>Layout S3</h2>
+    <p style="font-size: 0.82rem;">
+      Bucket Wasabi <code>eko365-pipelines</code> (region <code>eu-south-1</code>). Post migrazione
+      del 14-15 maggio 2026 lo schema è duale:
+    </p>
+    <pre class="s3-tree">
+<span class="folder">s3://eko365-pipelines/</span>
+├── <span class="folder">_runs/</span>                                <span class="comment"># Manifest contract (supervisor input)</span>
+│   └── <span class="folder">&lt;pipeline&gt;/&lt;YYYY-MM&gt;/</span>
+│       └── <span class="file">manifest.json</span>                 <span class="comment"># 7 manifest/mese (6 monthly + 1 quarterly)</span>
+│
+├── <span class="folder">smartreporting/pipelines/</span>             <span class="comment"># Pipeline-rooted (smartdesk, smartbackup, veeam, smartpatch parte)</span>
+│   └── <span class="folder">&lt;pipeline&gt;/{snapshots,analysis,reports}/</span>
+│
+├── <span class="folder">&lt;CLIENT&gt;/</span>                            <span class="comment"># Tenant-rooted (smart365, smartpatch raw)</span>
+│   ├── <span class="folder">raw/&lt;module&gt;/</span>                    <span class="comment"># Raw collected data per modulo (graph, action1, ...)</span>
+│   ├── <span class="folder">kpi/</span>                              <span class="comment"># KPI calcolati (snapshot point-in-time)</span>
+│   └── <span class="folder">exports/</span>                          <span class="comment"># DORA canonical exports (schema dora_kpis_v1)</span>
+│       └── <span class="file">dora_&lt;service&gt;.json</span>           <span class="comment"># Fonte autoritativa per dora-consolidated</span>
+│
+└── <span class="folder">infra/&lt;CLIENT&gt;/</span>                       <span class="comment"># SmartInfra legacy path (mantenuto come fallback)</span>
+    </pre>
+    <div class="callout note">
+      <strong>Path canonical vs legacy</strong> &middot; Il collector di <code>dora-consolidated</code>
+      cerca i DORA export in tre candidate path in ordine: tenant-rooted (<code>&lt;CLIENT&gt;/exports/</code>),
+      smartinfra legacy (<code>infra/&lt;CLIENT&gt;/exports/</code>), smartbackup legacy
+      (<code>smartreporting/pipelines/smartbackup/analysis/exports/&lt;CLIENT&gt;/</code>). Le pipeline
+      nuove producono sul path canonical; quelle storiche restano sul legacy ma sono ugualmente
+      risolte.
+    </div>
+  </div>
+
+  <div class="detail-section">
+    <h2>Manifest contract</h2>
+    <p style="font-size: 0.82rem;">
+      Ogni pipeline, al termine del run, scrive un manifest JSON che dichiara il proprio stato.
+      Il supervisor cerca questi file in un percorso prevedibile, senza dipendenza diretta dal
+      workflow.
+    </p>
     <table class="tech-table">
-      <thead><tr><th>Aspetto</th><th>Pre-F3</th><th>Post-F4</th></tr></thead>
+      <thead><tr><th>Campo</th><th>Significato</th></tr></thead>
       <tbody>
-        <tr><td>Email mensile</td><td>5+ email per ogni run</td><td>1 sola email aggregata (5° del mese)</td></tr>
-        <tr><td>Email failure</td><td>Mescolata con success</td><td>Dedicata, immediata</td></tr>
-        <tr><td>Download report</td><td>Manuale da S3 console</td><td>CLI <code>eko365-download</code> con filtri</td></tr>
-        <tr><td>Visibilità cross-pipeline</td><td>Nessuna</td><td>Digest aggregato + status badge</td></tr>
-        <tr><td>Manifest contract</td><td>—</td><td>JSON in <code>_runs/</code> per ogni run</td></tr>
+        <tr><td><code>pipeline</code></td><td>Identificativo univoco (smart365, smartbackup, veeam, smartpatch, smartdesk, smartinfra, dora-consolidated)</td></tr>
+        <tr><td><code>period</code> / <code>period_type</code></td><td><code>YYYY-MM</code> e tipo (<code>monthly</code> | <code>quarterly</code>)</td></tr>
+        <tr><td><code>status</code></td><td><code>success</code> | <code>partial</code> | <code>failed</code></td></tr>
+        <tr><td><code>clients_processed</code></td><td>Lista tenant code effettivamente elaborati (es. <code>["KSGR", "DLPHRC", "SACMAR"]</code>)</td></tr>
+        <tr><td><code>reports</code></td><td>Array con metadata di ogni deliverable: <code>client</code>, <code>type</code>, <code>format</code>, <code>filename</code>, <code>s3_key</code>, <code>size_bytes</code></td></tr>
+        <tr><td><code>github_run_id</code> / <code>_url</code></td><td>Run GitHub Actions associato (per audit trail)</td></tr>
       </tbody>
     </table>
+    <p style="font-size: 0.78rem; color: var(--gray); margin-top: 8px;">
+      Dettagli schema completo:
+      <a href="https://github.com/eko365sb/pipeline-workflows-docs/blob/main/docs/manifest-contract.md" target="_blank">manifest-contract.md</a>
+    </p>
   </div>
-  <div class="detail-section">
-    <h2>Calendario mensile</h2>
-    <p style="font-size: 0.85rem;">Le pipeline si attivano nei primi giorni del mese. Il supervisor produce il digest il 5°.</p>
-    <div class="schedule-row"><div class="cron">0 3 1 * *</div><div class="desc"><b>graph-scheduled</b> — collection raw M365 (1° del mese 03:00 UTC)</div></div>
-    <div class="schedule-row"><div class="cron">0 6 2 * *</div><div class="desc"><b>smartbackup</b> — analisi + report (2° del mese 06:00 UTC)</div></div>
-    <div class="schedule-row"><div class="cron">0 7 2 * *</div><div class="desc"><b>smartinfra</b> — fetch + analisi + report (2° del mese 07:00 UTC)</div></div>
-    <div class="schedule-row"><div class="cron">0 7 * * *</div><div class="desc"><b>smartpatch</b> — collect + KPI + report (giornaliero 07:00 UTC)</div></div>
-    <div class="schedule-row"><div class="cron">0 6 3 * *</div><div class="desc"><b>smartdesk</b> — fetch + analisi + report (3° del mese 06:00 UTC)</div></div>
-    <div class="schedule-row"><div class="cron">0 14 3 * *</div><div class="desc"><b>graph-report</b> — generazione DOCX/PPTX Smart365 (3° del mese 14:00 UTC)</div></div>
-    <div class="schedule-row"><div class="cron">0 10 5 * *</div><div class="desc"><b>supervisor (Monthly Digest)</b> — email aggregata (5° del mese 10:00 UTC)</div></div>
-    <div class="schedule-row"><div class="cron">manuale</div><div class="desc"><b>dora-consolidated</b> — fascicolo trimestrale on-demand</div></div>
-  </div>
-  <div class="detail-section">
-    <h2>Per ogni cosa, dove guardare</h2>
-    <table class="tech-table">
-      <thead><tr><th>Domanda</th><th>Dove</th></tr></thead>
-      <tbody>
-        <tr><td>Vedere lo stato di un mese</td><td>Email digest (5° del mese, da supervisor)</td></tr>
-        <tr><td>Scaricare i report</td><td><code>eko365-download --period 2026-04</code> &rarr; <code>~/EKO365-Reports/</code></td></tr>
-        <tr><td>Verificare un failure</td><td>Email subject <code>[FAIL] &lt;pipeline&gt;</code> + GitHub Actions log</td></tr>
-        <tr><td>Triggerare un run manuale</td><td>GitHub Actions UI &rarr; repo pipeline &rarr; "Run workflow"</td></tr>
-        <tr><td>Schema manifest</td><td><a href="https://github.com/eko365sb/pipeline-workflows-docs/blob/main/docs/manifest-contract.md">manifest-contract.md</a></td></tr>
-        <tr><td>Architettura tecnica deep</td><td><a href="https://github.com/eko365sb/pipeline-workflows-docs/blob/main/ARCHITECTURE.md">ARCHITECTURE.md</a></td></tr>
-      </tbody>
-    </table>
-  </div>
+
 </div>
 
-<div class="view" id="view-pipelines">
+<!-- ===================== VIEW 2: PIPELINE & FLUSSI ===================== -->
+<div class="view" id="view-pipeline">
+
   <div class="detail-section">
-    <h2>Le 6 pipeline</h2>
-    <p style="font-size: 0.85rem;">Ogni pipeline è autonoma: raccoglie dati, analizza, genera report DOCX/PPTX, carica su S3, e scrive un manifest JSON nel prefix <code>_runs/</code>. Il supervisor non chiama le pipeline; le ascolta tramite il manifest contract.</p>
-    <table class="tech-table pipeline-table">
-      <thead><tr><th>Pipeline</th><th>Repo</th><th>Origine dati</th><th>Schedule</th><th>Period</th><th>Output</th></tr></thead>
+    <h2>Le sei pipeline produttive</h2>
+    <p style="font-size: 0.82rem;">
+      Ogni pipeline è un repository GitHub indipendente con il suo workflow yml, i suoi script
+      Python/Node, i suoi tenant. Tutte condividono un foundation tooling comune
+      (<code>eko365-pipeline-core</code>, <code>@eko365/docx-lib</code>) e producono manifest
+      conformi al medesimo schema.
+    </p>
+
+    <div class="timing-band">
+      <div class="timing-chip"><span class="tc-label">Pipeline monthly:</span> <span class="tc-value">6</span></div>
+      <div class="timing-chip"><span class="tc-label">Pipeline quarterly:</span> <span class="tc-value">1</span></div>
+      <div class="timing-chip"><span class="tc-label">Tenant censiti:</span> <span class="tc-value">18</span></div>
+      <div class="timing-chip"><span class="tc-label">Tenant DORA-regulated:</span> <span class="tc-value">1 (KSGR)</span></div>
+      <div class="timing-chip"><span class="tc-label">Deliverable mensili:</span> <span class="tc-value">~20-25</span></div>
+    </div>
+
+    <!-- Smart365 -->
+    <div class="pipe-detail">
+      <div class="pipe-head">
+        <h3>Smart365 — Microsoft 365 Security &amp; Identity</h3>
+        <span class="pipe-tag">monthly + quarterly</span>
+      </div>
+      <p>
+        Raccoglie lo stato di sicurezza dei tenant M365 dei clienti: Secure Score, alert SOC,
+        identità a rischio, conformità dispositivi Intune, traffico email EOP, regole di forwarding,
+        attività SaaS Alerts. Il <b>cross_reference transformer</b> produce uno schema DORA
+        canonical <code>dora_security_m365.json</code> per cliente. Il report mensile è un INT
+        aggregato cross-tenant; i quarterly producono EXT per cliente.
+      </p>
+      <div class="pipe-meta">
+        <div class="meta-item"><div class="meta-label">Repo</div><div class="meta-value">smart365-pipeline</div></div>
+        <div class="meta-item"><div class="meta-label">Raccolta</div><div class="meta-value">1° del mese 03:00 UTC</div></div>
+        <div class="meta-item"><div class="meta-label">Report</div><div class="meta-value">3° del mese 14:00 UTC</div></div>
+        <div class="meta-item"><div class="meta-label">Fonti API</div><div class="meta-value">Graph &middot; EOP &middot; Intune &middot; SaaS Alerts</div></div>
+        <div class="meta-item"><div class="meta-label">Output</div><div class="meta-value"><span class="output-tag docx">DOCX</span><span class="output-tag json">DORA</span></div></div>
+      </div>
+      <div class="tenants">
+        <span class="tenant-chip">C2P</span><span class="tenant-chip">CLP</span><span class="tenant-chip">DLLAW</span>
+        <span class="tenant-chip">DLPHRC</span><span class="tenant-chip">ICONS</span><span class="tenant-chip">KAM</span>
+        <span class="tenant-chip">KSGR</span><span class="tenant-chip">RSRJ</span><span class="tenant-chip">SACMAR</span>
+      </div>
+    </div>
+
+    <!-- SmartBackup -->
+    <div class="pipe-detail">
+      <div class="pipe-head">
+        <h3>SmartBackup — Backup Microsoft 365 (AFI.ai)</h3>
+        <span class="pipe-tag">monthly + quarterly</span>
+      </div>
+      <p>
+        Interroga la piattaforma di backup cloud AFI.ai per i 10 tenant gestiti, raccoglie task
+        performance (success rate, total tasks, errori), coverage (risorse protette vs in scope),
+        storage (utilizzo vs quota contrattuale), operazioni di restore (test e operativi)
+        evidence DORA. Genera report cliente (EXT) e bollettino interno (INT) con executive
+        summary e raccomandazioni.
+      </p>
+      <div class="pipe-meta">
+        <div class="meta-item"><div class="meta-label">Repo</div><div class="meta-value">smartbackup-reports</div></div>
+        <div class="meta-item"><div class="meta-label">Schedule</div><div class="meta-value">2° del mese 06:00 UTC</div></div>
+        <div class="meta-item"><div class="meta-label">Fonte</div><div class="meta-value">AFI.ai REST API</div></div>
+        <div class="meta-item"><div class="meta-label">Output</div><div class="meta-value"><span class="output-tag docx">DOCX</span><span class="output-tag pptx">PPTX</span><span class="output-tag json">DORA</span></div></div>
+      </div>
+      <div class="tenants">
+        <span class="tenant-chip">ADVAM</span><span class="tenant-chip">C2P</span><span class="tenant-chip">DLLAW</span>
+        <span class="tenant-chip">DLPHRC</span><span class="tenant-chip">EKO</span><span class="tenant-chip">ICONS</span>
+        <span class="tenant-chip">K2P</span><span class="tenant-chip">KAM</span><span class="tenant-chip">KSGR</span>
+        <span class="tenant-chip">SACMAR</span>
+      </div>
+    </div>
+
+    <!-- Veeam -->
+    <div class="pipe-detail">
+      <div class="pipe-head">
+        <h3>Veeam — Backup on-premise &amp; SureBackup</h3>
+        <span class="pipe-tag">monthly</span>
+      </div>
+      <p>
+        Parsing automatico delle email giornaliere di sintesi del backup server
+        Veeam Backup &amp; Replication (EKOBKP08) e dei report SureBackup di
+        restore verification. Calcola success rate, transfer volume, durate,
+        anomalie e regressioni. Pipeline distinta da SmartBackup nel registry
+        del supervisor (dal 23-mag) perché S3 path e logica di parsing sono
+        completamente separate.
+      </p>
+      <div class="pipe-meta">
+        <div class="meta-item"><div class="meta-label">Repo</div><div class="meta-value">smartbackup-reports</div></div>
+        <div class="meta-item"><div class="meta-label">Schedule</div><div class="meta-value">giornaliera (10:00 UTC, parsing email)</div></div>
+        <div class="meta-item"><div class="meta-label">Fonte</div><div class="meta-value">Email Veeam VBR + SureBackup</div></div>
+        <div class="meta-item"><div class="meta-label">Output</div><div class="meta-value"><span class="output-tag docx">DOCX</span></div></div>
+      </div>
+      <div class="tenants"><span class="tenant-chip">KSGR</span></div>
+    </div>
+
+    <!-- SmartPATCH -->
+    <div class="pipe-detail">
+      <div class="pipe-head">
+        <h3>SmartPATCH — Vulnerability &amp; Patch Management (Action1)</h3>
+        <span class="pipe-tag">monthly + quarterly</span>
+      </div>
+      <p>
+        Recupera da Action1 lo stato di patching e vulnerabilità degli endpoint
+        gestiti: CVE critiche e tracciate, CISA KEV monitorate, pacchetti
+        deployati, finestre di manutenzione, gap di compliance. Genera KPI
+        snapshot giornaliero in S3 per costruire serie storica e produce report
+        mensile con trend e raccomandazioni. Esporta <code>dora_patch_management.json</code>
+        canonical per ogni tenant.
+      </p>
+      <div class="pipe-meta">
+        <div class="meta-item"><div class="meta-label">Repo</div><div class="meta-value">smartpatch-reports</div></div>
+        <div class="meta-item"><div class="meta-label">Schedule</div><div class="meta-value">giornaliera 07:00 UTC (raw + KPI)</div></div>
+        <div class="meta-item"><div class="meta-label">Fonte</div><div class="meta-value">Action1 REST API (multi-org)</div></div>
+        <div class="meta-item"><div class="meta-label">Output</div><div class="meta-value"><span class="output-tag docx">DOCX</span><span class="output-tag pptx">PPTX</span><span class="output-tag json">DORA</span></div></div>
+      </div>
+      <div class="tenants">
+        <span class="tenant-chip">C2P</span><span class="tenant-chip">DLLAW</span><span class="tenant-chip">DLPHRC</span>
+        <span class="tenant-chip">KSGR</span><span class="tenant-chip">SACMAR</span>
+      </div>
+    </div>
+
+    <!-- SmartInfra -->
+    <div class="pipe-detail">
+      <div class="pipe-head">
+        <h3>SmartInfra — Datacenter on-premise</h3>
+        <span class="pipe-tag">monthly + quarterly</span>
+      </div>
+      <p>
+        Aggrega l'inventario VMware (snapshot RVTools), il monitoring PRTG (disponibilità VM,
+        SNMP disk, SNMP uptime, sensori storage logico, traffico di rete), gli apparati UniFi
+        (Site Manager API: 11 endpoint cloud, mapping siti, salute apparati). Produce report
+        clienti con SLA disponibilità, capacità contrattuale, alert correlati, e report operativo
+        interno con right-sizing e capacity planning.
+      </p>
+      <div class="pipe-meta">
+        <div class="meta-item"><div class="meta-label">Repo</div><div class="meta-value">smartinfra-reports</div></div>
+        <div class="meta-item"><div class="meta-label">Schedule</div><div class="meta-value">2° del mese 07:00 UTC</div></div>
+        <div class="meta-item"><div class="meta-label">Fonti</div><div class="meta-value">PRTG SOAP &middot; UniFi REST &middot; RVTools email</div></div>
+        <div class="meta-item"><div class="meta-label">Output</div><div class="meta-value"><span class="output-tag docx">DOCX</span><span class="output-tag pptx">PPTX</span><span class="output-tag json">DORA</span></div></div>
+      </div>
+      <div class="tenants">
+        <span class="tenant-chip">DLPHRC</span><span class="tenant-chip">KSGR</span><span class="tenant-chip">QUANTUM</span>
+        <span class="tenant-chip">SACMAR</span><span class="tenant-chip">TOSI</span><span class="tenant-chip">TROVAMALA</span>
+      </div>
+    </div>
+
+    <!-- SmartDESK -->
+    <div class="pipe-detail">
+      <div class="pipe-head">
+        <h3>SmartDESK — Service Desk (Desk365)</h3>
+        <span class="pipe-tag">monthly</span>
+      </div>
+      <p>
+        Estrazione completa dei ticket dal portale Desk365 con classificazione
+        per cliente, calcolo dei KPI di volume, SLA compliance, tempi di prima
+        risposta e risoluzione (mean / median / P95), effort billable, CSAT
+        survey, deduplicazione SaaS Alerts, automazioni PowerAutomate. La sezione
+        DORA estrae incident di alta priorità e preventive alert con response /
+        recovery time. Produce un fascicolo per cliente (DOCX + PPTX) e un
+        overview cross-cliente.
+      </p>
+      <div class="pipe-meta">
+        <div class="meta-item"><div class="meta-label">Repo</div><div class="meta-value">smartdesk-reports</div></div>
+        <div class="meta-item"><div class="meta-label">Schedule</div><div class="meta-value">3° del mese 06:00 UTC</div></div>
+        <div class="meta-item"><div class="meta-label">Fonte</div><div class="meta-value">Desk365 v3 API</div></div>
+        <div class="meta-item"><div class="meta-label">Output</div><div class="meta-value"><span class="output-tag docx">DOCX</span><span class="output-tag pptx">PPTX</span><span class="output-tag csv">CSV</span><span class="output-tag json">DORA</span></div></div>
+      </div>
+      <div class="tenants">
+        <span class="tenant-chip">BEFL</span><span class="tenant-chip">C2P</span><span class="tenant-chip">DLLAW</span>
+        <span class="tenant-chip">DLPHRC</span><span class="tenant-chip">EKO</span><span class="tenant-chip">ICONS</span>
+        <span class="tenant-chip">KSGR</span><span class="tenant-chip">RSRJ</span><span class="tenant-chip">SACMAR</span>
+      </div>
+    </div>
+
+    <!-- DORA Consolidated -->
+    <div class="pipe-detail" style="border-left-color: var(--primary);">
+      <div class="pipe-head">
+        <h3>DORA Consolidated — Fascicolo trimestrale</h3>
+        <span class="pipe-tag">quarterly (manuale)</span>
+      </div>
+      <p>
+        Aggrega trimestralmente i KPI delle sei pipeline per i clienti DORA-regulated (oggi solo
+        KSGR), confronta i valori misurati con gli SLA contrattuali del profilo DORA del cliente,
+        produce un fascicolo Word con executive summary, performance per servizio, evidenze di
+        business continuity, gestione incidenti, asset register. Legge i DORA exports canonical
+        da S3 (path <code>&lt;CLIENT&gt;/exports/dora_&lt;service&gt;.json</code>) o, in fallback,
+        ricalcola dai raw data. Filtro temporale automatico per evitare contaminazione tra
+        trimestri.
+      </p>
+      <div class="pipe-meta">
+        <div class="meta-item"><div class="meta-label">Repo</div><div class="meta-value">dora-consolidated-reports</div></div>
+        <div class="meta-item"><div class="meta-label">Trigger</div><div class="meta-value">Manuale (post chiusura trimestre)</div></div>
+        <div class="meta-item"><div class="meta-label">Fonti</div><div class="meta-value">5 DORA exports + analysis legacy</div></div>
+        <div class="meta-item"><div class="meta-label">Output</div><div class="meta-value"><span class="output-tag docx">DOCX</span> fascicolo + prontuario</div></div>
+      </div>
+      <div class="tenants"><span class="tenant-chip">KSGR</span></div>
+    </div>
+
+  </div>
+
+  <div class="detail-section">
+    <h2>Calendario di raccolta &amp; produzione</h2>
+    <p style="font-size: 0.82rem;">
+      Lo scheduling è progettato perché ogni pipeline trovi pronti i dati upstream del periodo
+      precedente. Il digest del supervisor parte solo dopo che tutte le pipeline mensili hanno
+      avuto la finestra per concludere.
+    </p>
+    <div class="schedule-row"><div class="cron">0 7 * * *</div><div class="desc"><b>smartpatch</b> — raw collection &amp; KPI snapshot giornaliero (alimenta trend mensile)</div></div>
+    <div class="schedule-row"><div class="cron">0 10 * * *</div><div class="desc"><b>veeam</b> — parsing email giornaliera del backup server</div></div>
+    <div class="schedule-row"><div class="cron">0 3 1 * *</div><div class="desc"><b>smart365</b> — raw collection M365 del mese precedente</div></div>
+    <div class="schedule-row"><div class="cron">0 6 2 * *</div><div class="desc"><b>smartbackup</b> — analisi cloud backup + report</div></div>
+    <div class="schedule-row"><div class="cron">0 7 2 * *</div><div class="desc"><b>smartinfra</b> — analisi infrastruttura + report</div></div>
+    <div class="schedule-row"><div class="cron">0 6 3 * *</div><div class="desc"><b>smartdesk</b> — estrazione ticketing + report</div></div>
+    <div class="schedule-row"><div class="cron">0 14 3 * *</div><div class="desc"><b>smart365</b> — generazione report (dopo che i dati sono settati)</div></div>
+    <div class="schedule-row"><div class="cron">0 10 5 * *</div><div class="desc"><b>supervisor</b> — digest mensile aggregato a <code>fabio@eko365.it</code></div></div>
+  </div>
+
+</div>
+
+<!-- ===================== VIEW 3: TOOL & INTEGRAZIONI ===================== -->
+<div class="view" id="view-tool">
+
+  <div class="detail-section">
+    <h2>Tool e integrazioni esterne</h2>
+    <p style="font-size: 0.82rem;">
+      La piattaforma integra tredici sistemi esterni, ognuno con il suo modello di autenticazione,
+      retention e frequenza di accesso. Le card seguenti descrivono il ruolo funzionale; gli
+      endpoint esatti vivono nei singoli script.
+    </p>
+
+    <div class="section-label">Storage &amp; delivery</div>
+    <div class="tool-grid">
+      <div class="tool-card storage">
+        <div class="tool-name">Wasabi S3</div>
+        <div class="tool-role">Object storage</div>
+        <div class="tool-desc">
+          Bucket <code>eko365-pipelines</code> in regione <code>eu-south-1</code>.
+          Fonte autoritativa di tutti i dati: raw, analysis, reports, manifest, DORA exports.
+          Versioning attivo, lifecycle non aggressivo (i fascicoli quarterly vivono a tempo
+          indeterminato).
+        </div>
+        <div class="tool-meta">Auth: AWS access key/secret in vault Bitwarden &middot; endpoint <code>s3.eu-south-1.wasabisys.com</code></div>
+      </div>
+      <div class="tool-card storage">
+        <div class="tool-name">MailerSend SMTP &amp; API</div>
+        <div class="tool-role">Email delivery transazionale</div>
+        <div class="tool-desc">
+          Provider SMTP usato per le notifiche di failure delle pipeline e per il digest mensile
+          del supervisor. Sender <code>EKO365 | SmartSMTP Sender</code>. Cloudflare WAF richiede
+          User-Agent custom; egress da container Anthropic passa attraverso il worker proxy
+          <code>eko365-egress</code>.
+        </div>
+        <div class="tool-meta">Server <code>smtp.mailersend.net:587</code> TLS &middot; API token in vault</div>
+      </div>
+    </div>
+
+    <div class="section-label">Microsoft 365</div>
+    <div class="tool-grid">
+      <div class="tool-card identity">
+        <div class="tool-name">Microsoft Graph API</div>
+        <div class="tool-role">Security, identity, device, mail</div>
+        <div class="tool-desc">
+          API unificata per Secure Score, alert SOC, identità a rischio, conformità Intune,
+          dispositivi gestiti, traffico email EOP, attività audit. La piattaforma accede via
+          app multi-tenant con 49 scope delegated e refresh token GDAP (vedi sezione Sicurezza).
+        </div>
+        <div class="tool-meta">Auth: OAuth2 v2.0 + refresh token &middot; <code>graph.microsoft.com/v1.0</code> e <code>/beta</code></div>
+      </div>
+      <div class="tool-card identity">
+        <div class="tool-name">Exchange Online (EOP)</div>
+        <div class="tool-role">Email security posture</div>
+        <div class="tool-desc">
+          Cmdlet di Exchange Admin esposti via REST <code>InvokeCommand</code>. Estrae transport
+          rule, mail flow per categoria (GoodMail, spam, malware, phish), forwarding rule e
+          accepted domain. Lo scope <code>Exchange.Manage</code> è incluso nell'app registration
+          EKO365.
+        </div>
+        <div class="tool-meta">Auth: stesso refresh token Graph &middot; endpoint <code>outlook.office365.com/adminapi/beta</code></div>
+      </div>
+      <div class="tool-card identity">
+        <div class="tool-name">SaaS Alerts</div>
+        <div class="tool-role">Eventi di sicurezza M365 cross-tenant</div>
+        <div class="tool-desc">
+          Stream di eventi M365 (signin, file access, sharing, OOAL, file download/upload limit)
+          su un cluster Elasticsearch. Alimenta sia Smart365 (sezione SOC) sia BlueTeam per
+          ticket triage. Nove tenant censiti via API key dedicata.
+        </div>
+        <div class="tool-meta">Auth: <code>x-api-key</code> in vault &middot; 9 endpoint REST</div>
+      </div>
+    </div>
+
+    <div class="section-label">Backup &amp; resilienza</div>
+    <div class="tool-grid">
+      <div class="tool-card">
+        <div class="tool-name">AFI.ai</div>
+        <div class="tool-role">Backup M365 cloud</div>
+        <div class="tool-desc">
+          Piattaforma SaaS di backup per tenant Microsoft 365 (mailbox, OneDrive, SharePoint,
+          Teams). Espone REST API per task performance, copertura, storage, eventi di restore.
+          Quota contrattuale per cliente, monitorata mensilmente.
+        </div>
+        <div class="tool-meta">Auth: API token per tenant &middot; 10 organizzazioni configurate</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">Veeam B&amp;R + SureBackup</div>
+        <div class="tool-role">Backup on-premise &amp; restore verification</div>
+        <div class="tool-desc">
+          Veeam Backup &amp; Replication su server EKOBKP08 (datacenter EKO). Email di sintesi
+          giornaliere parsate dalla pipeline. SureBackup esegue test di restore automatici su
+          un sandbox: i risultati sono riportati nel report mensile come evidenza DORA Art. 11(6).
+        </div>
+        <div class="tool-meta">Auth: parsing email (no API esposta) &middot; un solo tenant attivo (KSGR)</div>
+      </div>
+    </div>
+
+    <div class="section-label">Endpoint &amp; infrastruttura</div>
+    <div class="tool-grid">
+      <div class="tool-card">
+        <div class="tool-name">Action1</div>
+        <div class="tool-role">Patch &amp; vulnerability management</div>
+        <div class="tool-desc">
+          Piattaforma multi-org per patching endpoint e gestione vulnerabilità. Espone l'inventario
+          asset, lo stato compliance, le CVE tracciate (con priorità CISA KEV), le finestre di
+          maintenance. SmartPATCH usa API REST per organizzazione (multi-tenant).
+        </div>
+        <div class="tool-meta">Auth: refresh token per org &middot; rate limit 429-aware</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">PRTG Network Monitor</div>
+        <div class="tool-role">Monitoring SLA infrastruttura</div>
+        <div class="tool-desc">
+          Server PRTG centralizzato monitora VM, sensori SNMP (disk, uptime, network), storage
+          logico, host fisici. Espone SOAP/REST per estrazione storica di disponibilità per
+          sensore. SmartInfra ne deriva l'availability SLA mensile.
+        </div>
+        <div class="tool-meta">Auth: passhash PRTG &middot; sensori filtrati per cliente</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">UniFi Site Manager</div>
+        <div class="tool-role">Apparati di rete cloud-managed</div>
+        <div class="tool-desc">
+          API cloud Ubiquiti per la gestione di tutti i siti UniFi dei clienti.
+          Espone 11 endpoint REST per inventario apparati, salute, configurazione,
+          alert. Mapping siti → cliente configurato in <code>eko365-pipeline-core</code>.
+        </div>
+        <div class="tool-meta">Auth: UniFi API key in vault &middot; endpoint <code>api.ui.com</code></div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">RVTools</div>
+        <div class="tool-role">Inventario VMware vCenter</div>
+        <div class="tool-desc">
+          Tool standalone che esporta lo stato vCenter in formato Excel.
+          Esportazione bisettimanale via email schedulata; un fetcher dedicato scarica gli
+          allegati e li parsa. Alimenta l'inventory delle VM gestite e la sezione capacity.
+        </div>
+        <div class="tool-meta">Auth: nessuna (parsing email)</div>
+      </div>
+    </div>
+
+    <div class="section-label">Ticketing &amp; secrets</div>
+    <div class="tool-grid">
+      <div class="tool-card">
+        <div class="tool-name">Desk365 v3</div>
+        <div class="tool-role">ITSM ticketing</div>
+        <div class="tool-desc">
+          Piattaforma di ticketing usata dal Service Desk EKO365. API v3 espone ticket
+          (con filtri company, status, priorità), time entries, contacts/companies,
+          survey ratings. Rate limit 10.000 req/h. Custom field <code>cf_Impact</code> usato
+          per classificazione automatica via Argentino.
+        </div>
+        <div class="tool-meta">Auth: header <code>Authorization: &lt;api_key&gt;</code> &middot; <code>eko365.desk365.io/apis/v3</code></div>
+      </div>
+      <div class="tool-card security">
+        <div class="tool-name">Bitwarden Secrets Manager</div>
+        <div class="tool-role">Vault credenziali centralizzato</div>
+        <div class="tool-desc">
+          Tenant Bitwarden EKO365 con 24 secret reali distribuiti su 3 progetti (blueteam,
+          shared, smartreporting) e 4 Machine Account distinti. Sostituisce progressivamente
+          i GitHub Secrets nei workflow grazie al pattern <code>bws_secrets</code> dei
+          reusable v2. Token rotabili senza toccare i workflow.
+        </div>
+        <div class="tool-meta">Auth: <code>BWS_ACCESS_TOKEN</code> per Machine Account &middot; CLI <code>bws</code></div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ===================== VIEW 4: SICUREZZA & AUTH ===================== -->
+<div class="view" id="view-sicurezza">
+
+  <div class="detail-section">
+    <h2>Modello di autenticazione Microsoft 365</h2>
+    <p style="font-size: 0.82rem;">
+      Tutti gli script che colpiscono Microsoft 365 (Smart365, BlueTeam, EKO365-Auth) condividono
+      un'unica app registration multi-tenant nel partner tenant EKO365, con admin consent granted
+      su ogni customer tenant via <b>GDAP</b> (Granular Delegated Admin Privileges). Non esistono
+      app diverse per progetto.
+    </p>
+
+    <div class="sec-row">
+      <div class="sec-card">
+        <h4>App registration condivisa</h4>
+        <p>
+          <b>EKO365-MSP-Automation</b> nel partner tenant
+          <code>eko365sb.onmicrosoft.com</code>. ClientId <code>a8ab42a7-7309-478f-9fd8-254077d221b4</code>.
+          Configurata con 49 delegated scope (48 Graph + 1 Exchange.Manage) e admin consent
+          granted su tutti i customer tenant.
+        </p>
+        <div class="meta">tenant partner: 09a312ef-0a99-451f-ae26-73454ca21a8a</div>
+      </div>
+      <div class="sec-card">
+        <h4>OBO account &amp; GDAP</h4>
+        <p>
+          L'account <b>admin-fs@eko365sb.onmicrosoft.com</b> autentica via GDAP per operare
+          sui customer tenant senza richiedere admin locale. Il refresh token v2.0 ottenuto
+          non è scope-bound: cambiando lo <code>scope</code> nella richiesta si ottiene access
+          token per Graph, Exchange o Security &amp; Compliance.
+        </p>
+        <div class="meta">file vault: exchange-refresh-token.enc (chmod 600)</div>
+      </div>
+    </div>
+
+    <h3>Pattern di esecuzione (multi-tenant loop)</h3>
+    <p style="font-size: 0.82rem;">
+      Per chiamate massive (es. interrogare tutti i tenant in sequenza) il pattern obbligatorio
+      è <b>REST API diretto + refresh token</b>. Mai <code>Connect-ExchangeOnline</code> o
+      <code>Connect-MgGraph</code> in loop: ogni connessione interattiva sarebbe un disastro
+      di prompt e cache locali. Il refresh token si auto-rinnova ad ogni uso (validità ~90 giorni).
+    </p>
+    <div class="callout">
+      <strong>Aggiunta nuovi scope</strong> &middot; La procedura è documentata: admin consent v2.0
+      "by-scope" per il partner tenant, poi fan-out programmatico ai customer tenant via
+      <code>oauth2PermissionGrants</code>. Nessun device-code flow, nessun browser-popup per ogni
+      cliente. Esempio in <code>Add-ThreatHuntingPermission.ps1</code>.
+    </div>
+  </div>
+
+  <div class="detail-section">
+    <h2>Gestione segreti — Bitwarden vault</h2>
+    <p style="font-size: 0.82rem;">
+      In corso la migrazione (Phase 13, iniziata maggio 2026) da <code>gh secret</code> per repo
+      a un vault centralizzato in <b>Bitwarden Secrets Manager</b>. I motivi: rotazione token
+      senza toccare 9 repo, audit accessi centralizzato, minor footprint di chiavi duplicate.
+    </p>
+
+    <h3>Struttura del vault</h3>
+    <table class="tech-table">
+      <thead><tr><th>Progetto</th><th>Contenuto</th><th>Machine Account</th></tr></thead>
       <tbody>
-        <tr><td><b>SmartBackup</b></td><td><code>smartbackup-reports</code></td><td>AFI.ai cloud</td><td>2° mese 06:00 UTC</td><td class="center">monthly + quarterly</td><td><span class="output-tag docx">DOCX</span><span class="output-tag pptx">PPTX</span> EXT/INT per cliente</td></tr>
-        <tr><td><b>SmartInfra</b></td><td><code>infra-reports</code></td><td>PRTG &middot; UniFi &middot; RVTools</td><td>2° mese 07:00 UTC</td><td class="center">monthly + quarterly</td><td><span class="output-tag docx">DOCX</span> bulletin INT, EXT per cliente quarterly</td></tr>
-        <tr><td><b>SmartPATCH</b></td><td><code>smartpatch-reports</code></td><td>Action1 endpoint mgmt</td><td>giornaliero 07:00 UTC</td><td class="center">monthly</td><td><span class="output-tag docx">DOCX</span><span class="output-tag pptx">PPTX</span> ops report + quarterly</td></tr>
-        <tr><td><b>Smart365</b></td><td><code>m365-graph-pipeline</code></td><td>Microsoft Graph &middot; EOP &middot; Intune</td><td>1° collection &middot; 3° report</td><td class="center">monthly + quarterly</td><td><span class="output-tag docx">DOCX</span><span class="output-tag pptx">PPTX</span> per cliente</td></tr>
-        <tr><td><b>SmartDESK</b></td><td><code>desk365-reports</code></td><td>Desk365 v3 (ticketing)</td><td>3° mese 06:00 UTC</td><td class="center">monthly</td><td><span class="output-tag docx">DOCX</span><span class="output-tag pptx">PPTX</span><span class="output-tag csv">CSV</span> aging</td></tr>
-        <tr><td><b>DORA Cons.</b></td><td><code>dora-consolidated-reports</code></td><td>Aggregazione cross-pipeline</td><td>manuale</td><td class="center">quarterly</td><td><span class="output-tag docx">DOCX</span> fascicolo per cliente</td></tr>
+        <tr><td><code>blueteam</code></td><td>Credenziali Desk365 staff, SaaS Alerts, MCP server tokens</td><td>App-MCP-BlueTeam</td></tr>
+        <tr><td><code>shared</code></td><td>Token cross-progetto: Anthropic API, MailerSend, Cloudflare proxy</td><td>App-Admin-Bootstrap</td></tr>
+        <tr><td><code>smartreporting</code></td><td>Wasabi credentials, AFI.ai tokens, Action1 refresh, GitHub PAT</td><td>App-CI-GitHub</td></tr>
+        <tr><td><code>argentino</code> (logico)</td><td>Credenziali agent SOC autonomo</td><td>App-Argentino</td></tr>
       </tbody>
     </table>
-    <h3>Naming convention deliverable</h3>
-    <p style="font-size: 0.85rem;">I file DOCX/PPTX client-facing rispettano il pattern <code>&lt;Pipeline&gt;_&lt;TYPE&gt;_&lt;CLIENT&gt;_&lt;periodo&gt;.&lt;ext&gt;</code>. <code>discover_reports</code> li riconosce automaticamente per popolare il manifest.</p>
-    <table class="tech-table">
-      <thead><tr><th>Token</th><th>Vincolo</th><th>Esempi</th></tr></thead>
+
+    <h3>Pattern di accesso nei workflow</h3>
+    <p style="font-size: 0.82rem;">
+      I reusable workflow v2 accettano un parametro <code>bws_secrets</code> (multilinea) con
+      mapping <code>&lt;secret-uuid&gt; &gt; &lt;env-var-name&gt;</code>. La <i>sm-action</i>
+      ufficiale Bitwarden risolve i secret a runtime e li espone come variabili d'ambiente nello
+      step. Il <code>BWS_ACCESS_TOKEN</code> Machine Account è l'unica credenziale che resta in
+      GitHub Secrets per repo.
+    </p>
+
+    <h3>Token GitHub a scadenza</h3>
+    <p style="font-size: 0.82rem;">
+      Due PAT personali (<code>GH_DOCXLIB_PAT</code> e secrets management) hanno scadenza
+      <b>2027-05-12</b>. Reminder: rotare entro <b>2027-04-12</b>. Tracciato in
+      <a href="https://github.com/eko365sb">project-github-pat-rotation-2027</a>.
+    </p>
+  </div>
+
+  <div class="detail-section">
+    <h2>Egress &amp; vincoli di rete</h2>
+    <p style="font-size: 0.82rem;">
+      L'agente Claude Code lavora da un container con un range IP che Cloudflare WAF blocca su
+      diversi provider (MailerSend, SaaS Alerts). Il worker
+      <a href="https://github.com/eko365sb">eko365-egress</a> espone un proxy autenticato che
+      ribalta le richieste con User-Agent custom EKO365. Le pipeline su GitHub Actions non
+      hanno questo problema (IP runner OK).
+    </p>
+  </div>
+
+</div>
+
+<!-- ===================== VIEW 5: INFRASTRUTTURA GITHUB ===================== -->
+<div class="view" id="view-github">
+
+  <div class="detail-section">
+    <h2>Ecosistema repository</h2>
+    <p style="font-size: 0.82rem;">
+      Tutti i repository SmartReporting vivono nell'organizzazione GitHub <b>eko365sb</b>.
+      L'ecosistema è strutturato in cinque ruoli funzionali. Ogni repo è privato; il team <code>dev</code>
+      ha permesso push, l'utenza <code>ev365eko</code> (Elisa) ha admin.
+    </p>
+    <table class="tech-table repo-table">
+      <thead><tr><th>Repo</th><th>Ruolo</th><th>Cosa contiene</th></tr></thead>
       <tbody>
-        <tr><td><code>Pipeline</code></td><td>CamelCase, no underscore interno</td><td>SmartBackup, SmartInfra, SmartPATCH</td></tr>
-        <tr><td><code>TYPE</code></td><td>EXT (cliente) o INT (interno)</td><td>EXT, INT</td></tr>
-        <tr><td><code>CLIENT</code></td><td>UPPERCASE alfanumerico</td><td>KSGR, DLPHRC, SACMAR, C2P</td></tr>
-        <tr><td><code>periodo</code></td><td>Libero</td><td>Q1-2026, 2026-04, 2026-01_2026-03</td></tr>
-        <tr><td><code>ext</code></td><td>docx o pptx</td><td>docx, pptx</td></tr>
+        <tr><td><code>smartbackup-reports</code></td><td><span class="repo-role pipeline">pipeline</span></td><td>AFI.ai cloud backup + Veeam on-prem (2 workflow distinti, stesso repo per ragioni storiche)</td></tr>
+        <tr><td><code>smartpatch-reports</code></td><td><span class="repo-role pipeline">pipeline</span></td><td>Vulnerability &amp; patch management Action1</td></tr>
+        <tr><td><code>smart365-pipeline</code></td><td><span class="repo-role pipeline">pipeline</span></td><td>Microsoft 365 security &amp; identity</td></tr>
+        <tr><td><code>smartinfra-reports</code></td><td><span class="repo-role pipeline">pipeline</span></td><td>Datacenter on-premise (PRTG + UniFi + RVTools)</td></tr>
+        <tr><td><code>smartdesk-reports</code></td><td><span class="repo-role pipeline">pipeline</span></td><td>Service desk ticketing Desk365</td></tr>
+        <tr><td><code>dora-consolidated-reports</code></td><td><span class="repo-role pipeline">pipeline</span></td><td>Aggregatore trimestrale cross-pipeline (KSGR)</td></tr>
+        <tr><td><code>eko365-supervisor</code></td><td><span class="repo-role control">control</span></td><td>Watcher manifest, digest mensile, CLI eko365-download</td></tr>
+        <tr><td><code>eko365-pipeline-core</code></td><td><span class="repo-role shared">shared</span></td><td>Libreria Python condivisa: runs, storage, dora, config</td></tr>
+        <tr><td><code>claude-plugins</code></td><td><span class="repo-role shared">shared</span></td><td>@eko365/docx-lib (npm), @eko365/documents (skill plugin)</td></tr>
+        <tr><td><code>pipeline-workflows</code></td><td><span class="repo-role shared">shared</span></td><td>Reusable workflows GitHub Actions (fetch, analyze, report, notify)</td></tr>
+        <tr><td><code>pipeline-workflows-docs</code></td><td><span class="repo-role docs">docs</span></td><td>Architettura, manuali, manifest contract, PPTX overview</td></tr>
+        <tr><td><code>eko365-docs</code></td><td><span class="repo-role docs">docs</span></td><td>Hub HTML statico (GitHub Pages, questa pagina)</td></tr>
+        <tr><td><code>EKO365-Auth</code></td><td><span class="repo-role auth">auth</span></td><td>Script setup app registration multi-tenant + GDAP consent</td></tr>
       </tbody>
     </table>
   </div>
+
+  <div class="detail-section">
+    <h2>Reusable workflows e pattern DRY</h2>
+    <p style="font-size: 0.82rem;">
+      EKO365 non ha licenza GitHub Team/Enterprise: niente Org Variables/Secrets condivisi. Per
+      ridurre la duplicazione tra pipeline si usano <b>reusable workflows</b> centralizzati in
+      <code>pipeline-workflows/.github/workflows/</code>. Esistono due generazioni (v1 e v2): la v2
+      integra <code>bws_secrets</code> Bitwarden per sostituire <code>gh secret</code>.
+    </p>
+    <table class="tech-table">
+      <thead><tr><th>Reusable workflow</th><th>Responsabilità</th><th>Versione</th></tr></thead>
+      <tbody>
+        <tr><td><code>reusable-fetch.yml</code> / <code>-v2</code></td><td>Fetch raw data, upload S3</td><td>v1 + v2</td></tr>
+        <tr><td><code>reusable-analyze.yml</code> / <code>-v2</code></td><td>Analisi, opzionalmente <code>extra_s3_uploads</code> per DORA exports</td><td>v1 + v2</td></tr>
+        <tr><td><code>reusable-report.yml</code> / <code>-v2</code></td><td>Generazione DOCX/PPTX, email, write-manifest CLI</td><td>v1 + v2</td></tr>
+        <tr><td><code>reusable-notify.yml</code> / <code>-v2</code></td><td>Email di failure dedicata + stall detection</td><td>v1 + v2</td></tr>
+      </tbody>
+    </table>
+    <h3>Manifest writer centralizzato</h3>
+    <p style="font-size: 0.82rem;">
+      La scrittura del manifest contract è un'unica CLI esposta da
+      <code>eko365-pipeline-core</code>:
+    </p>
+    <pre class="cli">python -m eko365_pipeline_core.runs write-manifest \
+  --pipeline smart365 \
+  --period 2026-04 \
+  --period-type monthly \
+  --s3-prefix smartreporting/pipelines/m365-graph/reports/mensili/2026-04 \
+  --reports-dir reports/output \
+  --clients-processed "C2P DLPHRC KSGR ..."</pre>
+    <p style="font-size: 0.78rem; color: var(--gray);">
+      I deliverable per cliente vengono scoperti automaticamente dal naming
+      <code>&lt;Pipeline&gt;_&lt;TYPE&gt;_&lt;CLIENT&gt;_&lt;periodo&gt;.&lt;ext&gt;</code>; per
+      report aggregati cross-tenant (CLIENT=ALL) il flag <code>--clients-processed</code> permette
+      di tracciare comunque i tenant nel manifest.
+    </p>
+  </div>
+
   <div class="detail-section">
     <h2>Foundation tooling condiviso</h2>
+    <p style="font-size: 0.82rem;">
+      Le librerie shared sono distribuite come tarball locale committato nei consumer (no PyPI/npm
+      pubblico). Un bump versione richiede 5 PR consumer prima che la nuova feature sia disponibile
+      ai workflow.
+    </p>
     <table class="tech-table">
-      <thead><tr><th>Pacchetto</th><th>Versione</th><th>Funzione</th></tr></thead>
+      <thead><tr><th>Pacchetto</th><th>Versione</th><th>Ruolo</th></tr></thead>
       <tbody>
-        <tr><td><code>eko365-pipeline-core</code></td><td>v0.1.4</td><td>Python lib: storage (Wasabi), email (MailerSend), config, dora, runs (write_manifest + discover_reports)</td></tr>
-        <tr><td><code>@eko365/docx-lib</code></td><td>v1.6.0</td><td>Node.js lib: createDocument, packDocument, branding EKO365 (Century Gothic, viola/arancio)</td></tr>
-        <tr><td><code>@eko365/msp-config</code></td><td>v0.1.0</td><td>Node.js: registry centralizzato dei 9 clienti MSSP</td></tr>
-        <tr><td><code>pipeline-workflows</code></td><td>—</td><td>Reusable workflows GitHub Actions (fetch, analyze, report, notify)</td></tr>
+        <tr><td><code>eko365-pipeline-core</code></td><td><b>v0.1.6</b></td><td>Python: storage (Wasabi), email (MailerSend), dora export, runs (manifest CLI), config</td></tr>
+        <tr><td><code>@eko365/docx-lib</code></td><td><b>v1.7.0</b></td><td>Node: createDocument, packDocument, branding EKO365 (Century Gothic, viola/arancio)</td></tr>
+        <tr><td><code>@eko365/msp-config</code></td><td>v0.1.0</td><td>Node: registry centralizzato dei clienti MSSP (18 censiti, 1 DORA-regulated)</td></tr>
+        <tr><td><code>eko365-supervisor</code></td><td>v0.1.1</td><td>Python: digest aggregator + CLI download (registry 6 monthly + 1 quarterly)</td></tr>
       </tbody>
     </table>
   </div>
-</div>
 
-<div class="view" id="view-supervisor">
   <div class="detail-section">
-    <h2>Control plane: <code>eko365-supervisor</code></h2>
-    <p style="font-size: 0.85rem;">Repo: <code>eko365sb/eko365-supervisor</code> &middot; Versione: <b>v0.1.1</b> (maggio 2026) &middot; Modular: core/formatters/cli/notify.</p>
-    <h3>Cosa fa</h3>
-    <ul style="font-size: 0.85rem; padding-left: 24px; line-height: 1.7;">
-      <li>Legge i manifest da <code>s3://eko365-pipelines/_runs/</code></li>
-      <li>Cross-referenzia con <code>pipeline_registry.py</code> (5 monthly + 1 quarterly attese)</li>
-      <li>Costruisce uno stato aggregato <code>DigestState</code></li>
-      <li>Renderizza un'email HTML branded EKO365 (Century Gothic, viola/arancio)</li>
-      <li>Invia via MailerSend SMTP a <code>fabio@eko365.it</code> (configurabile)</li>
-      <li>Espone <code>eko365-download</code> per pull selettivo dei report</li>
+    <h2>Audit, drift detection &amp; CI hygiene</h2>
+    <p style="font-size: 0.82rem;">
+      Tre meccanismi attivi prevengono drift cross-repo:
+    </p>
+    <ul style="font-size: 0.82rem; padding-left: 22px; line-height: 1.7;">
+      <li><b>audit-pipeline-standard.py</b> in <code>pipeline-workflows/scripts</code>: regola
+        <code>MS-001</code> verifica che ogni pipeline definita abbia uno step metrics-store;
+        regole <code>S3-001…005</code> con <code>--check-s3</code> confrontano il bucket
+        attuale con la config attesa (drift detection).</li>
+      <li><b>Contract test post-merge</b>: dopo modifiche cross-repo (es. cambio CLI di
+        pipeline-core), workflow_dispatch su ogni caller per verificare che il consumer abbia
+        adottato la nuova versione (lezione catturata 2026-05-23 in
+        <code>feedback_contract_test_post_merge</code>).</li>
+      <li><b>Verification 4-layer</b> riproducibile su periodo storico: L1 audit copertura S3,
+        L2 re-run skip-analysis, L3 plausibilità AI (Haiku), L4 full re-run opzionale.
+        Procedura documentata in
+        <a href="https://github.com/eko365sb/pipeline-workflows-docs/blob/main/docs/" target="_blank">docs/</a>.</li>
     </ul>
-    <h3>Email digest — anteprima</h3>
-    <div class="digest-preview">
-      <div class="subj">Subject: <b>[SmartReporting] Digest 2026-04 — 5/5 OK &middot; 0 missing &middot; 24 reports</b></div>
-      <h4>SmartReporting Digest 2026-04</h4>
-      <div class="kpi-line"><b>24</b> reports generati &middot; <b>9</b> clienti coperti<br>5 OK &middot; 0 partial &middot; 0 failed &middot; 0 missing</div>
-      <div class="pl-row"><span class="b success">SUCCESS</span><b>smartbackup</b> &middot; 9/9 clienti &middot; 6 report</div>
-      <div class="pl-row"><span class="b success">SUCCESS</span><b>smartinfra</b> &middot; 4/4 clienti &middot; 5 report</div>
-      <div class="pl-row"><span class="b success">SUCCESS</span><b>smartpatch</b> &middot; 6/6 orgs &middot; 4 report</div>
-      <div class="pl-row"><span class="b success">SUCCESS</span><b>smart365</b> &middot; 9/9 tenant &middot; 6 report</div>
-      <div class="pl-row"><span class="b success">SUCCESS</span><b>smartdesk</b> &middot; 9/9 company &middot; 3 report</div>
-      <div style="font-size: 0.72rem; color: var(--gray); margin-top: 12px; padding-top: 8px; border-top: 1px solid #eee;">Scarica i report del periodo: <code>eko365-download --period 2026-04</code></div>
-    </div>
-    <p style="font-size: 0.78rem; color: var(--gray); text-align: center;"><em>Pipeline ordinate per gravità (failed &rarr; missing &rarr; partial &rarr; success).</em></p>
-    <h3>Failure path</h3>
-    <p style="font-size: 0.85rem;">Quando una pipeline fallisce, viene inviata un'email <b>immediata</b> dedicata a <code>alerts@eko365.it</code> tramite <code>reusable-notify.yml</code>.</p>
-    <pre class="cli">[FAIL] smartinfra — 2026-04
-<span class="c"># Workflow run: https://github.com/eko365sb/infra-reports/actions/runs/...</span></pre>
-    <h3>Status badge nel digest</h3>
-    <table class="tech-table">
-      <thead><tr><th>Badge</th><th>Significato</th><th>Quando</th></tr></thead>
-      <tbody>
-        <tr><td><span class="b success">SUCCESS</span></td><td>Tutti i client processati</td><td>manifest.status = success, no failed</td></tr>
-        <tr><td><span class="b partial">PARTIAL</span></td><td>Alcuni client OK, altri falliti</td><td>manifest.status = partial</td></tr>
-        <tr><td><span class="b failed">FAILED</span></td><td>0 client processati</td><td>manifest.status = failed</td></tr>
-        <tr><td><span class="b missing">MISSING</span></td><td>Nessun manifest trovato</td><td><code>_runs/&lt;pipeline&gt;/&lt;period&gt;/manifest.json</code> non esiste</td></tr>
-      </tbody>
-    </table>
   </div>
+
   <div class="detail-section">
-    <h2>CLI <code>eko365-download</code></h2>
-    <p style="font-size: 0.85rem;">Download manifest-aware con filtri (period, pipeline, client, since) e tre layout di organizzazione output. Default folder: <code>~/EKO365-Reports/</code>.</p>
-    <h3>Recipes</h3>
-    <pre class="cli"><span class="c"># Archiviazione mensile (default = layout archive)</span>
-eko365-download --period 2026-04
-<span class="c"># &rarr; ~/EKO365-Reports/2026-04/&lt;pipeline&gt;/&lt;client&gt;/&lt;file&gt;</span>
-
-<span class="c"># Condivisione singolo cliente</span>
-eko365-download --period 2026-Q1 --client KSGR --layout client --output ~/EKO365-Share/
-<span class="c"># &rarr; ~/EKO365-Share/KSGR/2026-Q1/&lt;pipeline&gt;/&lt;file&gt;</span>
-
-<span class="c"># Review interno cross-client di una pipeline</span>
-eko365-download --period 2026-Q1 --pipeline smartdesk --layout pipeline --output ~/work/
-<span class="c"># &rarr; ~/work/smartdesk/2026-Q1/&lt;client&gt;/&lt;file&gt;</span></pre>
-    <h3>Layouts</h3>
-    <table class="tech-table">
-      <thead><tr><th>Layout</th><th>Path pattern</th><th>Use case</th></tr></thead>
-      <tbody>
-        <tr><td><code>archive</code> (default)</td><td><code>&lt;period&gt;/&lt;pipeline&gt;/&lt;client&gt;/&lt;file&gt;</code></td><td>Archiviazione cronologica</td></tr>
-        <tr><td><code>client</code></td><td><code>&lt;client&gt;/&lt;period&gt;/&lt;pipeline&gt;/&lt;file&gt;</code></td><td>Condivisione singolo cliente</td></tr>
-        <tr><td><code>pipeline</code></td><td><code>&lt;pipeline&gt;/&lt;period&gt;/&lt;client&gt;/&lt;file&gt;</code></td><td>Review interno di una pipeline</td></tr>
-      </tbody>
-    </table>
+    <h2>Convenzioni operative GitHub</h2>
+    <ul style="font-size: 0.82rem; padding-left: 22px; line-height: 1.7;">
+      <li>Tutti i merge in <code>main</code> passano da PR (no push diretto)</li>
+      <li>Account <code>fsecchia365</code> attivo di default per operazioni su <code>eko365sb</code></li>
+      <li>Default access per ogni nuovo repo: team <code>dev</code> = push, utente <code>ev365eko</code> = admin</li>
+      <li>Repo naming convention: <code>Smart&lt;Servizio&gt;</code> per le pipeline di reporting;
+          eccezione <code>eko365-supervisor</code>, <code>eko365-pipeline-core</code>, <code>eko365-docs</code></li>
+      <li>Notifiche failure: mail dedicata immediata a <code>alerts@eko365.it</code> via
+        <code>reusable-notify</code> (anche stall detection a 90 min)</li>
+    </ul>
   </div>
+
 </div>
 
-<div class="view" id="view-runbook">
-  <div class="detail-section">
-    <h2>Operatività mensile</h2>
-    <h3>Workflow tipico del 5° giorno del mese</h3>
-    <ol style="font-size: 0.85rem; padding-left: 24px; line-height: 1.8;">
-      <li>Le pipeline schedulate completano i run nei giorni 1-3 (vedi calendario)</li>
-      <li><b>5° del mese 10:00 UTC</b>: cron supervisor &rarr; email digest a <code>fabio@eko365.it</code></li>
-      <li>Apri l'email, verifica subject (es. <code>5/5 OK · 0 missing</code>) e badge</li>
-      <li>Se tutto OK: <code>eko365-download --period 2026-04</code> per scaricare l'archivio</li>
-      <li>Per condividere con un cliente: <code>eko365-download --period 2026-04 --client KSGR --layout client --output ~/EKO365-Share/</code></li>
-    </ol>
-    <h3>Cosa fare se vedi MISSING/FAILED</h3>
-    <table class="tech-table">
-      <thead><tr><th>Sintomo</th><th>Significato</th><th>Azione</th></tr></thead>
-      <tbody>
-        <tr><td><span class="b failed">FAILED</span> in digest</td><td>Pipeline ha runnato ma 0 client OK</td><td>Click su "view run" del badge &rarr; leggi log GitHub Actions &rarr; re-trigger</td></tr>
-        <tr><td><span class="b partial">PARTIAL</span> in digest</td><td>Alcuni client failed, vedi list</td><td>Re-trigger con <code>--client</code> dopo fix</td></tr>
-        <tr><td><span class="b missing">MISSING</span> in digest</td><td>Pipeline non ha mai runnato per questo period</td><td>Verifica schedule cron + GitHub Actions runs &rarr; trigger manuale</td></tr>
-        <tr><td>Email <code>[FAIL]</code> arrivata</td><td>Failure immediato di una pipeline</td><td>Click sul link &rarr; log &rarr; fix + re-trigger</td></tr>
-      </tbody>
-    </table>
-    <h3>Trigger manuale di una pipeline</h3>
-    <pre class="cli">gh workflow run "Infrastructure Pipeline" --repo eko365sb/infra-reports --ref main \
-  -f month=2026-04 -f phase=all -f send_email=false</pre>
-    <p style="font-size: 0.85rem;"><b>Importante</b>: <code>send_email</code> di default è <code>false</code> (silent on success). Lascia così salvo casi specifici di test.</p>
-  </div>
-  <div class="detail-section">
-    <h2>Lessons learned &amp; pattern</h2>
-    <div class="lessons">
-      <strong>Pattern: workflow integration testing</strong><br>
-      Verificare sempre che lo script Python modificato sia effettivamente invocato dal workflow di produzione. Modificare <code>main()</code> di un file che il workflow non chiama produce dead code. Bug F4.2 (1 maggio 2026) causato esattamente da questo. Vedi <a href="https://github.com/eko365sb/pipeline-workflows-docs/blob/main/docs/workflow-integration-pattern.md">workflow-integration-pattern.md</a>.
-    </div>
-    <div class="lessons">
-      <strong>Pattern: discover_reports + aws s3 sync</strong><br>
-      <code>discover_reports(s3_prefix="...")</code> deve usare il <em>parent</em> del <code>s3_destination</code>, non il prefix con period appended. La lib v0.1.4 usa <code>path.relative_to(directory)</code>. Bug F4.1 fixato il 30 aprile 2026.
-    </div>
-    <div class="lessons">
-      <strong>Pattern: gh secret set</strong><br>
-      Sempre <code>gh secret set NAME --body "$VAL"</code> inline. Mai stdin pipe (corrompe valori).
-    </div>
-  </div>
+<div class="eko-footer">
+  EKO365 S.B. S.r.l. — Documentazione interna · Versione documento 2026-05-23
 </div>
-
-<div class="eko-footer">EKO365 S.B. S.r.l. &mdash; SmartReporting Platform &mdash; Maggio 2026 &mdash; Riservato, uso interno</div>
 
 <script>
 function setView(ev, name) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('view-' + name).classList.add('active');
-  ev.target.classList.add('active');
+  ev.currentTarget.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 </script>
 
