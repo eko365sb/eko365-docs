@@ -591,7 +591,7 @@
   <div class="sidebar-logo">
     <div class="brand">EKO365 SOC</div>
     <div class="plugin-name">BlueTeam Plugin</div>
-    <div class="version">v0.1.0-beta · Guida Operativa</div>
+    <div class="version">v1.1.0 · Guida Operativa</div>
   </div>
 
   <div class="sidebar-section-label">Introduzione</div>
@@ -605,13 +605,17 @@
     <span class="icon">⚙️</span> Installazione
   </a>
   <a class="sidebar-item" onclick="show('credentials')" href="#">
-    <span class="icon">🔐</span> Setup credenziali
+    <span class="icon">🔐</span> Setup (Cloudflare Access)
   </a>
   <a class="sidebar-item" onclick="show('overview')" href="#">
     <span class="icon">🗺️</span> Panoramica Skill
   </a>
 
-  <div class="sidebar-section-label">Le 5 Skills</div>
+  <div class="sidebar-section-label">Le 7 Skills</div>
+  <a class="sidebar-item" onclick="show('setup-skill')" href="#">
+    <span class="icon">⚙️</span> setup
+    <span class="badge-type badge-readonly">config</span>
+  </a>
   <a class="sidebar-item" onclick="show('morning')" href="#">
     <span class="icon">🌅</span> morning-checklist
     <span class="badge-type badge-readonly">lettura</span>
@@ -626,6 +630,10 @@
   </a>
   <a class="sidebar-item" onclick="show('investigate')" href="#">
     <span class="icon">🔍</span> investigate-user
+    <span class="badge-type badge-readonly">lettura</span>
+  </a>
+  <a class="sidebar-item" onclick="show('investigate-incident')" href="#">
+    <span class="icon">🔬</span> investigate-incident
     <span class="badge-type badge-readonly">lettura</span>
   </a>
   <a class="sidebar-item" onclick="show('diagnose')" href="#">
@@ -658,19 +666,25 @@
       <div class="welcome-hero">
         <div class="wh-tag">SOC EKO365 · Guida Operativa</div>
         <h1>Benvenuto/a nel BlueTeam Plugin!</h1>
-        <p>Questa guida accompagna ogni nuovo operatore SOC nell'attivazione e nell'uso delle 5 skill operative che automatizzano i flussi più frequenti — dalla gestione OOAL alla diagnosi ticket, passando per la checklist mattutina.</p>
+        <p>Questa guida accompagna ogni nuovo operatore SOC nell'attivazione e nell'uso delle 7 skill operative che automatizzano i flussi più frequenti — dalla gestione OOAL alla diagnosi ticket, passando per la checklist mattutina e le investigazioni forensi.</p>
       </div>
 
       <h2>Cos'è questo plugin?</h2>
-      <p>Il <strong>BlueTeam Plugin</strong> è un estensione privata EKO365 per Claude (desktop o CLI) che espone cinque <em>skill</em> orientate al flusso operativo SOC. Ogni skill orchestra in automatico le chiamate al server MCP <span class="inline-code">blueteam</span>, presenta l'evidenza in formato strutturato e — quando necessario — propone la chiusura con un <strong>sì/no</strong> operatore prima di scrivere qualsiasi cosa.</p>
+      <p>Il <strong>BlueTeam Plugin</strong> è un'estensione privata EKO365 per Claude Code che espone sette <em>skill</em> orientate al flusso operativo SOC. È un plugin <strong>sottile</strong>: nessun runtime locale (zero Python, zero venv) — le skill si collegano al <strong>server MCP remoto</strong> <span class="inline-code">https://mcp-blueteam.eko365.it/mcp</span> via <strong>Cloudflare Access</strong>. Ogni skill orchestra le chiamate ai 27 tool MCP, presenta l'evidenza in formato strutturato e — quando necessario — propone la chiusura con un <strong>sì/no</strong> operatore prima di scrivere qualsiasi cosa.</p>
 
       <div class="callout callout-ok">
         <span class="callout-icon">✅</span>
         <div><strong>Sicurezza by design.</strong> Le due skill di chiusura (triage-ooal e triage-burst) mostrano sempre una proposta e attendono la tua conferma. Nessuna scrittura avviene senza il tuo Y esplicito.</div>
       </div>
 
-      <h2>Le 5 skill in un colpo d'occhio</h2>
+      <h2>Le 7 skill in un colpo d'occhio</h2>
       <div class="skills-grid">
+        <div class="skill-card" onclick="show('setup-skill')">
+          <div class="sc-icon">⚙️</div>
+          <h3>setup</h3>
+          <p>Configura il service token Cloudflare Access dell'operatore. Una tantum dopo l'install (+ rotation).</p>
+          <div class="sc-cmd">/blueteam:setup</div>
+        </div>
         <div class="skill-card" onclick="show('morning')">
           <div class="sc-icon">🌅</div>
           <h3>morning-checklist</h3>
@@ -694,6 +708,12 @@
           <h3>investigate-user</h3>
           <p>Profilo utente M365: baseline location, device Intune, anomalie 24h, sign-in.</p>
           <div class="sc-cmd">/blueteam:investigate-user &lt;email&gt;</div>
+        </div>
+        <div class="skill-card" onclick="show('investigate-incident')">
+          <div class="sc-icon">🔬</div>
+          <h3>investigate-incident</h3>
+          <p>Deep analysis forensic multi-tool: UAL, sign-in cross-utente, Defender drill-down, IOC. Verdict suggerito, non applicato.</p>
+          <div class="sc-cmd">/blueteam:investigate-incident &lt;ticket&gt;</div>
         </div>
         <div class="skill-card" onclick="show('diagnose')">
           <div class="sc-icon">🩺</div>
@@ -740,7 +760,7 @@
           <div>
             <h3 style="margin-top:0;">Plugin — il pacchetto</h3>
             <p style="margin-bottom:8px;">Un <strong>plugin</strong> è un pacchetto installabile che estende le capacità di Claude aggiungendo skill, configurazioni e connessioni a strumenti specifici. Si installa una volta sola e resta disponibile in tutte le sessioni.</p>
-            <p style="margin-bottom:8px;font-size:13.5px;color:rgba(74,70,96,0.7);">Il <strong>BlueTeam Plugin</strong> è un plugin privato EKO365 che raggruppa le 5 skill operative SOC. Una volta installato, Claude sa come comportarsi quando gli chiedi di analizzare un ticket OOAL o avviare la checklist mattutina — perché il plugin gli fornisce le istruzioni.</p>
+            <p style="margin-bottom:8px;font-size:13.5px;color:rgba(74,70,96,0.7);">Il <strong>BlueTeam Plugin</strong> è un plugin privato EKO365 che raggruppa le 7 skill operative SOC. È un plugin <strong>sottile</strong>: contiene solo le skill markdown e il manifest MCP — nessun runtime locale. Una volta installato, Claude sa come comportarsi quando gli chiedi di analizzare un ticket OOAL o avviare la checklist mattutina — perché il plugin gli fornisce le istruzioni.</p>
             <div style="background:var(--row-alt);border-radius:6px;padding:10px 14px;font-size:13px;">
               <strong>Analogia:</strong> pensa al plugin come alla nostra <em>procedura operativa standard</em> caricata in memoria. Invece di aprire manualmente Desk365, Entra Admin Center e il portale SaaS Alerts seguendo un protocollo, Claude lo fa in automatico — rispettando esattamente le stesse regole operative del nostro SOC.
             </div>
@@ -759,10 +779,12 @@
             <table style="margin:0;">
               <thead><tr><th>Comando</th><th>Cosa fa la skill</th></tr></thead>
               <tbody>
+                <tr><td><span class="inline-code">/blueteam:setup</span></td><td>Configura il service token Cloudflare Access (una tantum)</td></tr>
                 <tr><td><span class="inline-code">/blueteam:morning-checklist</span></td><td>Aggrega coda, salute agente, backlog</td></tr>
                 <tr><td><span class="inline-code">/blueteam:triage-ooal &lt;N&gt;</span></td><td>Analizza e propone chiusura ticket OOAL</td></tr>
                 <tr><td><span class="inline-code">/blueteam:triage-burst &lt;N&gt;</span></td><td>Gestisce burst File Limit (padre + figli)</td></tr>
                 <tr><td><span class="inline-code">/blueteam:investigate-user &lt;email&gt;</span></td><td>Profila un utente M365 completamente</td></tr>
+                <tr><td><span class="inline-code">/blueteam:investigate-incident &lt;N&gt;</span></td><td>Deep analysis forensic multi-tool di un incident</td></tr>
                 <tr><td><span class="inline-code">/blueteam:diagnose-stale &lt;N&gt;</span></td><td>Diagnostica perché un ticket è fermo</td></tr>
               </tbody>
             </table>
@@ -777,21 +799,23 @@
           <div>
             <h3 style="margin-top:0;">MCP Server — il ponte verso i sistemi</h3>
             <p style="margin-bottom:8px;"><strong>MCP</strong> (Model Context Protocol) è il protocollo standard che permette a Claude di interagire con i nostri sistemi in modo controllato e sicuro. Il <strong>server MCP blueteam</strong> è il componente che espone a Claude le operazioni sui nostri portali SOC.</p>
-            <p style="margin-bottom:10px;font-size:13.5px;color:rgba(74,70,96,0.7);">Senza il server MCP, Claude potrebbe ragionare ma non aprire Desk365 per leggere i ticket, non consultare Entra Admin Center per i log di accesso, non scrivere la nota di chiusura. È il server MCP che abilita quelle operazioni — con guardrail integrati (idempotenza, autorizzazioni, audit log).</p>
+            <p style="margin-bottom:10px;font-size:13.5px;color:rgba(74,70,96,0.7);">Senza il server MCP, Claude potrebbe ragionare ma non aprire Desk365 per leggere i ticket, non consultare Entra Admin Center per i log di accesso, non scrivere la nota di chiusura. È il server MCP che abilita quelle operazioni — con guardrail integrati (idempotenza, autorizzazioni, audit log). Il server è <strong>remoto</strong> (<span class="inline-code">https://mcp-blueteam.eko365.it/mcp</span>, dietro Cloudflare Access) ed espone <strong>27 tool</strong>.</p>
 
             <div style="background:var(--row-alt);border-radius:8px;padding:14px 16px;">
-              <div style="font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(74,70,96,0.4);margin-bottom:10px;">Strumenti esposti dal server MCP blueteam</div>
+              <div style="font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(74,70,96,0.4);margin-bottom:10px;">27 tool MCP — alcuni esempi per categoria</div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;">
-                <div><span class="inline-code">scan_queue</span> — coda ticket su Desk365</div>
-                <div><span class="inline-code">ticket_details</span> — dettaglio ticket su Desk365</div>
-                <div><span class="inline-code">user_security_overview</span> — profilo da Entra Admin Center</div>
-                <div><span class="inline-code">signin_logs</span> — Sign-in logs su Entra Admin Center</div>
-                <div><span class="inline-code">device_check</span> — device dell'utente su Intune</div>
-                <div><span class="inline-code">argentino_health</span> — stato agente autonomo</div>
-                <div><span class="inline-code">ticket_diagnose</span> — diagnosi da Desk365 + SaaS Alerts</div>
-                <div><span class="inline-code" style="color:var(--orange);">close_ticket</span> — scrive la chiusura su Desk365 ✱</div>
+                <div><span class="inline-code">scan_queue</span> / <span class="inline-code">search_tickets</span> — coda e ricerca Desk365</div>
+                <div><span class="inline-code">ticket_details</span> / <span class="inline-code">ticket_diagnose</span> — dettaglio e diagnosi</div>
+                <div><span class="inline-code">user_security_overview</span> / <span class="inline-code">signin_logs</span> / <span class="inline-code">timeline_user</span> — profilo e accessi</div>
+                <div><span class="inline-code">device_check</span> — device Intune</div>
+                <div><span class="inline-code">defender_incident_details</span> / <span class="inline-code">defender_sweep</span> — Defender XDR</div>
+                <div><span class="inline-code">unified_audit_log_query</span> / <span class="inline-code">query_audit_log</span> — audit log</div>
+                <div><span class="inline-code">analyze_pec</span> — verifica PEC (lettura)</div>
+                <div><span class="inline-code">argentino_health</span> / <span class="inline-code">agent_activity</span> — stato agente</div>
+                <div><span class="inline-code" style="color:var(--orange);">close_ticket</span> / <span class="inline-code" style="color:var(--orange);">bulk_close</span> / <span class="inline-code" style="color:var(--orange);">update_ticket</span> — scrittura Desk365 ✱</div>
+                <div><span class="inline-code" style="color:var(--orange);">close_defender_incident</span> / <span class="inline-code" style="color:var(--orange);">deep_investigate</span> — write ✱</div>
               </div>
-              <div style="font-size:12px;color:rgba(74,70,96,0.5);margin-top:10px;">✱ Unico strumento in scrittura — richiede conferma operatore e ha guardrail server-side.</div>
+              <div style="font-size:12px;color:rgba(74,70,96,0.5);margin-top:10px;">✱ Gli strumenti in scrittura (chiusure, note, update) richiedono conferma operatore e hanno guardrail server-side (modello Granularità A, cap 10 chiusure/sessione).</div>
             </div>
           </div>
         </div>
@@ -891,7 +915,7 @@
 
       <div class="callout callout-warn">
         <span class="callout-icon">⚠️</span>
-        <div><strong>Prerequisiti:</strong> Claude desktop (o Claude Code CLI) installato e funzionante, GitHub CLI (<span class="inline-code">gh</span>) autenticato con accesso a <span class="inline-code">eko365sb</span>. Le credenziali per Desk365/Graph/SaaS Alerts vengono configurate nel prossimo capitolo (🔐 Setup credenziali) via Bitwarden Vault. Non è più necessario nessun <span class="inline-code">.env</span> manuale.</div>
+        <div><strong>Prerequisiti:</strong> Claude Code installato e funzionante, connessione a <span class="inline-code">mcp-blueteam.eko365.it</span> (server MCP remoto), e un <strong>service token Cloudflare Access</strong> per-operatore fornito dall'admin SOC (Fabio). <strong>Zero runtime locale</strong>: niente Python, niente venv, nessun <span class="inline-code">.env</span> con segreti EKO365 — le credenziali dei servizi vivono lato server. L'unica cosa da configurare in locale è il service token CF (prossimo capitolo).</div>
       </div>
 
       <h2>Procedura di installazione</h2>
@@ -952,11 +976,11 @@
               <pre>claude plugin list</pre>
               <button class="copy-btn" onclick="copyCode(this)">Copia</button>
             </div>
-            <p style="font-size:13px;margin:0;">Il plugin <span class="inline-code">blueteam</span> deve comparire come <span class="inline-code">installed</span>. Se non c'è, ripeti il passo 2.</p>
+            <p style="font-size:13px;margin:0;">Il plugin <span class="inline-code">blueteam</span> deve comparire come <span class="inline-code">installed</span> (versione 1.1.0). Se non c'è, ripeti il passo 2.</p>
           </div>
           <ul style="font-size:13.5px;padding-left:18px;margin-top:8px;line-height:2;">
-            <li>Il tuo account è stato aggiunto in <span class="inline-code">operators.py</span> dall'amministratore del plugin?</li>
-            <li>Stai usando la sessione aperta <strong>dopo</strong> l'installazione?</li>
+            <li>Il tuo Client ID del service token è registrato in <span class="inline-code">CF_SERVICE_TOKEN_OPERATORS</span> lato server (chiedi all'admin)?</li>
+            <li>Stai usando la sessione aperta <strong>dopo</strong> l'installazione + setup?</li>
           </ul>
         </div>
       </div>
@@ -964,8 +988,8 @@
       <div class="install-step">
         <div class="is-num">5</div>
         <div class="is-body">
-          <div class="is-title">Configura le credenziali</div>
-          <div class="is-desc">Procedi al capitolo successivo <strong>🔐 Setup credenziali</strong> per consumare il vault Bitwarden.</div>
+          <div class="is-title">Configura il service token Cloudflare Access</div>
+          <div class="is-desc">Procedi al capitolo successivo <strong>🔐 Setup (Cloudflare Access)</strong> ed esegui <span class="inline-code">/blueteam:setup</span>.</div>
         </div>
       </div>
     </div>
@@ -979,27 +1003,25 @@
       <span class="topbar-title">Setup credenziali</span>
     </div>
     <div class="content">
-      <h1>🔐 Setup credenziali (Bitwarden Vault)</h1>
-      <p class="subtitle">Una sola volta al primo setup. Tempo stimato: ~3 minuti.</p>
+      <h1>🔐 Setup (Cloudflare Access)</h1>
+      <p class="subtitle">Una sola volta dopo l'install (e a ogni rotation del token). Tempo stimato: ~2 minuti.</p>
 
       <div class="callout callout-ok">
         <span class="callout-icon">🔑</span>
-        <div><strong>Le tue credenziali sono in Bitwarden Vault.</strong> L'MCP BlueTeam le legge automaticamente al boot. Tu non vedi mai i valori — vedi solo il risultato delle query (ticket, alert, signin, ecc.).</div>
+        <div><strong>Nessuna credenziale EKO365 sul tuo PC.</strong> Il server MCP è remoto: l'unica cosa che configuri in locale è il tuo <strong>service token Cloudflare Access</strong> (Client ID + Secret). I segreti dei servizi (Desk365, Graph, SaaS Alerts) vivono solo lato server. La tua identità operatore è derivata dal JWT del service token.</div>
       </div>
 
       <h2>Il flusso di setup</h2>
       <div class="output-preview" style="font-size:12px;line-height:1.7;">
-        <span class="o-header">FABIO (admin)</span>           genera Access Token in Bitwarden web UI<br>
+        <span class="o-header">FABIO (admin SOC)</span>      emette un service token Cloudflare Access per-operatore<br>
         <span class="o-dim">                       │</span><br>
-        <span class="o-dim">                       ▼ Bitwarden Send (link cifrato monouso)</span><br>
-        <span class="o-header">TU (operatore)</span>          ricevi token + Organization ID<br>
+        <span class="o-dim">                       ▼ consegna sicura: CF_ACCESS_CLIENT_ID + CF_ACCESS_CLIENT_SECRET</span><br>
+        <span class="o-header">TU (operatore)</span>          esegui /blueteam:setup e incolli i due valori<br>
         <span class="o-dim">                       │</span><br>
-        <span class="o-dim">                       ▼ eko365-blueteam-init --token US:... --org ...</span><br>
-        <span class="o-section">~/.eko365/bitwarden_config.env</span> creato sul tuo PC<br>
+        <span class="o-dim">                       ▼ salva ~/.eko365/cf-access-blueteam.env (chmod 600) + source in ~/.zshrc</span><br>
+        <span class="o-section">riavvii Claude Code</span> (carica le variabili nel profilo shell)<br>
         <span class="o-dim">                       │</span><br>
-        <span class="o-dim">                       ▼ source ~/.eko365/bitwarden_config.env</span><br>
-        <span class="o-section">MCP boot reads from vault</span><br>
-        <span class="o-dim">                       │</span><br>
+        <span class="o-dim">                       ▼ il plugin invia gli header CF su ogni richiesta MCP</span><br>
         <span class="o-ok">/blueteam:morning-checklist OK</span>
       </div>
 
@@ -1008,16 +1030,16 @@
       <div class="install-step">
         <div class="is-num">1</div>
         <div class="is-body">
-          <div class="is-title">Ricevi Access Token e Organization ID dall'admin</div>
-          <div class="is-desc">L'admin (Fabio) ti invia 2 stringhe:
+          <div class="is-title">Ricevi il service token dall'admin SOC</div>
+          <div class="is-desc">L'admin (Fabio) emette per te un <strong>service token Cloudflare Access</strong> dedicato e ti consegna in modo sicuro due stringhe:
           <ul>
-            <li>Un <strong>Access Token</strong> (formato <span class="inline-code">0.xxx...</span>) tramite Bitwarden Send (link cifrato monouso)</li>
-            <li>L'<strong>Organization ID</strong> (UUID), tipicamente <span class="inline-code">f090dcd7-df9e-43db-b230-b440011f75c5</span> per EKO365</li>
+            <li><span class="inline-code">CF_ACCESS_CLIENT_ID</span> (formato <span class="inline-code">&lt;id&gt;.access</span>)</li>
+            <li><span class="inline-code">CF_ACCESS_CLIENT_SECRET</span></li>
           </ul>
           </div>
           <div class="callout callout-warn">
             <span class="callout-icon">⚠️</span>
-            <div><strong>Non condividere il token.</strong> Chi lo possiede può leggere tutte le credenziali EKO365 BlueTeam.</div>
+            <div><strong>Non condividere il token.</strong> Identifica te come operatore verso il server MCP. In caso di compromissione l'admin lo revoca/ruota in pochi minuti.</div>
           </div>
         </div>
       </div>
@@ -1025,62 +1047,35 @@
       <div class="install-step">
         <div class="is-num">2</div>
         <div class="is-body">
-          <div class="is-title">Esegui il comando di init</div>
-          <div class="is-desc">Sul tuo terminale (PowerShell su Windows, Terminal su Mac), nella directory del workspace BlueTeam:</div>
+          <div class="is-title">Esegui la skill di setup</div>
+          <div class="is-desc">In Claude Code lancia:</div>
           <div class="code-block">
-<pre>./scripts/eko365-blueteam-init.py \
-  --token "0.xxx-paste-the-real-token-here-xxx" \
-  --org "f090dcd7-df9e-43db-b230-b440011f75c5"</pre>
+<pre>/blueteam:setup</pre>
             <button class="copy-btn" onclick="copyCode(this)">Copia</button>
           </div>
-          <div class="output-preview" style="margin-top:8px;font-size:11.5px;">
-            <span class="o-header">EKO365 BlueTeam — first-time setup</span><br><br>
-            <span class="o-ok">[1/4]</span> <span class="o-dim">Validating token format...                  ✓</span><br>
-            <span class="o-ok">[2/4]</span> <span class="o-dim">Persisting config to ~/.eko365/...           ✓</span><br>
-            <span class="o-ok">[3/4]</span> <span class="o-dim">Verifying read access (8 records, 13 secrets)... ✓</span><br>
-            <span class="o-ok">[4/4]</span> <span class="o-dim">Setup complete.</span>
-          </div>
+          <div class="is-desc" style="margin-top:8px;">La skill ti chiede i due valori, li salva in <span class="inline-code">~/.eko365/cf-access-blueteam.env</span> (mode 600) e aggiunge il <span class="inline-code">source</span> in <span class="inline-code">~/.zshrc</span>. Nessun valore viene mostrato a schermo dopo l'inserimento.</div>
         </div>
       </div>
 
       <div class="install-step">
         <div class="is-num">3</div>
         <div class="is-body">
-          <div class="is-title">Attiva il vault nella tua shell</div>
-          <div class="is-desc">Per attivare il vault override nella sessione corrente:</div>
-          <div class="code-block">
-<pre>source ~/.eko365/bitwarden_config.env</pre>
-            <button class="copy-btn" onclick="copyCode(this)">Copia</button>
-          </div>
-          <div class="is-desc" style="margin-top:8px;">Per attivarlo automaticamente in tutte le shell future:</div>
-          <div class="code-block">
-<pre>echo '[ -f ~/.eko365/bitwarden_config.env ] && source ~/.eko365/bitwarden_config.env' >> ~/.zshrc</pre>
-            <button class="copy-btn" onclick="copyCode(this)">Copia</button>
+          <div class="is-title">Riavvia Claude Code</div>
+          <div class="is-desc">Serve un riavvio perché le variabili CF vengano caricate nel profilo shell (il plugin le inietta come header <span class="inline-code">CF-Access-Client-Id/Secret</span> su ogni richiesta al server MCP). <strong>Apri un terminale nuovo</strong> e rilancia <span class="inline-code">claude</span> — non basta rilanciarlo nella stessa shell vecchia.</div>
+          <div class="callout callout-info">
+            <span class="callout-icon">🔁</span>
+            <div><strong>Rotation futura del token:</strong> rilancia <span class="inline-code">/blueteam:setup</span> — sovrascrive il file e le variabili si aggiornano al prossimo riavvio.</div>
           </div>
         </div>
       </div>
 
-      <h2>Verifica con il doctor</h2>
-      <p>In ogni momento puoi controllare lo stato delle tue credenziali:</p>
+      <h2>Verifica installazione</h2>
+      <p>Dopo il riavvio, apri <span class="inline-code">/mcp</span> e verifica che <span class="inline-code">plugin:blueteam:blueteam</span> sia connesso (type <span class="inline-code">http</span>). Poi lancia la checklist mattutina:</p>
       <div class="code-block">
-<pre>./scripts/eko365-blueteam-doctor.py</pre>
+<pre>/blueteam:morning-checklist</pre>
         <button class="copy-btn" onclick="copyCode(this)">Copia</button>
       </div>
-      <div class="output-preview" style="margin-top:8px;font-size:11.5px;">
-        <span class="o-header">EKO365 BlueTeam — doctor</span><br><br>
-        <span class="o-section">Configuration sources:</span><br>
-        <span class="o-dim">  .env file:           found (22 vars)</span><br>
-        <span class="o-dim">  BW config file:      found (~/.eko365/bitwarden_config.env)</span><br>
-        <span class="o-dim">  EKO365_SECRETS_BACKEND: bitwarden</span><br>
-        <span class="o-dim">  BW_ACCESS_TOKEN:        set</span><br><br>
-        <span class="o-section">Backend connectivity:</span><br>
-        <span class="o-dim">  Backend:             BitwardenBackend</span><br>
-        <span class="o-dim">  Vault connectivity:  </span><span class="o-ok">OK (8 records, 186ms)</span><br><br>
-        <span class="o-section">Required env vars:</span><br>
-        <span class="o-dim">  ANTHROPIC_API_KEY            </span><span class="o-ok">OK</span><span class="o-dim"> (from vault)</span><br>
-        <span class="o-dim">  ... (13 totali)</span><br><br>
-        <span class="o-ok">Status: HEALTHY</span>
-      </div>
+      <p style="font-size:13px;color:rgba(74,70,96,0.6);margin-top:6px;">Se vedi la sintesi giornaliera (coda, salute Argentino, backlog), il collegamento al server MCP remoto funziona.</p>
 
       <h2>Problemi comuni</h2>
       <table>
@@ -1089,24 +1084,19 @@
         </thead>
         <tbody>
           <tr>
-            <td>Init dice "Token format invalid"</td>
-            <td>Hai incollato il token con caratteri extra (spazi, virgolette, ecc.)</td>
-            <td>Re-incolla pulito; deve iniziare con <span class="inline-code">0.</span> e essere lungo &gt;30 caratteri</td>
+            <td><span class="inline-code">plugin:blueteam:blueteam</span> non connesso in <span class="inline-code">/mcp</span></td>
+            <td>Variabili CF non in env, oppure connettività verso <span class="inline-code">mcp-blueteam.eko365.it</span></td>
+            <td>Verifica <span class="inline-code">printenv CF_ACCESS_CLIENT_ID</span>; se vuoto, rilancia <span class="inline-code">/blueteam:setup</span> e riavvia da un terminale nuovo</td>
           </tr>
           <tr>
-            <td>Init dice "Authentication failed"</td>
-            <td>Token revocato o expired</td>
-            <td>Chiedi un nuovo Access Token all'admin (Fabio)</td>
+            <td><span class="inline-code">403</span> / "non autorizzata" da <span class="inline-code">argentino_health</span></td>
+            <td>Service token assente/errato, o Client ID non registrato lato server</td>
+            <td>Controlla le variabili CF in env; se presenti, chiedi all'admin di verificare il tuo Client ID in <span class="inline-code">CF_SERVICE_TOKEN_OPERATORS</span></td>
           </tr>
           <tr>
-            <td>Doctor dice "Status: DEGRADED" con vault non disponibile</td>
-            <td>Hai dimenticato <span class="inline-code">source ~/.eko365/bitwarden_config.env</span>, oppure è scaduto il token</td>
-            <td>Source il file e re-run doctor; se ancora DEGRADED, chiedi nuovo token</td>
-          </tr>
-          <tr>
-            <td>MCP parte ma morning-checklist dà errore 401</td>
-            <td>Un secret nel vault è stato ruotato e il valore upstream è cambiato</td>
-            <td>Restart Claude Code (per forzare reload cache); se persiste, contatta admin</td>
+            <td>Pagina HTML "Cloudflare Access — Forbidden" al posto della risposta MCP</td>
+            <td>Header CF vuoti (la shell che ha lanciato Claude non aveva gli export)</td>
+            <td>Apri un <strong>terminale nuovo</strong> (carica <span class="inline-code">~/.zshrc</span>) e rilancia <span class="inline-code">claude</span> — non basta rilanciarlo nella stessa shell</td>
           </tr>
         </tbody>
       </table>
@@ -1114,9 +1104,9 @@
       <h2>Se devi reinstallare</h2>
       <p>Laptop nuovo, format, ecc.:</p>
       <ol>
-        <li>Chiedi all'admin un <strong>nuovo</strong> Access Token (il vecchio andrebbe revocato per pulizia)</li>
         <li>Reinstalla Claude Code + plugin BlueTeam come da capitolo Installazione</li>
-        <li>Esegui di nuovo <span class="inline-code">eko365-blueteam-init.py</span> con il nuovo token</li>
+        <li>Rilancia <span class="inline-code">/blueteam:setup</span> con il tuo service token (se serve, chiedi all'admin di ri-emetterlo)</li>
+        <li>Riavvia Claude Code da un terminale nuovo</li>
       </ol>
 
       <h2>Sicurezza e responsabilità</h2>
@@ -1125,11 +1115,11 @@
         <div>
           <strong>Cosa NON fare:</strong>
           <ul style="margin-top:6px;padding-left:20px;line-height:1.8;">
-            <li>Non copiare <span class="inline-code">~/.eko365/bitwarden_config.env</span> su altri dispositivi</li>
-            <li>Non condividere screenshot del terminale che mostrano il token (anche solo visivamente)</li>
+            <li>Non copiare <span class="inline-code">~/.eko365/cf-access-blueteam.env</span> su altri dispositivi</li>
+            <li>Non condividere screenshot del terminale che mostrano il service token</li>
             <li>Non lasciare il PC sbloccato in luoghi pubblici</li>
           </ul>
-          <strong>Se sospetti un problema</strong> (laptop rubato, malware, accesso non autorizzato): notifica l'admin <em>entro 1 ora</em>. La revoca del tuo Access Token richiede meno di 5 minuti e blocca completamente l'accesso al vault.
+          <strong>Se sospetti un problema</strong> (laptop rubato, malware, accesso non autorizzato): notifica l'admin <em>entro 1 ora</em>. La revoca del tuo service token Cloudflare Access è immediata e blocca completamente l'accesso al server MCP.
         </div>
       </div>
     </div>
@@ -1143,7 +1133,7 @@
       <span class="topbar-title">Panoramica Skills</span>
     </div>
     <div class="content">
-      <h1>🗺️ Panoramica delle 5 skill</h1>
+      <h1>🗺️ Panoramica delle 7 skill</h1>
       <p class="subtitle">Frequenza attesa, tipo di operazione e quando usarle.</p>
 
       <table>
@@ -1157,6 +1147,13 @@
           </tr>
         </thead>
         <tbody>
+          <tr>
+            <td><strong>⚙️ setup</strong></td>
+            <td><span class="inline-code">/blueteam:setup</span></td>
+            <td><span class="chip chip-readonly">Config</span></td>
+            <td>una tantum + rotation</td>
+            <td>Nessuno</td>
+          </tr>
           <tr>
             <td><strong>🌅 morning-checklist</strong></td>
             <td><span class="inline-code">/blueteam:morning-checklist</span></td>
@@ -1184,6 +1181,13 @@
             <td><span class="chip chip-readonly">Sola lettura</span></td>
             <td>~5 / settimana</td>
             <td>Email utente</td>
+          </tr>
+          <tr>
+            <td><strong>🔬 investigate-incident</strong></td>
+            <td><span class="inline-code">/blueteam:investigate-incident &lt;ticket&gt;</span></td>
+            <td><span class="chip chip-readonly">Sola lettura</span></td>
+            <td>~2 / settimana</td>
+            <td>Numero ticket</td>
           </tr>
           <tr>
             <td><strong>🩺 diagnose-stale</strong></td>
@@ -1876,6 +1880,97 @@
     </div>
   </div>
 
+  <!-- ─── SETUP (SKILL) ─── -->
+  <div id="section-setup-skill" class="section">
+    <div class="topbar">
+      <span class="topbar-breadcrumb">Skills</span>
+      <span style="color:rgba(74,70,96,0.3)">›</span>
+      <span class="topbar-title">setup</span>
+    </div>
+    <div class="content">
+      <div class="skill-hero">
+        <div class="skill-hero-icon bg-purple">⚙️</div>
+        <div class="skill-hero-body">
+          <h1>setup</h1>
+          <p>Configura il <strong>service token Cloudflare Access</strong> dell'operatore per collegarsi al server MCP remoto BlueTeam. Da eseguire una volta dopo l'install (onboarding) o quando il token va ruotato. Valida la connessione al server.</p>
+          <div class="skill-hero-meta">
+            <span class="chip chip-readonly">Config</span>
+            <span class="chip chip-freq">una tantum + rotation</span>
+            <span class="chip chip-trigger">setup</span>
+            <span class="chip chip-trigger">configura token</span>
+            <span class="chip chip-trigger">onboarding</span>
+          </div>
+        </div>
+      </div>
+
+      <h2>Come si usa</h2>
+      <div class="command-pill" onclick="copyText('/blueteam:setup', this)">
+        <span>/blueteam:setup</span>
+        <span class="cp-icon">⚙️</span>
+      </div>
+      <p style="font-size:13px;color:rgba(74,70,96,0.6);margin-top:6px;">Tieni pronti i due valori del service token (<span class="inline-code">CF_ACCESS_CLIENT_ID</span> e <span class="inline-code">CF_ACCESS_CLIENT_SECRET</span>) forniti dall'admin SOC.</p>
+
+      <h2>Cosa fa</h2>
+      <ul class="steps">
+        <li><div class="step-num">1</div><div class="step-body"><div class="step-title">Chiede i due valori del service token</div><div class="step-desc">Client ID e Secret Cloudflare Access, consegnati in modo sicuro dall'admin.</div></div></li>
+        <li><div class="step-num">2</div><div class="step-body"><div class="step-title">Salva il file credenziali</div><div class="step-desc">Scrive <span class="inline-code">~/.eko365/cf-access-blueteam.env</span> (mode 600) con gli <span class="inline-code">export</span> e aggiunge il <span class="inline-code">source</span> in <span class="inline-code">~/.zshrc</span>.</div></div></li>
+        <li><div class="step-num">3</div><div class="step-body"><div class="step-title">Richiede il riavvio</div><div class="step-desc">Le variabili entrano nel profilo shell al prossimo avvio di Claude Code (da un terminale nuovo). Il plugin le invia poi come header su ogni richiesta al server MCP.</div></div></li>
+      </ul>
+
+      <div class="callout callout-info">
+        <span class="callout-icon">🔁</span>
+        <div><strong>Rotation:</strong> rilancia <span class="inline-code">/blueteam:setup</span> per sostituire il token; i valori si aggiornano al riavvio. La revoca lato Cloudflare è immediata.</div>
+      </div>
+      <div class="callout callout-ok">
+        <span class="callout-icon">🔐</span>
+        <div><strong>Nessun segreto EKO365 in locale.</strong> Solo il tuo service token CF risiede sulla macchina; i segreti dei servizi (Desk365, Graph, SaaS Alerts) vivono lato server.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── INVESTIGATE INCIDENT (SKILL) ─── -->
+  <div id="section-investigate-incident" class="section">
+    <div class="topbar">
+      <span class="topbar-breadcrumb">Skills</span>
+      <span style="color:rgba(74,70,96,0.3)">›</span>
+      <span class="topbar-title">investigate-incident</span>
+    </div>
+    <div class="content">
+      <div class="skill-hero">
+        <div class="skill-hero-icon bg-blue">🔬</div>
+        <div class="skill-hero-body">
+          <h1>investigate-incident</h1>
+          <p>Deep analysis forensic di un incident con orchestrazione <strong>multi-tool</strong>: UAL audit log, sign-in cross-utente, Defender drill-down, IOC extraction. Produce un <strong>verdict suggerito</strong> (compromise / exfiltration / lateral / notifica Garante) <strong>non applicato</strong>, lasciato alla decisione operatore.</p>
+          <div class="skill-hero-meta">
+            <span class="chip chip-readonly">Sola lettura</span>
+            <span class="chip chip-freq">~2 / settimana</span>
+            <span class="chip chip-trigger">investiga incident</span>
+            <span class="chip chip-trigger">deep analysis</span>
+            <span class="chip chip-trigger">indagine forense</span>
+          </div>
+        </div>
+      </div>
+
+      <h2>Come si usa</h2>
+      <div class="command-pill" onclick="copyText('/blueteam:investigate-incident 16578', this)">
+        <span>/blueteam:investigate-incident &lt;numero-ticket&gt;</span>
+        <span class="cp-icon">🔬</span>
+      </div>
+
+      <h2>Cosa fa</h2>
+      <ul class="steps">
+        <li><div class="step-num">1</div><div class="step-body"><div class="step-title">Orchestrazione multi-tool (managed agent)</div><div class="step-desc">Token exchange Graph, query UAL, sign-in cross-utente, drill-down Defender XDR, estrazione IOC. Esecuzione autonoma con guardrail (cap iterazioni, timeout, kill switch).</div></div></li>
+        <li><div class="step-num">2</div><div class="step-body"><div class="step-title">Sintesi forense</div><div class="step-desc">Correla le evidenze e formula un verdict suggerito con motivazione, senza applicarlo.</div></div></li>
+        <li><div class="step-num">3</div><div class="step-body"><div class="step-title">Output + nota</div><div class="step-desc">Report all'operatore; opzionalmente scrive una nota privata su Desk365. Sola lettura su Microsoft 365 e Defender; write opzionale solo sulla nota. Può generare una bozza IR DOCX via skill <span class="inline-code">ekodocs:incident</span>.</div></div></li>
+      </ul>
+
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div><strong>Verdict non applicato.</strong> La skill non chiude né classifica autonomamente: fornisce l'analisi forense; la decisione (incluse eventuali notifiche al Garante) resta all'operatore.</div>
+      </div>
+    </div>
+  </div>
+
   <!-- ─── QUICK REFERENCE ─── -->
   <div id="section-quickref" class="section">
     <div class="topbar">
@@ -1893,6 +1988,12 @@
           <div class="qr-cmd">Comando</div>
           <div class="qr-desc">Quando usarla</div>
           <div class="qr-type">Tipo</div>
+        </div>
+        <div class="qr-row">
+          <div class="qr-skill">⚙️ setup</div>
+          <div class="qr-cmd">/blueteam:setup</div>
+          <div class="qr-desc">Configura il service token Cloudflare Access (una tantum + rotation).</div>
+          <div class="qr-type"><span class="chip chip-readonly">config</span></div>
         </div>
         <div class="qr-row">
           <div class="qr-skill">🌅 morning-checklist</div>
@@ -1916,6 +2017,12 @@
           <div class="qr-skill">🔍 investigate-user</div>
           <div class="qr-cmd">/blueteam:investigate-user &lt;email&gt;</div>
           <div class="qr-desc">Profilo utente completo: baseline geo, device, sign-in, anomalie 24h.</div>
+          <div class="qr-type"><span class="chip chip-readonly">lettura</span></div>
+        </div>
+        <div class="qr-row">
+          <div class="qr-skill">🔬 investigate-incident</div>
+          <div class="qr-cmd">/blueteam:investigate-incident &lt;N&gt;</div>
+          <div class="qr-desc">Deep analysis forensic multi-tool. Verdict suggerito, non applicato.</div>
           <div class="qr-type"><span class="chip chip-readonly">lettura</span></div>
         </div>
         <div class="qr-row" style="border-bottom:none;">
