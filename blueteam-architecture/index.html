@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BlueTeam — Architettura di esecuzione — EKO365 Docs</title>
+<link rel="stylesheet" href="../css/eko365.css">
+<style>
+  .lead { font-size: 0.92rem; color: var(--dark); max-width: 820px; margin-bottom: 8px; }
+  .lead.muted { color: var(--gray); }
+
+  /* ---- TRE PIANI ---- */
+  .planes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin: 18px 0 6px; }
+  .plane {
+    background: var(--white); border-radius: 12px; box-shadow: var(--shadow);
+    overflow: hidden; display: flex; flex-direction: column;
+  }
+  .plane-head { padding: 14px 18px; color: var(--white); }
+  .plane-head .icon { font-size: 1.5rem; }
+  .plane-head .ptitle { font-weight: 700; font-size: 0.98rem; margin-top: 2px; }
+  .plane-head .pwhere { font-size: 0.74rem; opacity: 0.85; margin-top: 2px; }
+  .plane.cloud   .plane-head { background: var(--primary); }
+  .plane.onprem  .plane-head { background: var(--accent); }
+  .plane.github  .plane-head { background: var(--blue); }
+  .plane-body { padding: 14px 18px; flex: 1; }
+  .wl { padding: 8px 0; border-bottom: 1px solid #eee; }
+  .wl:last-child { border-bottom: none; }
+  .wl .wl-name { font-weight: 700; font-size: 0.84rem; color: var(--dark); }
+  .wl .wl-meta { font-size: 0.74rem; color: var(--gray); margin-top: 2px; }
+
+  .legend { font-size: 0.76rem; color: var(--gray); margin: 10px 0 0; }
+  .pill { display:inline-block; font-size:0.7rem; font-weight:700; padding:2px 9px;
+          border-radius:10px; text-transform:uppercase; letter-spacing:0.04em; }
+  .pill.k247 { background:#D4EFDF; color:#1E8449; }
+  .pill.day  { background:#FDEBD0; color:#935116; }
+
+  .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 12px 0; }
+  .why-card { background: var(--light); border-radius: 10px; padding: 16px 18px; border-top: 4px solid var(--accent); }
+  .why-card h4 { font-size: 0.9rem; color: var(--primary); margin-bottom: 6px; }
+  .why-card p { font-size: 0.82rem; color: var(--dark); }
+
+  @media (max-width: 900px) {
+    .planes, .why-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="eko-header">
+  <h1>BlueTeam — Architettura di esecuzione</h1>
+  <div class="subtitle">Dove gira cosa, e perché — i tre piani d'esecuzione del SOC AI-assistito</div>
+  <a href="../" class="back-link">&larr; Hub Documentazione</a>
+</div>
+
+<div style="padding: 24px 40px 40px;">
+
+  <!-- ───────────────── PANORAMICA ───────────────── -->
+  <div class="detail-section">
+    <h2>Una visione d'insieme</h2>
+    <p class="lead">
+      Il sistema BlueTeam — il SOC AI-assistito che fa triage degli alert di sicurezza
+      sui tenant Microsoft 365 gestiti da EKO365 — non gira su un'unica infrastruttura.
+      I carichi sono distribuiti su <strong>tre piani d'esecuzione</strong>, ciascuno
+      scelto per il compito che serve meglio.
+    </p>
+    <p class="lead muted">
+      La regola che guida la distribuzione è l'<strong>indipendenza dei domini di
+      guasto</strong>: chi sorveglia non deve poter cadere insieme a ciò che sorveglia.
+    </p>
+
+    <div class="planes">
+
+      <!-- CLOUD ANTHROPIC -->
+      <div class="plane cloud">
+        <div class="plane-head">
+          <div class="icon">&#9729;&#65039;</div>
+          <div class="ptitle">Cloud Anthropic</div>
+          <div class="pwhere">Routine schedulata &middot; nessun server EKO365</div>
+        </div>
+        <div class="plane-body">
+          <div class="wl">
+            <div class="wl-name">Argentino — loop di triage</div>
+            <div class="wl-meta">Contatto, burst, classificazione, chiusura falsi positivi, report. <span class="pill day">Diurno</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ON-PREM -->
+      <div class="plane onprem">
+        <div class="plane-head">
+          <div class="icon">&#128421;&#65039;</div>
+          <div class="ptitle">Box on-prem EKO365</div>
+          <div class="pwhere">VM dedicata, sempre attiva</div>
+        </div>
+        <div class="plane-body">
+          <div class="wl">
+            <div class="wl-name">Server MCP</div>
+            <div class="wl-meta">Punto di contatto operatore&harr;dati (via Cloudflare Access). <span class="pill k247">24/7</span></div>
+          </div>
+          <div class="wl">
+            <div class="wl-name">Pipeline health-check</div>
+            <div class="wl-meta">Early-warning sulla catena alert&rarr;ticket, ogni 2h. <span class="pill k247">24/7</span></div>
+          </div>
+          <div class="wl">
+            <div class="wl-name">Audit health-check</div>
+            <div class="wl-meta">Verifica audit log e mailbox, settimanale.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GITHUB ACTIONS -->
+      <div class="plane github">
+        <div class="plane-head">
+          <div class="icon">&#9881;&#65039;</div>
+          <div class="ptitle">GitHub Actions</div>
+          <div class="pwhere">CI/CD &middot; sorveglianza esterna</div>
+        </div>
+        <div class="plane-body">
+          <div class="wl">
+            <div class="wl-name">Liveness watchdog</div>
+            <div class="wl-meta">Sonda esterna: rileva il down di Argentino e la staleness del pipeline-check.</div>
+          </div>
+          <div class="wl">
+            <div class="wl-name">CI &amp; build immagine</div>
+            <div class="wl-meta">Test su ogni pull request; build/pubblicazione dell'immagine MCP.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="legend">
+      I tre piani convergono sugli stessi servizi (Desk365, SaaS Alerts, Microsoft
+      Graph, Exchange) e su un registro attività condiviso, da cui il watchdog esterno
+      legge i "battiti" di salute.
+    </p>
+  </div>
+
+  <!-- ───────────────── PERCHÉ ON-PREM ───────────────── -->
+  <div class="detail-section">
+    <h2>Perché abbiamo posizionato dei carichi on-prem</h2>
+    <p class="lead">
+      Storicamente tutto girava in cloud (la Routine) e su GitHub Actions (i controlli
+      schedulati). A giugno 2026 abbiamo spostato sulla VM on-prem due controlli
+      schedulati — il pipeline health-check e l'audit health-check — oltre al server
+      MCP, che era già nato on-prem. Tre ragioni, in ordine di peso.
+    </p>
+
+    <div class="why-grid">
+      <div class="why-card">
+        <h4>1 &middot; Costo dei minuti CI</h4>
+        <p>I controlli schedulati erano il principale driver di consumo dei minuti
+        GitHub Actions. Spostandone due su una macchina già accesa li si <strong>azzera
+        dal conto</strong> — e si guadagna anche una frequenza di controllo maggiore.</p>
+      </div>
+      <div class="why-card">
+        <h4>2 &middot; Riuso di infrastruttura</h4>
+        <p>La VM è <strong>già attiva 24/7</strong> per ospitare il server MCP. Aggiungere
+        un controllo schedulato (un container effimero che parte, gira pochi secondi e
+        termina) ha costo marginale prossimo a zero: nessuna macchina nuova, nessun
+        runtime in più da mantenere.</p>
+      </div>
+      <div class="why-card">
+        <h4>3 &middot; Indipendenza dei guasti</h4>
+        <p>Una sonda di sorveglianza non deve condividere il destino di ciò che
+        sorveglia. Per questo il <strong>liveness watchdog resta su GitHub Actions</strong>:
+        è l'unico punto da cui "vedere" che la box on-prem fosse caduta.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────── RESILIENZA ───────────────── -->
+  <div class="detail-section">
+    <h2>Chi controlla il controllore</h2>
+    <p class="lead">
+      Spostare un controllo critico su una macchina che potrebbe spegnersi in silenzio
+      introduce un rischio: se muore senza dirlo, nessuno se ne accorge. La mitigazione è
+      un <strong>"dead-man's switch"</strong>.
+    </p>
+
+    <div class="flow">
+      <div class="flow-step process"><strong>Controllo on-prem</strong><small>a ogni run scrive un "battito"</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step storage"><strong>Registro condiviso</strong><small>action log</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step source"><strong>Watchdog esterno (GitHub)</strong><small>verifica la freschezza del battito</small></div>
+      <span class="flow-arrow">&#x27A1;</span>
+      <div class="flow-step deliver"><strong>Alert</strong><small>Teams + email se il battito manca</small></div>
+    </div>
+
+    <p class="lead muted" style="margin-top:14px;">
+      Lo stesso watchdog sorveglia anche Argentino: se il loop non dà segni di vita
+      entro la soglia, in orario lavorativo, scatta la notifica. Le due sonde sono
+      indipendenti. Ogni spostamento on-prem è inoltre <strong>completamente
+      reversibile</strong>: i controlli sono privi di stato e si riportano in cloud con
+      un comando.
+    </p>
+  </div>
+
+  <!-- ───────────────── COSA NON È ON-PREM ───────────────── -->
+  <div class="detail-section">
+    <h2>Cosa resta dov'è</h2>
+    <table class="tech-table">
+      <thead><tr><th>Carico</th><th>Dove</th><th>Perché</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Argentino</strong> (triage)</td>
+          <td>Cloud Anthropic</td>
+          <td>È un agente che richiede l'ambiente Routine (modello + strumenti).</td>
+        </tr>
+        <tr>
+          <td><strong>Liveness watchdog</strong></td>
+          <td>GitHub Actions</td>
+          <td>Sonda esterna: deve sopravvivere alla caduta della box on-prem.</td>
+        </tr>
+        <tr>
+          <td><strong>CI &amp; build</strong></td>
+          <td>GitHub Actions</td>
+          <td>Legati al ciclo pull request / merge del codice.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<div class="eko-footer">
+  EKO365 S.B. S.r.l. &mdash; BlueTeam: Architettura di esecuzione &mdash; Giugno 2026 &mdash; Riservato, uso interno
+</div>
+
+</body>
+</html>

@@ -3,3 +3,7 @@
 *~
 .env
 .letta/
+
+# Repo PUBBLICO: mai pubblicare dati cliente o estrazioni grezze.
+*.csv
+reporting-platform/Clienti.csv

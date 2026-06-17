@@ -11,6 +11,14 @@ eko365-docs/
 │   └── eko365.css                    # Design system condiviso (colori, font, componenti)
 ├── reporting-platform/
 │   └── index.html                    # SmartREPORTING Architecture
+├── platform-stats/
+│   └── index.html                    # SmartReporting Statistics
+├── blueteam-architecture/
+│   └── index.html                    # BlueTeam — Architettura di esecuzione (3 piani, on-prem)
+├── blueteam-plugin/
+│   └── index.html                    # BlueTeam Plugin — Guida Operativa
+├── cowork-routines/
+│   └── index.html                    # Cowork & Routines — Guida Operativa
 ├── _templates/
 │   └── page-template.html            # Template per nuove pagine
 └── README.md
