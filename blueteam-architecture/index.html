@@ -75,12 +75,12 @@
         <div class="plane-head">
           <div class="icon">&#9729;&#65039;</div>
           <div class="ptitle">Cloud Anthropic</div>
-          <div class="pwhere">Routine schedulata &middot; nessun server EKO365</div>
+          <div class="pwhere">Routine in standby &middot; nessun server EKO365</div>
         </div>
         <div class="plane-body">
           <div class="wl">
-            <div class="wl-name">Argentino — loop di triage</div>
-            <div class="wl-meta">Contatto, burst, classificazione, chiusura falsi positivi, report. <span class="pill day">Diurno</span></div>
+            <div class="wl-name">Routine "BlueTeam Loop" — standby</div>
+            <div class="wl-meta">Fallback riattivabile: era l'esecutore di Argentino fino al cutover on-prem (luglio 2026).</div>
           </div>
         </div>
       </div>
@@ -93,6 +93,10 @@
           <div class="pwhere">VM dedicata, sempre attiva</div>
         </div>
         <div class="plane-body">
+          <div class="wl">
+            <div class="wl-name">Argentino — loop di triage</div>
+            <div class="wl-meta">Contatto, burst, classificazione, chiusura falsi positivi, report. Orchestratore su timer, cadenza oraria. <span class="pill day">Diurno</span></div>
+          </div>
           <div class="wl">
             <div class="wl-name">Server MCP</div>
             <div class="wl-meta">Punto di contatto operatore&harr;dati (via Cloudflare Access). <span class="pill k247">24/7</span></div>
@@ -141,8 +145,9 @@
     <h2>Perché abbiamo posizionato dei carichi on-prem</h2>
     <p class="lead">
       Storicamente tutto girava in cloud (la Routine) e su GitHub Actions (i controlli
-      schedulati). A giugno 2026 abbiamo spostato sulla VM on-prem due controlli
-      schedulati — il pipeline health-check e l'audit health-check — oltre al server
+      schedulati). Tra giugno e luglio 2026 abbiamo spostato sulla VM on-prem i controlli
+      schedulati — pipeline health-check e audit health-check — e infine <strong>Argentino
+      stesso</strong> (luglio 2026), oltre al server
       MCP, che era già nato on-prem. Tre ragioni, in ordine di peso.
     </p>
 
@@ -204,9 +209,9 @@
       <thead><tr><th>Carico</th><th>Dove</th><th>Perché</th></tr></thead>
       <tbody>
         <tr>
-          <td><strong>Argentino</strong> (triage)</td>
-          <td>Cloud Anthropic</td>
-          <td>È un agente che richiede l'ambiente Routine (modello + strumenti).</td>
+          <td><strong>Routine "BlueTeam Loop"</strong> (fallback)</td>
+          <td>Cloud Anthropic &mdash; standby</td>
+          <td>Dopo il cutover on-prem (luglio 2026) non è più l'esecutore: resta dormiente come fallback riattivabile se la box cade. Argentino ora gira on-prem.</td>
         </tr>
         <tr>
           <td><strong>Liveness watchdog</strong></td>

@@ -493,7 +493,7 @@
       <h2>Contesto</h2>
       <p>EKO365 BlueTeam usa <strong>tre prodotti distinti</strong> della famiglia Claude — Claude Code (CLI), Cowork (desktop app) e Routines (cloud automation) — costruiti tutti sopra Claude Agent SDK ma con casi d'uso, runtime e UI differenti. Confonderli porta a errori architetturali, ad esempio trattare una Routine come un Managed Agent o assumere che un SessionStart hook funzioni in claude.ai web.</p>
 
-      <p>Questa guida è la sintesi operativa di quanto validato in produzione sul ciclo M1-M4 del plugin BlueTeam, con il loop orario di Argentino (agente autonomo SOC) attivo come Routine cloud e il plugin distribuito al team via Org Settings claude.ai.</p>
+      <p>Questa guida è la sintesi operativa di quanto validato in produzione sul ciclo M1-M4 del plugin BlueTeam, con il loop orario di Argentino (agente autonomo SOC) — allora attivo come Routine cloud, dal luglio 2026 migrato a orchestratore <strong>on-prem</strong> su EKO365MCP01 — e il plugin distribuito al team via Org Settings claude.ai.</p>
 
       <div class="callout callout-info">
         <span class="callout-label">Nota</span>
@@ -533,7 +533,7 @@
 
       <div class="prod-card routines">
         <div class="prod-name">Routines <span class="prod-tag cloud">Cloud Anthropic</span></div>
-        <p style="margin:0;font-size:13.5px;color:rgba(74,70,96,0.75)">Automation cloud-based — gira sui server Anthropic, machine off OK. Unattended automation scheduled via cron, API webhook <span class="inline-code">/fire</span> o GitHub event. Argentino loop SOC è una Routine.</p>
+        <p style="margin:0;font-size:13.5px;color:rgba(74,70,96,0.75)">Automation cloud-based — gira sui server Anthropic, machine off OK. Unattended automation scheduled via cron, API webhook <span class="inline-code">/fire</span> o GitHub event. Argentino loop SOC è nato come Routine (migrato on-prem a luglio 2026, mantenuta in standby come fallback).</p>
       </div>
 
       <h2>Tabella comparativa</h2>
@@ -655,7 +655,7 @@
        /blueteam:triage-ooal, ecc.
 
    ┌──────────────────────┐
-   │ Routine cloud        │ ← Argentino loop schedulato (ogni ora)
+   │ Routine cloud        │ ← Argentino loop schedulato (storico; ora on-prem 07/2026)
    │ "EKO365 BlueTeam     │
    │  Loop"               │
    │                      │
@@ -685,7 +685,7 @@
       <ul>
         <li><strong>Marketplace privato</strong>: repo <span class="inline-code">eko365sb/claude-plugins</span> con <span class="inline-code">marketplace.json</span> al root come TOC</li>
         <li><strong>Due runtime locali</strong>: Cowork desktop (preferito per operatori SOC) e Claude Code CLI (developer)</li>
-        <li><strong>Routine cloud</strong>: Argentino loop orario 5-19 con repository <span class="inline-code">EKO365-BlueTeam</span> e Environment dedicato</li>
+        <li><strong>Routine cloud</strong> (storico → on-prem 07/2026): Argentino loop orario 5-19 con repository <span class="inline-code">EKO365-BlueTeam</span> e Environment dedicato; dal cutover gira come orchestratore su timer systemd sulla box on-prem, Routine in standby</li>
         <li><strong>Vault Bitwarden EU</strong>: secrets centralizzati con machine accounts dedicati per agente</li>
         <li><strong>Wasabi S3 eu-south-1</strong>: action log centrale + refresh tokens per cross-tenant operations</li>
       </ul>
